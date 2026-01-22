@@ -3,298 +3,199 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi PDF Timesheet Locale</title>
+    <title>Analisi PDF Timesheet</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        tailwind.config = { darkMode: 'class' }
+    </script>
     <style>
-        :root { --primary: #6886C4; --success: #22c55e; --danger: #ef4444; }
-        .bg-primary { background-color: var(--primary); }
+        :root { --primary: #6886C4; }
         .text-primary { color: var(--primary); }
-        .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
     </style>
 </head>
-<body <nav class="bg-white border-b border-slate-200 sticky top-0 z-50">
-    <div class="flex h-1 w-full">
-        <div class="flex-1" style="background-color: #009246;"></div>
-        <div class="flex-1 bg-white"></div>
-        <div class="flex-1" style="background-color: #CE2B37;"></div>
-    </div>
-    
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex justify-between h-16">
+<body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen font-sans transition-colors duration-300">
+
+    <nav class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
+        <div class="flex h-1 w-full">
+            <div class="flex-1" style="background-color: #009246;"></div>
+            <div class="flex-1 bg-white"></div>
+            <div class="flex-1" style="background-color: #CE2B37;"></div>
+        </div>
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="flex items-center gap-8">
-                <a href="Home.html" class="flex items-center gap-2 text-indigo-900 font-black tracking-tighter">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-primary"></i>
-                    GESTIONE ORE
+                <a href="Home.html" class="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 font-black tracking-tighter">
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-primary"></i> GESTIONE ORE
                 </a>
-
-                <div class="hidden md:flex items-center gap-6">
-                    <a href="Home.html" class="text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-2 transition-colors">
-                        <i data-lucide="home" class="w-4 h-4"></i> Home
-                    </a>
-                    <a href="calcolo-ore.html" class="text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-2 transition-colors">
-                        <i data-lucide="clock" class="w-4 h-4"></i> Calcolo Odierno
-                    </a>
-                    <a href="analisi-pdf.html" class="text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-2 transition-colors">
-                        <i data-lucide="file-search" class="w-4 h-4"></i> Analisi PDF
-                    </a>
+                <div class="hidden md:flex items-center gap-6 text-sm font-bold text-slate-500">
+                    <a href="Home.html" class="hover:text-primary transition-colors">Home</a>
+                    <a href="calcolo-ore.html" class="hover:text-primary transition-colors">Calcolo Odierno</a>
+                    <a href="analisi-pdf.html" class="text-primary underline decoration-2 underline-offset-4">Analisi PDF</a>
                 </div>
             </div>
-            
-            <div class="flex items-center">
-                <span class="text-[10px] bg-indigo-50 text-indigo-600 px-2 py-1 rounded-full font-bold border border-indigo-100 uppercase tracking-widest">
-                    v1.0
-                </span>
-            </div>
+            <button id="theme-toggle" class="p-2 rounded-lg bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400">
+                <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-4 h-4 hidden"></i>
+                <i id="theme-toggle-light-icon" data-lucide="sun" class="w-4 h-4 hidden"></i>
+            </button>
         </div>
-    </div>
-</nav>
+    </nav>
 
-    <div class="max-w-5xl mx-auto space-y-6">
-        <div class="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <div>
-                <h1 class="text-2xl font-black text-indigo-900 flex items-center gap-2">
-                    <i data-lucide="file-search" class="text-primary"></i> Analisi PDF Timesheet
-                </h1>
-                <p class="text-slate-500 text-sm"></p>
+    <div class="max-w-5xl mx-auto py-12 px-6 space-y-8">
+        <div class="bg-white dark:bg-slate-900 p-10 rounded-3xl border-4 border-dashed border-slate-200 dark:border-slate-800 text-center relative hover:border-indigo-400 dark:hover:border-indigo-600 transition-all">
+            <input type="file" id="fileInput" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer">
+            <div class="bg-indigo-50 dark:bg-indigo-950/40 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4 text-primary">
+                <i data-lucide="upload-cloud" class="w-10 h-10"></i>
             </div>
-            <div id="statusIndicator" class="hidden flex items-center gap-2 text-sm font-medium text-amber-600 animate-pulse">
-                <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Elaborazione in corso...
-            </div>
+            <h2 class="text-xl font-bold text-indigo-900 dark:text-white">Trascina qui il tuo PDF</h2>
+            <p class="text-slate-500 dark:text-slate-400 mt-2">Oppure clicca per selezionare il file dal tuo computer</p>
         </div>
 
-        <div id="dropZone" class="relative group border-4 border-dashed border-slate-200 bg-white rounded-3xl p-12 text-center transition-all hover:border-primary/50 hover:bg-indigo-50/30">
-            <input type="file" id="fileInput" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-            <div class="space-y-4">
-                <div class="w-20 h-20 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                    <i data-lucide="upload-cloud" class="w-10 h-10"></i>
+        <div id="resultsArea" class="hidden space-y-8">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border-b-4 border-emerald-500 shadow-sm text-center">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Extra Totali</p>
+                    <p id="statExtra" class="text-3xl font-black text-emerald-600 dark:text-emerald-400">0h 00m</p>
                 </div>
-                <div>
-                    <p class="text-lg font-bold text-slate-700">Trascina qui il tuo Timesheet PDF</p>
-                    <p class="text-sm text-slate-400">O clicca per selezionare il file dal computer</p>
+                <div class="bg-white dark:bg-slate-900 p-6 rounded-2xl border-b-4 border-red-500 shadow-sm text-center">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Debito/Fless.</p>
+                    <p id="statFlex" class="text-3xl font-black text-red-500">0h 00m</p>
                 </div>
-                <div id="fileSelected" class="hidden inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-bold">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> <span id="fileNameDisplay"></span>
-                </div>
-            </div>
-        </div>
-
-        <div id="resultsArea" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-emerald-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Ore Extra Totali</p>
-                    <p id="statExtra" class="text-3xl font-black text-emerald-600 mt-1">0h 0m</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Flessibilità Totale</p>
-                    <p id="statFlex" class="text-3xl font-black text-red-600 mt-1">0h 0m</p>
-                </div>
-                <div id="balanceCard" class="bg-white p-6 rounded-2xl shadow-sm border-b-4">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Saldo Attuale</p>
-                    <p id="statBalance" class="text-3xl font-black mt-1">0h 0m</p>
+                <div id="balanceCard" class="bg-white dark:bg-slate-900 p-6 rounded-2xl border-b-4 border-indigo-500 shadow-sm text-center">
+                    <p class="text-xs font-bold text-slate-400 uppercase tracking-widest mb-1">Saldo Finale</p>
+                    <p id="statBalance" class="text-3xl font-black text-indigo-600 dark:text-indigo-400">0h 00m</p>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-700 flex items-center gap-2">
-                        <i data-lucide="list" class="w-5 h-5 text-primary"></i> Dettaglio Rilevato
-                    </h3>
-                    <span id="dataInfo" class="text-xs font-medium bg-slate-100 text-slate-500 px-3 py-1 rounded-lg"></span>
-                </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold">
-                                <th class="p-4">Giorno</th>
-                                <th class="p-4">Causale Rilevata</th>
-                                <th class="p-4 text-right">Valore</th>
-                                <th class="p-4 text-right">Tipo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-50">
-                            </tbody>
-                    </table>
-                </div>
+            <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 overflow-hidden shadow-xl">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 dark:bg-slate-800 text-slate-500 dark:text-slate-400 text-xs font-bold uppercase tracking-wider">
+                            <th class="p-5">Giorno</th>
+                            <th class="p-5">Causale</th>
+                            <th class="p-5 text-right">Valore</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody" class="divide-y divide-slate-100 dark:divide-slate-800"></tbody>
+                </table>
             </div>
         </div>
     </div>
 
-	<script>
-		pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-		const fileInput = document.getElementById('fileInput');
-		const resultsArea = document.getElementById('resultsArea');
-		const tableBody = document.getElementById('tableBody');
-		const statusIndicator = document.getElementById('statusIndicator');
+        // Tema
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-		fileInput.addEventListener('change', async (e) => {
-			const file = e.target.files[0];
-			if (!file) return;
+        function updateTheme() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                lightIcon.classList.remove('hidden'); darkIcon.classList.add('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden'); lightIcon.classList.add('hidden');
+            }
+        }
 
-			document.getElementById('fileSelected').classList.remove('hidden');
-			document.getElementById('fileNameDisplay').innerText = file.name;
-			statusIndicator.classList.remove('hidden');
-			resultsArea.classList.add('hidden');
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            updateTheme();
+        });
 
-			try {
-				const data = await processPDF(file);
-				renderResults(data);
-			} catch (err) {
-				console.error(err);
-				alert("Errole: " + err.message);
-			} finally {
-				statusIndicator.classList.add('hidden');
-			}
-		});
+        // Logica PDF (Versione migliorata con ordinamento spaziale)
+        document.getElementById('fileInput').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
 
-		async function processPDF(file) {
-			const arrayBuffer = await file.arrayBuffer();
-			const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-			let allItems = [];
+            const arrayBuffer = await file.arrayBuffer();
+            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
+            let allItems = [];
 
-			// Estraiamo tutti gli elementi con le loro coordinate (y = altezza sulla pagina)
-			for (let i = 1; i <= pdf.numPages; i++) {
-				const page = await pdf.getPage(i);
-				const content = await page.getTextContent();
-				// Arrotondiamo la coordinata Y per raggruppare elementi sulla stessa riga
-				const items = content.items.map(item => ({
-					str: item.str.trim(),
-					y: Math.round(item.transform[5]), 
-					x: item.transform[4]
-				}));
-				allItems = allItems.concat(items);
-			}
+            for (let i = 1; i <= pdf.numPages; i++) {
+                const page = await pdf.getPage(i);
+                const content = await page.getTextContent();
+                const items = content.items.map(item => ({ str: item.str, y: Math.round(item.transform[5]), x: item.transform[4] }));
+                allItems = allItems.concat(items);
+            }
 
-			// Raggruppiamo gli elementi per riga (stessa coordinata Y)
-			const rowsMap = {};
-			allItems.forEach(item => {
-				if (!rowsMap[item.y]) rowsMap[item.y] = [];
-				rowsMap[item.y].push(item);
-			});
+            const rowsMap = {};
+            allItems.forEach(item => {
+                if (!rowsMap[item.y]) rowsMap[item.y] = [];
+                rowsMap[item.y].push(item);
+            });
 
-			// Ordiniamo le righe dall'alto verso il basso e il contenuto da sinistra a destra
-			const sortedY = Object.keys(rowsMap).sort((a, b) => b - a);
-			const processedRows = sortedY.map(y => {
-				return rowsMap[y].sort((a, b) => a.x - b.x).map(i => i.str).join(" ");
-			});
+            const sortedY = Object.keys(rowsMap).sort((a, b) => b - a);
+            const processedRows = sortedY.map(y => rowsMap[y].sort((a, b) => a.x - b.x).map(i => i.str).join(" "));
 
-			return parseRows(processedRows);
-		}
+            const data = parseRows(processedRows);
+            renderTable(data);
+        });
 
-		function parseRows(rows) {
-			const results = [];
-			let totalExtra = 0;
-			let totalFlex = 0;
-			let period = "Gennaio 2026";
+        function parseRows(rows) {
+            const results = [];
+            let te = 0, tf = 0;
+            const dayRegex = /^(Ven|Lun|Mar|Mer|Gio|Sab|Dom)\.\d{2}/;
 
-			// Regex specifica per il formato Giorno (es: Lun.12 o Mar.13) 
-			const dayRegex = /^(Ven|Lun|Mar|Mer|Gio|Sab|Dom)\.\d{2}/;
+            rows.forEach(line => {
+                if (dayRegex.test(line)) {
+                    const dayLabel = line.match(dayRegex)[0];
+                    if (line.includes("Presenza non prevista")) {
+                        const vals = line.match(/\d+,\d{2}/g);
+                        if (vals) {
+                            const mins = convertToMinutes(vals[vals.length - 1]);
+                            te += mins;
+                            results.push({ day: dayLabel, desc: "Extra", val: mins, type: 'EXTRA' });
+                        }
+                    }
+                    if (line.includes("FLESSIBILITA")) {
+                        const flexMatch = line.match(/FLESSIBILITA.*?(\d+,\d{2})/);
+                        if (flexMatch) {
+                            const mins = convertToMinutes(flexMatch[1]);
+                            tf += mins;
+                            results.push({ day: dayLabel, desc: "Flessibilità", val: mins, type: 'FLEX' });
+                        }
+                    }
+                }
+            });
+            return { results, te, tf };
+        }
 
-			rows.forEach(line => {
-				// Cerchiamo il periodo nel documento [cite: 4]
-				if (line.includes("Prospetto Orari Mensile:")) {
-					period = line.split("Prospetto Orari Mensile:")[1].trim();
-				}
+        function convertToMinutes(s) {
+            const [h, m] = s.replace(',', '.').split('.').map(Number);
+            return (h * 60) + (m || 0);
+        }
 
-				// Se la riga inizia con un giorno, è una riga della tabella 
-				if (dayRegex.test(line)) {
-					let dayLabel = line.match(dayRegex)[0];
-					
-					// --- LOGICA ESTRAZIONE EXTRA --- 
-					// Se la riga contiene "Presenza non prevista", cerchiamo il valore numerico
-					if (line.includes("Presenza non prevista")) {
-						// Nel tuo PDF l'extra è solitamente dopo la causale 
-						const values = line.match(/\d+,\d{2}/g);
-						if (values && values.length >= 2) {
-							// Il primo valore è solitamente l'orario ordinario (7,12), il secondo è l'extra 
-							const extraStr = values[values.length - 1]; 
-							const mins = convertToMinutes(extraStr);
-							totalExtra += mins;
-							results.push({ day: dayLabel, desc: "Presenza non prevista", val: mins, type: 'EXTRA' });
-						}
-					}
+        function renderTable(data) {
+            const tbody = document.getElementById('tableBody');
+            tbody.innerHTML = '';
+            document.getElementById('resultsArea').classList.remove('hidden');
 
-					// --- LOGICA ESTRAZIONE FLESSIBILITÀ --- 
-					if (line.includes("FLESSIBILITA")) {
-						const flexMatch = line.match(/FLESSIBILITA\s*\(durata\s*(\d+,\d{2})\)/i);
-						if (flexMatch) {
-							const mins = convertToMinutes(flexMatch[1]);
-							totalFlex += mins;
-							results.push({ day: dayLabel, desc: "Flessibilità", val: mins, type: 'FLEX' });
-						} else {
-							// Caso riga Lun.13 dove i valori sono accorpati 
-							const values = line.match(/\d+,\d{2}/g);
-							if (values && values.length >= 3) {
-								 const flexStr = values[values.length - 1];
-								 const mins = convertToMinutes(flexStr);
-								 totalFlex += mins;
-								 results.push({ day: dayLabel, desc: "Flessibilità", val: mins, type: 'FLEX' });
-							}
-						}
-					}
-				}
-			});
+            data.results.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors";
+                tr.innerHTML = `
+                    <td class="p-5 font-bold">${item.day}</td>
+                    <td class="p-5 text-slate-500 dark:text-slate-400 text-sm">${item.desc}</td>
+                    <td class="p-5 text-right font-black ${item.type === 'EXTRA' ? 'text-emerald-500' : 'text-red-500'}">
+                        ${item.type === 'EXTRA' ? '+' : '-'}${Math.floor(item.val/60)}h ${(item.val%60).toString().padStart(2,'0')}m
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
 
-			return { results, totalExtra, totalFlex, period, balance: totalExtra - totalFlex };
-		}
+            document.getElementById('statExtra').innerText = `${Math.floor(data.te/60)}h ${(data.te%60).toString().padStart(2,'0')}m`;
+            document.getElementById('statFlex').innerText = `${Math.floor(data.tf/60)}h ${(data.tf%60).toString().padStart(2,'0')}m`;
+            const bal = data.te - data.tf;
+            document.getElementById('statBalance').innerText = `${bal >= 0 ? '+' : '-'}${Math.floor(Math.abs(bal)/60)}h ${(Math.abs(bal)%60).toString().padStart(2,'0')}m`;
+            document.getElementById('balanceCard').style.borderColor = bal >= 0 ? '#10b981' : '#ef4444';
+        }
 
-		function convertToMinutes(valStr) {
-			const clean = valStr.replace(',', '.');
-			const [h, m] = clean.split('.').map(Number);
-			return (h * 60) + (m || 0);
-		}
-
-		function renderResults(data) {
-			resultsArea.classList.remove('hidden');
-			tableBody.innerHTML = '';
-			document.getElementById('dataInfo').innerText = data.period;
-
-			data.results.forEach(item => {
-				const row = `
-					<tr class="hover:bg-slate-50 border-b border-slate-50">
-						<td class="p-4 font-bold text-slate-700">${item.day}</td>
-						<td class="p-4 text-xs text-slate-500">${item.desc}</td>
-						<td class="p-4 text-right font-black ${item.type === 'EXTRA' ? 'text-emerald-600' : 'text-red-500'}">
-							${item.type === 'EXTRA' ? '+' : '-'}${formatTime(item.val)}
-						</td>
-						<td class="p-4 text-right">
-							<span class="text-[10px] font-bold px-2 py-1 rounded-md ${item.type === 'EXTRA' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">
-								${item.type}
-							</span>
-						</td>
-					</tr>
-				`;
-				tableBody.insertAdjacentHTML('beforeend', row);
-			});
-
-			document.getElementById('statExtra').innerText = formatTime(data.totalExtra);
-			document.getElementById('statFlex').innerText = formatTime(data.totalFlex);
-			
-			const balEl = document.getElementById('statBalance');
-			const balCard = document.getElementById('balanceCard');
-			const absBalance = Math.abs(data.balance);
-			balEl.innerText = (data.balance >= 0 ? '+' : '-') + formatTime(absBalance);
-			
-			if (data.balance >= 0) {
-				balEl.className = "text-3xl font-black mt-1 text-indigo-600";
-				balCard.className = "bg-white p-6 rounded-2xl shadow-sm border-b-4 border-indigo-500";
-			} else {
-				balEl.className = "text-3xl font-black mt-1 text-red-600";
-				balCard.className = "bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500";
-			}
-			lucide.createIcons();
-		}
-
-		function formatTime(minutes) {
-			const h = Math.floor(minutes / 60);
-			const m = minutes % 60;
-			return `${h}h ${m.toString().padStart(2, '0')}m`;
-		}
-
-		lucide.createIcons();
-	</script>
+        updateTheme();
+        lucide.createIcons();
+    </script>
 </body>
 </html>
