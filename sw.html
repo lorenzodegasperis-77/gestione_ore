@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calcolo Ore Odierne</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+    <style>
+        /* Definizione colori personalizzati per rispecchiare il componente originale */
+        :root {
+            --primary: #6886C4;
+            --success: #22c55e;
+        }
+        .bg-primary { background-color: var(--primary); }
+        .text-primary { color: var(--primary); }
+        .border-primary { border-color: var(--primary); }
+        .bg-success { background-color: var(--success); }
+        .text-success { color: var(--success); }
+        .border-success { border-color: var(--success); }
+    </style>
+</head>
+<body class="bg-gray-50 text-slate-800 min-h-screen p-6 font-sans">
+
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div>
+            <h1 class="text-3xl font-bold text-indigo-900 mb-2">Calcolo Ore Odierne</h1>
+            <p id="currentDate" class="text-slate-500 capitalize"></p>
+        </div>
+
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl border-2 border-indigo-100 shadow-sm overflow-hidden">
+                <div class="bg-primary p-6">
+                    <h2 class="text-white font-bold flex items-center gap-2">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                        Inserisci Orario di Ingresso
+                    </h2>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-slate-600 font-semibold block">Orario di Ingresso</label>
+                        <input type="time" id="entryInput" 
+                            class="w-full text-lg border-2 border-indigo-100 rounded-lg p-2 focus:border-indigo-500 outline-none transition-all">
+                    </div>
+                </div>
+            </div>
+
+            <div class="bg-white rounded-xl border-2 border-success shadow-sm overflow-hidden">
+                <div class="bg-success p-6 text-white font-bold">
+                    Orario di Uscita Previsto
+                </div>
+                <div id="exitContent" class="p-6">
+                    <div id="noEntry" class="text-center py-8 opacity-40">
+                        <i data-lucide="clock" class="w-12 h-12 mx-auto mb-2"></i>
+                        <p>Inserisci l'orario per vedere l'uscita</p>
+                    </div>
+                    <div id="hasEntry" class="hidden text-center">
+                        <p class="text-slate-500 mb-2">Per uscire in orario, devi timbrare alle:</p>
+                        <div id="calculatedExit" class="text-6xl font-bold text-success my-4">--:--</div>
+                        <p class="text-sm text-slate-400">(7 ore e 42 minuti dall'ingresso)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="countdownCard" class="hidden md:col-span-2 bg-white rounded-xl border-2 border-primary shadow-sm overflow-hidden">
+                <div class="bg-primary p-6 text-white font-bold text-center uppercase tracking-wider">
+                    Sei libero tra:
+                </div>
+                <div class="p-8 text-center">
+                    <div id="timeRemaining" class="text-7xl md:text-8xl font-black text-primary my-4 tabular-nums">00:00:00</div>
+                    <div id="celebrationText" class="hidden text-2xl font-bold text-success animate-bounce">
+                        🎉 SEI LIBERO! 🎉
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Stato dell'app
+        let calculatedExitTime = "";
+        let hasTriggeredConfetti = false;
+
+        // Formatta la data odierna
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('currentDate').innerText = new Intl.DateTimeFormat('it-IT', dateOptions).format(new Date());
+
+        // Elementi DOM
+        const entryInput = document.getElementById('entryInput');
+        const calculatedExitEl = document.getElementById('calculatedExit');
+        const timeRemainingEl = document.getElementById('timeRemaining');
+        const celebrationText = document.getElementById('celebrationText');
+        const countdownCard = document.getElementById('countdownCard');
+        const noEntrySection = document.getElementById('noEntry');
+        const hasEntrySection = document.getElementById('hasEntry');
+
+        // Listener per l'input
+        entryInput.addEventListener('change', (e) => {
+            const entryValue = e.target.value;
+            if (entryValue) {
+                calculateExit(entryValue);
+                noEntrySection.classList.add('hidden');
+                hasEntrySection.classList.remove('hidden');
+                countdownCard.classList.remove('hidden');
+                hasTriggeredConfetti = false; // Resetta coriandoli per nuovo orario
+            }
+        });
+
+        function calculateExit(entry) {
+            const [hours, minutes] = entry.split(':').map(Number);
+            const entryDate = new Date();
+            entryDate.setHours(hours, minutes, 0, 0);
+
+            // Aggiungi 7 ore e 42 minuti
+            entryDate.setMinutes(entryDate.getMinutes() + (7 * 60 + 42));
+
+            calculatedExitTime = entryDate;
+            const exitHours = String(entryDate.getHours()).padStart(2, '0');
+            const exitMinutes = String(entryDate.getMinutes()).padStart(2, '0');
+            calculatedExitEl.innerText = `${exitHours}:${exitMinutes}`;
+        }
+
+        function updateTimer() {
+            if (!calculatedExitTime) return;
+
+            const now = new Date();
+            const diffMs = calculatedExitTime - now;
+
+            if (diffMs <= 0) {
+                timeRemainingEl.innerText = "00:00:00";
+                celebrationText.classList.remove('hidden');
+                if (!hasTriggeredConfetti) {
+                    triggerFireworks();
+                    hasTriggeredConfetti = true;
+                }
+                return;
+            }
+
+            celebrationText.classList.add('hidden');
+            const hours = Math.floor(diffMs / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+            timeRemainingEl.innerText = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        function triggerFireworks() {
+            const duration = 5000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
+        }
+
+        // Loop di aggiornamento
+        setInterval(updateTimer, 1000);
+
+        // Inizializza icone
+        lucide.createIcons();
+    </script>
+</body>
+</html>
