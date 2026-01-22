@@ -3,233 +3,172 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Analisi PDF Timesheet Locale</title>
+    <title>Calcolo Ore Odierne</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
     <style>
-        :root { --primary: #6886C4; --success: #22c55e; --danger: #ef4444; }
+        /* Definizione colori personalizzati per rispecchiare il componente originale */
+        :root {
+            --primary: #6886C4;
+            --success: #22c55e;
+        }
         .bg-primary { background-color: var(--primary); }
         .text-primary { color: var(--primary); }
+        .border-primary { border-color: var(--primary); }
+        .bg-success { background-color: var(--success); }
         .text-success { color: var(--success); }
-        .text-danger { color: var(--danger); }
+        .border-success { border-color: var(--success); }
     </style>
 </head>
-<body class="bg-slate-50 min-h-screen p-4 md:p-8 font-sans">
+<body class="bg-gray-50 text-slate-800 min-h-screen p-6 font-sans">
 
-    <div class="max-w-5xl mx-auto space-y-6">
-        <div class="flex items-center justify-between bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-            <div>
-                <h1 class="text-2xl font-black text-indigo-900 flex items-center gap-2">
-                    <i data-lucide="file-search" class="text-primary"></i> Analisi PDF Timesheet
-                </h1>
-                <p class="text-slate-500 text-sm">Elaborazione locale sicura (i dati non lasciano il tuo PC)</p>
-            </div>
-            <div id="statusIndicator" class="hidden flex items-center gap-2 text-sm font-medium text-amber-600 animate-pulse">
-                <i data-lucide="loader-2" class="w-4 h-4 animate-spin"></i> Elaborazione in corso...
-            </div>
+    <div class="max-w-4xl mx-auto space-y-6">
+        <div>
+            <h1 class="text-3xl font-bold text-indigo-900 mb-2">Calcolo Ore Odierne</h1>
+            <p id="currentDate" class="text-slate-500 capitalize"></p>
         </div>
 
-        <div id="dropZone" class="relative group border-4 border-dashed border-slate-200 bg-white rounded-3xl p-12 text-center transition-all hover:border-primary/50 hover:bg-indigo-50/30">
-            <input type="file" id="fileInput" accept=".pdf" class="absolute inset-0 w-full h-full opacity-0 cursor-pointer">
-            <div class="space-y-4">
-                <div class="w-20 h-20 bg-indigo-50 text-primary rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform">
-                    <i data-lucide="upload-cloud" class="w-10 h-10"></i>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="bg-white rounded-xl border-2 border-indigo-100 shadow-sm overflow-hidden">
+                <div class="bg-primary p-6">
+                    <h2 class="text-white font-bold flex items-center gap-2">
+                        <i data-lucide="clock" class="w-5 h-5"></i>
+                        Inserisci Orario di Ingresso
+                    </h2>
                 </div>
-                <div>
-                    <p class="text-lg font-bold text-slate-700">Trascina qui il tuo Timesheet PDF</p>
-                    <p class="text-sm text-slate-400">O clicca per selezionare il file dal computer</p>
-                </div>
-                <div id="fileSelected" class="hidden inline-flex items-center gap-2 bg-emerald-50 text-emerald-700 px-4 py-2 rounded-full text-sm font-bold">
-                    <i data-lucide="check-circle" class="w-4 h-4"></i> <span id="fileNameDisplay"></span>
-                </div>
-            </div>
-        </div>
-
-        <div id="resultsArea" class="hidden space-y-6">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-emerald-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Ore Extra Totali</p>
-                    <p id="statExtra" class="text-3xl font-black text-emerald-600 mt-1">0h 0m</p>
-                </div>
-                <div class="bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Flessibilità Totale</p>
-                    <p id="statFlex" class="text-3xl font-black text-red-600 mt-1">0h 0m</p>
-                </div>
-                <div id="balanceCard" class="bg-white p-6 rounded-2xl shadow-sm border-b-4">
-                    <p class="text-xs font-bold text-slate-400 uppercase">Saldo Attuale</p>
-                    <p id="statBalance" class="text-3xl font-black mt-1">0h 0m</p>
+                <div class="p-6 space-y-4">
+                    <div class="space-y-2">
+                        <label class="text-slate-600 font-semibold block">Orario di Ingresso</label>
+                        <input type="time" id="entryInput" 
+                            class="w-full text-lg border-2 border-indigo-100 rounded-lg p-2 focus:border-indigo-500 outline-none transition-all">
+                    </div>
                 </div>
             </div>
 
-            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-                <div class="p-6 border-b border-slate-100 flex justify-between items-center">
-                    <h3 class="font-bold text-slate-700 flex items-center gap-2">
-                        <i data-lucide="list" class="w-5 h-5 text-primary"></i> Dettaglio Rilevato
-                    </h3>
-                    <span id="dataInfo" class="text-xs font-medium bg-slate-100 text-slate-500 px-3 py-1 rounded-lg"></span>
+            <div class="bg-white rounded-xl border-2 border-success shadow-sm overflow-hidden">
+                <div class="bg-success p-6 text-white font-bold">
+                    Orario di Uscita Previsto
                 </div>
-                <div class="overflow-x-auto">
-                    <table class="w-full text-left border-collapse">
-                        <thead>
-                            <tr class="bg-slate-50 text-slate-400 text-[10px] uppercase tracking-widest font-bold">
-                                <th class="p-4">Giorno</th>
-                                <th class="p-4">Causale Rilevata</th>
-                                <th class="p-4 text-right">Valore</th>
-                                <th class="p-4 text-right">Tipo</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tableBody" class="divide-y divide-slate-50">
-                            </tbody>
-                    </table>
+                <div id="exitContent" class="p-6">
+                    <div id="noEntry" class="text-center py-8 opacity-40">
+                        <i data-lucide="clock" class="w-12 h-12 mx-auto mb-2"></i>
+                        <p>Inserisci l'orario per vedere l'uscita</p>
+                    </div>
+                    <div id="hasEntry" class="hidden text-center">
+                        <p class="text-slate-500 mb-2">Per uscire in orario, devi timbrare alle:</p>
+                        <div id="calculatedExit" class="text-6xl font-bold text-success my-4">--:--</div>
+                        <p class="text-sm text-slate-400">(7 ore e 42 minuti dall'ingresso)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="countdownCard" class="hidden md:col-span-2 bg-white rounded-xl border-2 border-primary shadow-sm overflow-hidden">
+                <div class="bg-primary p-6 text-white font-bold text-center uppercase tracking-wider">
+                    Sei libero tra:
+                </div>
+                <div class="p-8 text-center">
+                    <div id="timeRemaining" class="text-7xl md:text-8xl font-black text-primary my-4 tabular-nums">00:00:00</div>
+                    <div id="celebrationText" class="hidden text-2xl font-bold text-success animate-bounce">
+                        🎉 SEI LIBERO! 🎉
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Configurazione PDF.js
-        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        // Stato dell'app
+        let calculatedExitTime = "";
+        let hasTriggeredConfetti = false;
 
-        const fileInput = document.getElementById('fileInput');
-        const resultsArea = document.getElementById('resultsArea');
-        const tableBody = document.getElementById('tableBody');
-        const statusIndicator = document.getElementById('statusIndicator');
+        // Formatta la data odierna
+        const dateOptions = { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' };
+        document.getElementById('currentDate').innerText = new Intl.DateTimeFormat('it-IT', dateOptions).format(new Date());
 
-        fileInput.addEventListener('change', async (e) => {
-            const file = e.target.files[0];
-            if (!file) return;
+        // Elementi DOM
+        const entryInput = document.getElementById('entryInput');
+        const calculatedExitEl = document.getElementById('calculatedExit');
+        const timeRemainingEl = document.getElementById('timeRemaining');
+        const celebrationText = document.getElementById('celebrationText');
+        const countdownCard = document.getElementById('countdownCard');
+        const noEntrySection = document.getElementById('noEntry');
+        const hasEntrySection = document.getElementById('hasEntry');
 
-            // Reset UI
-            document.getElementById('fileSelected').classList.remove('hidden');
-            document.getElementById('fileNameDisplay').innerText = file.name;
-            statusIndicator.classList.remove('hidden');
-            resultsArea.classList.add('hidden');
-
-            try {
-                const text = await extractTextFromPDF(file);
-                const data = parseTimesheetText(text);
-                renderResults(data);
-            } catch (err) {
-                alert("Errore nella lettura del PDF: " + err.message);
-            } finally {
-                statusIndicator.classList.add('hidden');
+        // Listener per l'input
+        entryInput.addEventListener('change', (e) => {
+            const entryValue = e.target.value;
+            if (entryValue) {
+                calculateExit(entryValue);
+                noEntrySection.classList.add('hidden');
+                hasEntrySection.classList.remove('hidden');
+                countdownCard.classList.remove('hidden');
+                hasTriggeredConfetti = false; // Resetta coriandoli per nuovo orario
             }
         });
 
-        // 1. Estrazione testo dal PDF
-        async function extractTextFromPDF(file) {
-            const arrayBuffer = await file.arrayBuffer();
-            const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-            let fullText = "";
+        function calculateExit(entry) {
+            const [hours, minutes] = entry.split(':').map(Number);
+            const entryDate = new Date();
+            entryDate.setHours(hours, minutes, 0, 0);
 
-            for (let i = 1; i <= pdf.numPages; i++) {
-                const page = await pdf.getPage(i);
-                const content = await page.getTextContent();
-                const strings = content.items.map(item => item.str);
-                fullText += strings.join(" ") + "\n";
-            }
-            return fullText;
+            // Aggiungi 7 ore e 42 minuti
+            entryDate.setMinutes(entryDate.getMinutes() + (7 * 60 + 42));
+
+            calculatedExitTime = entryDate;
+            const exitHours = String(entryDate.getHours()).padStart(2, '0');
+            const exitMinutes = String(entryDate.getMinutes()).padStart(2, '0');
+            calculatedExitEl.innerText = `${exitHours}:${exitMinutes}`;
         }
 
-        // 2. Logica di "comprensione" del testo (Sostituisce l'IA con Regex)
-        function parseTimesheetText(text) {
-            const lines = text.split('\n');
-            const results = [];
-            let totalExtra = 0;
-            let totalFlex = 0;
+        function updateTimer() {
+            if (!calculatedExitTime) return;
 
-            // Cerchiamo il nome o il periodo (opzionale)
-            const periodMatch = text.match(/(Gennaio|Febbraio|Marzo|Aprile|Maggio|Giugno|Luglio|Agosto|Settembre|Ottobre|Novembre|Dicembre)\s+\d{4}/i);
-            const period = periodMatch ? periodMatch[0] : "Periodo non rilevato";
+            const now = new Date();
+            const diffMs = calculatedExitTime - now;
 
-            // Regex per trovare i valori numerici nel formato h,mm (es: 0,18 o 1,30)
-            const valueRegex = /(\d+,\d{2})/;
-
-            lines.forEach(line => {
-                let type = null;
-                let value = 0;
-                let description = "";
-
-                if (line.includes("FLESSIBILITA")) {
-                    type = 'FLEX';
-                    description = "Flessibilità";
-                } else if (line.includes("ACCANTONATO") || line.includes("Presenza non prevista")) {
-                    type = 'EXTRA';
-                    description = line.includes("ACCANTONATO") ? "Accantonamento" : "Presenza Extra";
+            if (diffMs <= 0) {
+                timeRemainingEl.innerText = "00:00:00";
+                celebrationText.classList.remove('hidden');
+                if (!hasTriggeredConfetti) {
+                    triggerFireworks();
+                    hasTriggeredConfetti = true;
                 }
-
-                if (type) {
-                    const match = line.match(valueRegex);
-                    if (match) {
-                        const valStr = match[1].replace(',', '.');
-                        const [h, m] = valStr.split('.').map(Number);
-                        value = h * 60 + m;
-
-                        if (type === 'FLEX') totalFlex += value;
-                        else totalExtra += value;
-
-                        results.push({
-                            day: line.substring(0, 10).trim(), // Tenta di prendere l'inizio riga (data)
-                            desc: description,
-                            val: value,
-                            type: type
-                        });
-                    }
-                }
-            });
-
-            return { results, totalExtra, totalFlex, period, balance: totalExtra - totalFlex };
-        }
-
-        // 3. Rendering UI
-        function renderResults(data) {
-            resultsArea.classList.remove('hidden');
-            tableBody.innerHTML = '';
-            document.getElementById('dataInfo').innerText = data.period;
-
-            data.results.forEach(item => {
-                const row = `
-                    <tr class="hover:bg-slate-50 transition-colors">
-                        <td class="p-4 font-bold text-slate-700">${item.day}</td>
-                        <td class="p-4 text-xs text-slate-500">${item.desc}</td>
-                        <td class="p-4 text-right font-black ${item.type === 'EXTRA' ? 'text-emerald-600' : 'text-red-500'}">
-                            ${item.type === 'EXTRA' ? '+' : '-'}${formatTime(item.val)}
-                        </td>
-                        <td class="p-4 text-right">
-                            <span class="text-[10px] font-bold px-2 py-1 rounded-md ${item.type === 'EXTRA' ? 'bg-emerald-100 text-emerald-700' : 'bg-red-100 text-red-700'}">
-                                ${item.type}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-                tableBody.insertAdjacentHTML('beforeend', row);
-            });
-
-            document.getElementById('statExtra').innerText = formatTime(data.totalExtra);
-            document.getElementById('statFlex').innerText = formatTime(data.totalFlex);
-            
-            const balEl = document.getElementById('statBalance');
-            const balCard = document.getElementById('balanceCard');
-            balEl.innerText = (data.balance >= 0 ? '+' : '-') + formatTime(Math.abs(data.balance));
-            
-            if (data.balance >= 0) {
-                balEl.className = "text-3xl font-black mt-1 text-indigo-600";
-                balCard.className = "bg-white p-6 rounded-2xl shadow-sm border-b-4 border-indigo-500";
-            } else {
-                balEl.className = "text-3xl font-black mt-1 text-red-600";
-                balCard.className = "bg-white p-6 rounded-2xl shadow-sm border-b-4 border-red-500";
+                return;
             }
 
-            lucide.createIcons();
+            celebrationText.classList.add('hidden');
+            const hours = Math.floor(diffMs / (1000 * 60 * 60));
+            const minutes = Math.floor((diffMs % (1000 * 60 * 60)) / (1000 * 60));
+            const seconds = Math.floor((diffMs % (1000 * 60)) / 1000);
+
+            timeRemainingEl.innerText = 
+                `${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
         }
 
-        function formatTime(minutes) {
-            const h = Math.floor(minutes / 60);
-            const m = minutes % 60;
-            return `${h}h ${m}m`;
+        function triggerFireworks() {
+            const duration = 5000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 9999 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+                if (timeLeft <= 0) return clearInterval(interval);
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
         }
 
+        // Loop di aggiornamento
+        setInterval(updateTimer, 1000);
+
+        // Inizializza icone
         lucide.createIcons();
     </script>
 </body>
