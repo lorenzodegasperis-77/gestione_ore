@@ -1,9 +1,10 @@
+<link rel="icon" type="image/x-icon" href="img/favicon.ico" />
 <!DOCTYPE html>
 <html lang="it">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calcolo Ore Odierne</title>
+    <title>Gestione Ore - Calcolo Ore Odierne</title>
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -63,7 +64,7 @@
         </div>
 
         <div id="countdownCard" class="hidden bg-white dark:bg-slate-900 rounded-3xl border-2 border-indigo-100 dark:border-indigo-900/50 p-10 text-center shadow-xl">
-            <p class="text-primary font-black uppercase tracking-[0.2em] mb-4 text-sm">Tempo rimanente</p>
+            <p class="text-primary font-black uppercase tracking-[0.2em] mb-4 text-sm">Sei libero tra:</p>
             <div id="timeRemaining" class="text-7xl md:text-9xl font-black text-indigo-900 dark:text-white tabular-nums tracking-tighter">00:00:00</div>
         </div>
     </main>
@@ -94,7 +95,7 @@
             if (e.target.value) {
                 const [h, m] = e.target.value.split(':').map(Number);
                 const date = new Date();
-                date.setHours(h, m + (7 * 60 + 12), 0);
+                date.setHours(h, m + (7 * 60 + 42), 0);
                 targetTime = date;
                 document.getElementById('calculatedExit').innerText = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
                 document.getElementById('countdownCard').classList.remove('hidden');
