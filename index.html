@@ -4,24 +4,23 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Gestione Ore - Home</title>
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <link rel="stylesheet" href="style.css">
+
     <script>
         tailwind.config = { darkMode: 'class' }
     </script>
-    <style>
-        :root { --primary: #6886C4; --primary-light: #8da9e2; }
-        .text-primary { color: var(--primary); }
-        .bg-primary-soft { background-color: rgba(104, 134, 196, 0.1); }
-        .border-primary-light { border-color: var(--primary-light); }
-    </style>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen font-sans transition-colors duration-300">
+    
     <nav class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
-        <div class="flex h-1 w-full">
-            <div class="flex-1" style="background-color: #009246;"></div>
-            <div class="flex-1 bg-white"></div>
-            <div class="flex-1" style="background-color: #CE2B37;"></div>
+        <div class="flag-container">
+            <div class="flag-green"></div>
+            <div class="flag-white"></div>
+            <div class="flag-red"></div>
         </div>
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="flex items-center gap-8">
@@ -39,51 +38,64 @@
                     <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-4 h-4 hidden"></i>
                     <i id="theme-toggle-light-icon" data-lucide="sun" class="w-4 h-4 hidden"></i>
                 </button>
-                <span class="text-[10px] bg-indigo-50 dark:bg-indigo-900/30 text-indigo-600 dark:text-indigo-400 px-2 py-1 rounded-full font-bold border border-indigo-100 dark:border-indigo-800 uppercase">v1.0</span>
             </div>
         </div>
     </nav>
 
-    <div class="flex flex-col items-center justify-center py-12 px-6">
+    <main class="flex flex-col items-center justify-center py-12 px-6">
         <div class="text-center mb-16 max-w-2xl">
             <h1 class="text-5xl md:text-7xl font-black text-indigo-900 dark:text-indigo-300 mb-4 tracking-tight">Gestione Ore</h1>
             <p class="text-xl md:text-2xl text-slate-500 dark:text-slate-400 font-medium">Sistema di gestione ore lavorative</p>
         </div>
-        <div class="grid md:grid-cols-2 gap-8 w-full max-w-4xl mb-16">
+
+        <div class="grid md:grid-cols-2 gap-8 w-full max-w-4xl">
             <a href="calcolo-ore.html" class="group">
-                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-10 text-center transition-all group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary">
-                    <div class="bg-primary-soft w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="clock" class="w-12 h-12 text-primary"></i></div>
+                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-10 text-center transition-all-custom group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary">
+                    <div class="bg-primary-soft w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="clock" class="w-12 h-12 text-primary"></i>
+                    </div>
                     <h2 class="text-2xl font-bold text-indigo-900 dark:text-indigo-300 mb-3">Calcolo Ore Odierne</h2>
-                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed">Calcola l'orario di uscita in base all'ingresso</p>
+                    <p class="text-slate-500 dark:text-slate-400">Determina l'uscita in base all'ingresso.</p>
                 </div>
             </a>
             <a href="analisi-pdf.html" class="group">
-                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-10 text-center transition-all group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary">
-                    <div class="bg-primary-soft w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6"><i data-lucide="file-text" class="w-12 h-12 text-primary"></i></div>
+                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-10 text-center transition-all-custom group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary">
+                    <div class="bg-primary-soft w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-6">
+                        <i data-lucide="file-text" class="w-12 h-12 text-primary"></i>
+                    </div>
                     <h2 class="text-2xl font-bold text-indigo-900 dark:text-indigo-300 mb-3">Analisi PDF</h2>
-                    <p class="text-slate-500 dark:text-slate-400 leading-relaxed">Analizza prospetti orari e calcola extra</p>
+                    <p class="text-slate-500 dark:text-slate-400">Analizza i tuoi prospetti mensili.</p>
                 </div>
             </a>
         </div>
-        <div class="flex justify-center"><div class="flex rounded-xl overflow-hidden shadow-2xl border-2 border-slate-200 dark:border-slate-800"><div class="w-16 h-10 bg-[#009246]"></div><div class="w-16 h-10 bg-white"></div><div class="w-16 h-10 bg-[#CE2B37]"></div></div></div>
-    </div>
+    </main>
 
     <script>
+        // Logica Dark Mode (riutilizzabile in tutte le pagine)
         const themeToggleBtn = document.getElementById('theme-toggle');
         const darkIcon = document.getElementById('theme-toggle-dark-icon');
         const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark'); darkIcon.classList.add('hidden'); lightIcon.classList.remove('hidden');
-        } else {
-            document.documentElement.classList.remove('dark'); darkIcon.classList.remove('hidden'); lightIcon.classList.add('hidden');
+        function applyTheme() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
+            }
         }
 
         themeToggleBtn.addEventListener('click', function() {
             document.documentElement.classList.toggle('dark');
-            darkIcon.classList.toggle('hidden'); lightIcon.classList.toggle('hidden');
-            localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+            applyTheme();
         });
+
+        applyTheme();
         lucide.createIcons();
     </script>
 </body>
