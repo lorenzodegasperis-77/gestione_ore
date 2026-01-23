@@ -14,9 +14,6 @@
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen font-sans transition-colors duration-300">
 
     <nav class="bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 sticky top-0 z-50">
-        <div class="flag-container">
-            <div class="flag-green"></div><div class="flag-white"></div><div class="flag-red"></div>
-        </div>
         <div class="max-w-7xl mx-auto px-4 flex justify-between h-16 items-center">
             <div class="flex items-center gap-8">
                 <a href="index.html" class="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 font-black tracking-tighter">
@@ -33,14 +30,18 @@
                 <i data-lucide="moon" id="theme-toggle-dark-icon" class="w-5 h-5"></i>
             </button>
         </div>
+        <div class="flag-container">
+            <div class="flag-green"></div><div class="flag-white"></div><div class="flag-red"></div>
+        </div>
+
     </nav>
 
     <main class="max-w-5xl mx-auto py-12 px-6 space-y-8">
-        <div class="grid md:grid-cols-2 gap-6">
+        <div class="grid md:grid-cols-2 gap-4">
             <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center relative hover:border-indigo-400 transition-all">
                 <input type="file" id="filePrec" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer">
-                <i data-lucide="history" class="w-10 h-10 mx-auto mb-3 text-slate-400"></i>
-                <h2 class="font-bold text-slate-600 dark:text-slate-300 text-sm">PROSPETTO MESE PRECEDENTE<br>(opzionale)</h2>
+                <i data-lucide="history" class="w-10 h-10 mx-auto mb-3 text-primary"></i>
+                <h2 class="font-bold text-indigo-900 dark:text-slate-300 text-sm">PROSPETTO MESE PRECEDENTE<br>(opzionale)</h2>
                 <p id="namePrec" class="text-xs text-indigo-500 mt-2 font-bold"></p>
             </div>
 
@@ -148,11 +149,11 @@
                 <div class="grid ${datiPrec ? 'md:grid-cols-2' : 'grid-cols-1'} gap-8 mt-10">
                     ${datiPrec ? `
                     <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800">
-                        <h3 class="text-xl font-black text-slate-400 mb-6 uppercase tracking-tighter">${datiPrec.nomeMese}</h3>
+                        <h3 class="text-xl font-black text-slate-600 mb-6 uppercase tracking-tighter">${datiPrec.nomeMese}</h3>
                         <div class="space-y-4">
                             <div class="flex justify-between"><span>Accantonamento mese prec.</span><span class="font-bold text-emerald-500">+${formatTime(datiPrec.recMesePrec)}</span></div>
                             <div class="flex justify-between">
-                                <span>Presenze extra (calcolato)</span>
+                                <span>Presenze extra</span>
                                 <span class="font-bold text-emerald-500">+${formatTime(datiPrec.residuoBO + datiPrec.flexMese - datiPrec.recMesePrec)}</span>
                             </div>
                             <div class="flex justify-between"><span>Flessibilità</span><span class="font-bold text-red-500">-${formatTime(datiPrec.flexMese)}</span></div>
@@ -167,7 +168,7 @@
                         <div class="space-y-4">
                             <div class="flex justify-between"><span>Extra del mese</span><span class="font-bold text-emerald-500">+${formatTime(datiCorr.extraCorrente)}</span></div>
                             <div class="flex justify-between"><span>Flessibilità del mese</span><span class="font-bold text-red-500">-${formatTime(datiCorr.flexCorrente)}</span></div>
-                            <div class="pt-4 border-t border-dashed flex justify-between font-black text-slate-800 dark:text-white text-lg">
+                            <div class="pt-4 border-t border-dashed flex justify-between font-black text-slate-600 dark:text-white text-lg">
                                 <span>SALDO ATTUALE</span><span>${formatTime(datiCorr.extraCorrente - datiCorr.flexCorrente)}</span>
                             </div>
                         </div>
@@ -180,7 +181,7 @@
                         ${formatTime((datiPrec ? datiPrec.residuoBO : 0) + (datiCorr.extraCorrente - datiCorr.flexCorrente))}
                     </p>
                     <p class="text-xs mt-4 opacity-50 italic">
-                        ${datiPrec ? `Somma del Residuo BO di ${datiPrec.nomeMese} e del saldo di ${datiCorr.nomeMese}` : `Saldo basato solo su ${datiCorr.nomeMese}`}
+                        ${datiPrec ? `Residuo BO di ${datiPrec.nomeMese} e saldo ${datiCorr.nomeMese}` : `Saldo di ${datiCorr.nomeMese}`}
                     </p>
                 </div>
             `;
@@ -188,24 +189,32 @@
             lucide.createIcons();
         };
 
-        // Theme Toggle
-        document.getElementById('theme-toggle').onclick = () => {
-            const isDark = document.documentElement.classList.toggle('dark');
-            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
-            updateThemeIcons();
-        };
+            // Logica Dark Mode (riutilizzabile in tutte le pagine)
+            const themeToggleBtn = document.getElementById('theme-toggle');
+            const darkIcon = document.getElementById('theme-toggle-dark-icon');
+            const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-        function updateThemeIcons() {
-            const isDark = document.documentElement.classList.contains('dark');
-            document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDark);
-            document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDark);
-        }
+            function applyTheme() {
+                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                    document.documentElement.classList.add('dark');
+                    darkIcon.classList.add('hidden');
+                    lightIcon.classList.remove('hidden');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    darkIcon.classList.remove('hidden');
+                    lightIcon.classList.add('hidden');
+                }
+            }
 
-        if (localStorage.getItem('color-theme') === 'dark' || window.matchMedia('(prefers-color-scheme: dark)').matches) {
-            document.documentElement.classList.add('dark');
-        }
-        updateThemeIcons();
-        lucide.createIcons();
-    </script>
+            themeToggleBtn.addEventListener('click', function() {
+                document.documentElement.classList.toggle('dark');
+                const isDark = document.documentElement.classList.contains('dark');
+                localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+                applyTheme();
+            });
+
+            applyTheme();
+            lucide.createIcons();
+            </script>
 </body>
 </html>
