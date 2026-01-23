@@ -1,0 +1,46 @@
+/* Definizione Variabili Globali */
+:root {
+    --primary: #6886C4;
+    --primary-light: #8da9e2;
+    --primary-soft: rgba(104, 134, 196, 0.1);
+    --italy-green: #009246;
+    --italy-red: #CE2B37;
+}
+
+/* Classi di Utilità Personalizzate */
+.text-primary { color: var(--primary); }
+.text-primary-light { color: var(--primary-light); }
+.bg-primary { background-color: var(--primary); }
+.bg-primary-soft { background-color: var(--primary-soft); }
+.border-primary { border-color: var(--primary); }
+.border-primary-light { border-color: var(--primary-light); }
+
+/* Bandiera Italiana (Footer/Nav) */
+.flag-container {
+    display: flex;
+    height: 4px; /* Altezza della linea sopra la nav */
+    width: 100%;
+}
+.flag-green { flex: 1; background-color: var(--italy-green); }
+.flag-white { flex: 1; background-color: white; }
+.flag-red { flex: 1; background-color: var(--italy-red); }
+
+/* Stili per la Tabella Analisi PDF */
+.table-container {
+    overflow: hidden;
+    border-radius: 1.5rem; /* rounded-3xl */
+    border: 1px solid; /* border */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* shadow-xl */
+    transition: background-color 0.3s; /* transition-colors */
+    background-color: white;
+}
+
+.dark .table-container {
+    background-color: #0f172a; /* slate-900 */
+    border-color: #1e293b; /* slate-800 */
+}
+
+/* Transizioni */
+.transition-all-custom {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
