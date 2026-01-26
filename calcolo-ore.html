@@ -8,8 +8,9 @@
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
+	<script src="https://cdn.jsdelivr.net/npm/protobufjs@7.2.6/dist/protobuf.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
-    
+	
     <link rel="stylesheet" href="style.css">
     <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
@@ -67,54 +68,189 @@
             <p class="text-primary font-black uppercase tracking-[0.2em] mb-4 text-sm">Sei libero tra:</p>
             <div id="timeRemaining" class="text-7xl md:text-9xl font-black text-indigo-900 dark:text-white tabular-nums tracking-tighter">00:00:00</div>
         </div>
+		<div class="mt-12">
+			<h2 class="text-2xl font-bold text-indigo-900 dark:text-indigo-300 mb-6 flex items-center gap-2">
+				<i data-lucide="bus" class="w-6 h-6"></i> Prossimi Arrivi ATAC
+			</h2>
+			<div id="bus-container" class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+				<p class="text-slate-500">Caricamento arrivi...</p>
+			</div>
+		</div>
     </main>
 
     <script>
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const darkIcon = document.getElementById('theme-toggle-dark-icon');
-        const lightIcon = document.getElementById('theme-toggle-light-icon');
+	// Funzione per formattare la data odierna
+	const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+	document.getElementById('currentDate').innerText = new Date().toLocaleDateString('it-IT', options);
 
-        function applyTheme() {
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                darkIcon.classList.add('hidden'); lightIcon.classList.remove('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                darkIcon.classList.remove('hidden'); lightIcon.classList.add('hidden');
-            }
-        }
+	let targetTime = null;
 
-        themeToggleBtn.addEventListener('click', () => {
-            document.documentElement.classList.toggle('dark');
-            localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
-            applyTheme();
-        });
+	// Funzione principale di calcolo
+	function calcolaOrario(orarioInserito) {
+		if (orarioInserito) {
+			// 1. Salva l'orario nel browser
+			localStorage.setItem('ultimoIngresso', orarioInserito);
 
-        let targetTime = null;
-        document.getElementById('entryInput').addEventListener('change', (e) => {
-            if (e.target.value) {
-                const [h, m] = e.target.value.split(':').map(Number);
-                const date = new Date();
-                date.setHours(h, m + (7 * 60 + 42), 0);
-                targetTime = date;
-                document.getElementById('calculatedExit').innerText = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
-                document.getElementById('countdownCard').classList.remove('hidden');
-            }
-        });
+			// 2. Logica di calcolo (7 ore e 42 minuti)
+			const [h, m] = orarioInserito.split(':').map(Number);
+			const date = new Date();
+			date.setHours(h, m + (7 * 60 + 42), 0);
+			targetTime = date;
 
-        setInterval(() => {
-            if (!targetTime) return;
-            const diff = targetTime - new Date();
-            if (diff <= 0) { document.getElementById('timeRemaining').innerText = "00:00:00"; return; }
-            const hrs = Math.floor(diff / 3600000);
-            const mins = Math.floor((diff % 3600000) / 60000);
-            const secs = Math.floor((diff % 60000) / 1000);
-            document.getElementById('timeRemaining').innerText = `${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
-        }, 1000);
+			// 3. Aggiorna l'interfaccia
+			const oreUscita = date.getHours().toString().padStart(2, '0');
+			const minUscita = date.getMinutes().toString().padStart(2, '0');
+			document.getElementById('calculatedExit').innerText = oreUscita + ":" + minUscita;
+			document.getElementById('countdownCard').classList.remove('hidden');
+		}
+	}
 
-        document.getElementById('currentDate').innerText = new Intl.DateTimeFormat('it-IT', { weekday: 'long', day: 'numeric', month: 'long' }).format(new Date());
-        applyTheme();
-        lucide.createIcons();
+	// Evento quando l'utente cambia l'orario manualmente
+	document.getElementById('entryInput').addEventListener('change', (e) => {
+		calcolaOrario(e.target.value);
+	});
+
+	// --- LOGICA DI RECUPERO AUTOMATICO ---
+	window.addEventListener('load', () => {
+		const orarioSalvato = localStorage.getItem('ultimoIngresso');
+		if (orarioSalvato) {
+			const input = document.getElementById('entryInput');
+			input.value = orarioSalvato; // Inserisce l'orario salvato nell'input
+			calcolaOrario(orarioSalvato); // Esegue il calcolo subito
+		}
+	});
+
+	// Logica del Countdown (resta invariata)
+	setInterval(() => {
+		if (!targetTime) return;
+		const diff = targetTime - new Date();
+		if (diff <= 0) { 
+			document.getElementById('timeRemaining').innerText = "00:00:00"; 
+			return; 
+		}
+		const hrs = Math.floor(diff / 3600000);
+		const mins = Math.floor((diff % 3600000) / 60000);
+		const secs = Math.floor((diff % 60000) / 1000);
+		document.getElementById('timeRemaining').innerText = 
+			`${hrs.toString().padStart(2,'0')}:${mins.toString().padStart(2,'0')}:${secs.toString().padStart(2,'0')}`;
+	}, 1000);
+
+	// Logica Dark Mode (riutilizzata)
+	const themeToggleBtn = document.getElementById('theme-toggle');
+	const darkIcon = document.getElementById('theme-toggle-dark-icon');
+	const lightIcon = document.getElementById('theme-toggle-light-icon');
+
+	function applyTheme() {
+		if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+			document.documentElement.classList.add('dark');
+			darkIcon.classList.add('hidden');
+			lightIcon.classList.remove('hidden');
+		} else {
+			document.documentElement.classList.remove('dark');
+			darkIcon.classList.remove('hidden');
+			lightIcon.classList.add('hidden');
+		}
+	}
+
+	themeToggleBtn.addEventListener('click', function() {
+		document.documentElement.classList.toggle('dark');
+		const isDark = document.documentElement.classList.contains('dark');
+		localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+		applyTheme();
+	});
+
+
+
+	const fermateInteresse = ["70920", "79504", "79759", "80649", "79758", "80648"];
+	// URL dello schema per decodificare i dati binari
+	const PROTO_URL = "https://raw.githubusercontent.com/google/gtfs-realtime-bindings/master/dotNet/GtfsRealtimeBindings/gtfs-realtime.proto";
+	// URL dei file binari ATAC (passando per un proxy per evitare il blocco CORS)
+	const TRIP_UPDATES_URL = "https://api.allorigins.win/raw?url=https://romamobilita.it/sites/default/files/rome_rtgtfs_trip_updates_feed.pb";
+
+	async function caricaDatiAtacRealtime() {
+		try {
+			// 1. Carica lo schema Protobuf
+			const root = await protobuf.load(PROTO_URL);
+			const FeedMessage = root.lookupType("transit_realtime.FeedMessage");
+
+			// 2. Scarica il file binario Trip Updates dal sito ATAC
+			const response = await fetch(TRIP_UPDATES_URL);
+			const buffer = await response.arrayBuffer();
+
+			// 3. Decodifica il binario
+			const message = FeedMessage.decode(new Uint8Array(buffer));
+			const feed = FeedMessage.toObject(message, { longs: Number });
+
+			elaboraEVisualizza(feed.entity);
+		} catch (err) {
+			console.error("Errore ATAC:", err);
+			fermateInteresse.forEach(id => {
+				const el = document.getElementById(`stop-${id}`);
+				if (el) el.innerHTML = "<span class='text-red-400 text-xs'>Errore connessione</span>";
+			});
+		}
+	}
+
+	function elaboraEVisualizza(entities) {
+		const oraCorrente = Math.floor(Date.now() / 1000);
+		const risultati = {};
+		fermateInteresse.forEach(id => risultati[id] = []);
+
+		// Scansione dei TripUpdates per trovare le nostre fermate
+		entities.forEach(entity => {
+			if (entity.tripUpdate && entity.tripUpdate.stopTimeUpdate) {
+				const linea = entity.tripUpdate.trip.routeId;
+				entity.tripUpdate.stopTimeUpdate.forEach(stop => {
+					if (fermateInteresse.includes(stop.stopId)) {
+						const tempoArrivo = stop.arrival ? stop.arrival.time : (stop.departure ? stop.departure.time : null);
+						if (tempoArrivo) {
+							const attesa = Math.round((tempoArrivo - oraCorrente) / 60);
+							if (attesa >= 0 && attesa < 60) {
+								risultati[stop.stopId].push({ linea, attesa });
+							}
+						}
+					}
+				});
+			}
+		});
+
+		// Aggiornamento HTML
+		fermateInteresse.forEach(id => {
+			const container = document.getElementById(`stop-${id}`);
+			if (!container) return;
+			
+			const arrivi = risultati[id].sort((a, b) => a.attesa - b.attesa).slice(0, 3);
+			
+			if (arrivi.length > 0) {
+				container.innerHTML = arrivi.map(a => `
+					<div class="flex justify-between items-center bg-white dark:bg-slate-900 p-2 rounded shadow-sm mb-1">
+						<span class="font-bold text-indigo-600">${a.linea}</span>
+						<span class="font-medium">${a.attesa === 0 ? 'In arrivo' : a.attesa + ' min'}</span>
+					</div>
+				`).join('');
+			} else {
+				container.innerHTML = "<span class='text-slate-400 text-xs'>Nessun bus previsto</span>";
+			}
+		});
+	}
+
+	// Avvio e aggiornamento ogni minuto
+	window.addEventListener('load', () => {
+		caricaDatiAtacRealtime();
+		setInterval(caricaDatiAtacRealtime, 60000);
+	});
+
+
+	// Avvia il caricamento al boot
+	window.addEventListener('load', () => {
+		caricaTuttiArrivi();
+		// Aggiorna ogni 30 secondi
+		setInterval(caricaTuttiArrivi, 30000);
+	});
+
+
+	applyTheme();
+	lucide.createIcons();
     </script>
 </body>
 </html>

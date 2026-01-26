@@ -40,6 +40,20 @@
     border-color: #1e293b; /* slate-800 */
 }
 
+#bus-container .card-glass {
+    min-height: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+}
+.animate-pulse {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: .5; }
+}
+
 /* Transizioni */
 .transition-all-custom {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
