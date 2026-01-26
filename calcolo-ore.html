@@ -26,17 +26,15 @@
                     <a href="analisi-pdf.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Analisi PDF</a>
                 </div>
             </div>
-<div class="flex items-center gap-4">
-                <div id="nav-weather" class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200 dark:border-slate-800">
-                    <img id="nav-weather-icon" src="" class="w-8 h-8">
-                    <div class="flex flex-col leading-tight">
-                        <span id="nav-temp" class="font-bold text-sm">--°C</span>
-                        <span id="nav-hum" class="text-[10px] opacity-60">Umidità: --%</span>
-                    </div>
+        <div class="flex items-center gap-4 sm:gap-6">
+            <div id="nav-weather" class="hidden sm:flex items-center gap-3 text-xs font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 pr-6">
+                <img id="nav-weather-icon" src="" alt="tempo" class="w-8 h-8">
+                <div class="flex flex-col">
+                    <span id="nav-temp" class="text-slate-900 dark:text-white font-bold text-sm">--°C</span>
+                    <span id="nav-hum">Umidità: --%</span>
                 </div>
-
-
-				
+            </div>
+            
             <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                 <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5"></i>
                 <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
@@ -81,123 +79,157 @@
         <p class="text-primary font-black uppercase tracking-[0.2em] mb-4 text-sm">Sei libero tra:</p>
         <div id="timeRemaining" class="text-7xl md:text-9xl font-black text-indigo-900 dark:text-white tabular-nums tracking-tighter">00:00:00</div>
                 <div id="weatherAlert" class="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-8 border border-slate-100 dark:border-slate-700">
+					<br>
                     <div class="flex flex-col items-center gap-4">
                         <div id="weatherBigIcon" class="p-4 bg-white dark:bg-slate-900 rounded-full shadow-lg">
                             </div>
                         <div class="space-y-2">
                             <p class="text-slate-500 dark:text-slate-400 font-bold uppercase text-xs tracking-widest">Previsioni per l'uscita</p>
+							<div class="space-x-2">
                             <p id="weatherMessage" class="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 leading-relaxed">
                                 Calcolo il tempo previsto...
-                            </p>
-                        </div>
+							</p>
+						</div>
                     </div>
                 </div>
     </div>
+	        <br>
+        <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0"></a>
     <script>
-	// --- CONFIGURAZIONE ---
-	const API_KEY = '5487533995554d8fabe101832262601'; 
-	const CITY = 'Rome';
-	let targetTime = null;
+// --- CONFIGURAZIONE ---
+    const API_KEY = '5487533995554d8fabe101832262601'; 
+    const CITY = 'Rome';
+    let targetTime = null;
 
-	async function checkWeather(exitHourStr) {
-		// Rimosso il controllo IF problematico
-		try {
-			const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${CITY}&days=1&lang=it`);
-			if (!res.ok) throw new Error("Errore API");
-			const data = await res.json();
-			
-			// Update Nav - Forziamo https: per le icone
-			const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
-			document.getElementById('nav-weather').classList.remove('hidden');
-			document.getElementById('nav-weather-icon').src = navIcon;
-			document.getElementById('nav-temp').innerText = Math.round(data.current.temp_c) + "°C";
+    // Funzione centralizzata per aggiornare tutto
+    async function aggiornaTutto(valoreIngresso) {
+        if (!valoreIngresso) return;
+        
+        localStorage.setItem('entryTime', valoreIngresso);
+        
+        const [h, m] = valoreIngresso.split(':').map(Number);
+        const date = new Date();
+        date.setHours(h, m + (7 * 60 + 42), 0);
+        targetTime = date;
 
-			if (!exitHourStr) return;
-			
-			const exitHour = parseInt(exitHourStr.split(':')[0]);
-			const forecast = data.forecast.forecastday[0].hour.find(h => new Date(h.time).getHours() === exitHour);
-			
-			displayWeatherAdvice(forecast || data.current);
-		} catch (e) { 
-			console.error("Meteo Error:", e);
-			document.getElementById('weatherMessage').innerText = "Servizio meteo non disponibile.";
-		}
-	}
+        const exitStr = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
+        document.getElementById('calculatedExit').innerText = exitStr;
+        document.getElementById('countdownCard').classList.remove('hidden');
+        
+        // Passiamo l'orario di uscita alla funzione meteo
+        await checkWeather(exitStr);
+    }
 
-	function displayWeatherAdvice(data) {
-		const msgEl = document.getElementById('weatherMessage');
-		const iconEl = document.getElementById('weatherBigIcon');
-		
-		let condMsg = "";
-		let tempMsg = "";
-		// Forza https per l'icona grande
-		let iconUrl = data.condition.icon.startsWith('http') ? data.condition.icon : "https:" + data.condition.icon;
+    async function checkWeather(exitHourStr) {
+        try {
+            const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${CITY}&days=1&lang=it`);
+            if (!res.ok) throw new Error("Errore API");
+            const data = await res.json();
+            
+            // 1. UPDATE NAV (Sempre meteo attuale)
+            const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
+            document.getElementById('nav-weather').classList.remove('hidden');
+            document.getElementById('nav-weather-icon').src = navIcon;
+            document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
+            document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
 
-		const text = data.condition.text.toLowerCase();
-		const code = data.condition.code;
+            // 2. UPDATE ALERT BOX (Meteo uscita)
+            if (exitHourStr) {
+                const exitHour = parseInt(exitHourStr.split(':')[0]);
+                // Cerchiamo l'ora esatta nelle previsioni orarie
+                const forecast = data.forecast.forecastday[0].hour.find(h => new Date(h.time).getHours() === exitHour);
+                displayWeatherAdvice(forecast || data.current);
+            }
+        } catch (e) { 
+            console.error("Meteo Error:", e);
+            document.getElementById('weatherMessage').innerText = "Servizio meteo non disponibile.";
+        }
+    }
 
-		// Logica Condizioni (Frase 1)
-		if (code === 1000) {
-			condMsg = "Soleggiato, che fortuna! Goditi il resto della giornata";
-		} else if (text.includes('pioggia') || text.includes('pioviggine') || data.will_it_rain) {
-			condMsg = "Pioggia, che disdetta. Ricorda di prendere l'ombrello";
-		} else if (text.includes('nubi') || text.includes('coperto') || text.includes('nuvoloso')) {
-			condMsg = "Cielo coperto, ma la libertà è vicina";
-		} else {
-			condMsg = "Tempo variabile, ma l'importante è uscire";
-		}
+    function displayWeatherAdvice(data) {
+        const msgEl = document.getElementById('weatherMessage');
+        const iconEl = document.getElementById('weatherBigIcon');
+        
+        let condMsg = "";
+        let tempMsg = "";
+        let iconUrl = data.condition.icon.startsWith('http') ? data.condition.icon : "https:" + data.condition.icon;
 
-		// Logica Temperature (Frase 2)
-		const temp = data.temp_c;
-		if (temp >= 28) {
-			tempMsg = " e ricorda di restare fresco e idratato con tanta acqua.";
-		} else if (temp <= 12) {
-			tempMsg = " e copriti bene, fuori fa un bel freddo!";
-		} else {
-			tempMsg = " e goditi questo clima mite e piacevole.";
-		}
+        const code = data.condition.code; // Usiamo i codici numerici per precisione
+        const temp = data.temp_c;
+        const wind = data.wind_kph || 0;
 
-		msgEl.innerText = condMsg + tempMsg;
-		iconEl.innerHTML = `<img src="${iconUrl}" class="w-24 h-24 mx-auto" alt="meteo">`;
-	}
+        // --- LOGICA CONDIZIONI (Frase 1) ---
+        if (code === 1000) {
+            condMsg = "Cielo limpido e soleggiato! Goditi il fine turno";
+        } else if ([1003, 1006].includes(code)) {
+            condMsg = "Qualche nuvola, ma il tempo regge. Buona uscita";
+        } else if (code === 1009) {
+            condMsg = "Cielo grigio e coperto, ma la libertà brilla lo stesso";
+        } else if ([1063, 1180, 1183, 1186, 1189, 1192, 1195, 1240, 1243, 1246].includes(code)) {
+            condMsg = "Piove! Che disdetta, prendi assolutamente l'ombrello";
+        } else if ([1087, 1273, 1276, 1279, 1282].includes(code)) {
+            condMsg = "Attenzione: temporali in corso! Corri a casa al sicuro";
+        } else if ([1066, 1114, 1210, 1213, 1216, 1219, 1222, 1225, 1255, 1258].includes(code)) {
+            condMsg = "Nevica! Atmosfera magica per l'uscita, ma occhio alla strada";
+        } else if ([1030, 1135, 1147].includes(code)) {
+            condMsg = "C'è nebbia, guida con prudenza tornando a casa";
+        } else {
+            condMsg = "Tempo variabile, preparati a tutto uscendo";
+        }
 
-	// Event Listeners
-	document.getElementById('entryInput').addEventListener('change', (e) => {
-		if (!e.target.value) return;
-		const [h, m] = e.target.value.split(':').map(Number);
-		const date = new Date();
-		date.setHours(h, m + (7 * 60 + 42), 0);
-		targetTime = date;
+        // --- LOGICA TEMPERATURE & EXTRA (Frase 2) ---
+        if (wind > 40) {
+            tempMsg = " e fai attenzione al vento forte che tira!";
+        } else if (temp >= 30) {
+            tempMsg = " e ricordati di bere molta acqua, fa caldissimo!";
+        } else if (temp >= 22) {
+            tempMsg = " e goditi questa splendida temperatura mite.";
+        } else if (temp <= 5) {
+            tempMsg = " e copriti bene: fuori si gela!";
+        } else if (temp <= 15) {
+            tempMsg = " e non dimenticare la giacca, l'aria è freschina.";
+        } else {
+            tempMsg = " e goditi il resto della tua giornata.";
+        }
 
-		const exitStr = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
-		document.getElementById('calculatedExit').innerText = exitStr;
-		document.getElementById('countdownCard').classList.remove('hidden');
-		
-		checkWeather(exitStr);
-	});
+        msgEl.innerText = condMsg + tempMsg;
+        iconEl.innerHTML = `<img src="${iconUrl}" class="w-24 h-24 mx-auto" alt="meteo">`;
+    }
 
-	setInterval(() => {
-		if (!targetTime) return;
-		const diff = targetTime - new Date();
-		if (diff <= 0) {
-			document.getElementById('timeRemaining').innerText = "00:00:00";
-			return;
-		}
-		const hrs = Math.floor(diff / 3600000).toString().padStart(2, '0');
-		const mins = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
-		const secs = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
-		document.getElementById('timeRemaining').innerText = `${hrs}:${mins}:${secs}`;
-	}, 1000);
+    // --- EVENT LISTENERS ---
+    document.getElementById('entryInput').addEventListener('change', (e) => {
+        aggiornaTutto(e.target.value);
+    });
 
-	// Inizializzazione
-	window.addEventListener('load', () => {
-		lucide.createIcons();
-		checkWeather(); 
-	});
+    setInterval(() => {
+        if (!targetTime) return;
+        const diff = targetTime - new Date();
+        if (diff <= 0) {
+            document.getElementById('timeRemaining').innerText = "00:00:00";
+            return;
+        }
+        const hrs = Math.floor(diff / 3600000).toString().padStart(2, '0');
+        const mins = Math.floor((diff % 3600000) / 60000).toString().padStart(2, '0');
+        const secs = Math.floor((diff % 60000) / 1000).toString().padStart(2, '0');
+        document.getElementById('timeRemaining').innerText = `${hrs}:${mins}:${secs}`;
+    }, 1000);
 
-	document.getElementById('theme-toggle').addEventListener('click', () => {
-		document.documentElement.classList.toggle('dark');
-	});
+    window.addEventListener('load', () => {
+        lucide.createIcons();
+        const savedEntry = localStorage.getItem('entryTime');
+        if (savedEntry) {
+            document.getElementById('entryInput').value = savedEntry;
+            aggiornaTutto(savedEntry);
+        } else {
+            checkWeather(); // Solo nav se non c'è orario
+        }
+    });
+
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+        const isDark = document.documentElement.classList.toggle('dark');
+        document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDark);
+        document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDark);
+    });
     </script>
 </body>
 </html>

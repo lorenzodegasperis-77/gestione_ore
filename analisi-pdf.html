@@ -73,6 +73,8 @@
         </div>
 
         <div id="reportArea" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20"></div>
+        <br><br>
+        <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0"></a>
     </main>
 
     <script>
@@ -239,10 +241,12 @@
 					const data = await response.json();
 
 					// 1. Aggiorna Navigazione
-					document.getElementById('nav-weather').classList.remove('hidden');
-					document.getElementById('weather-icon').src = data.current.condition.icon;
-					document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
-					document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
+                    const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
+                    document.getElementById('nav-weather').classList.remove('hidden');
+                    document.getElementById('nav-weather-icon').src = navIcon;
+                    document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
+                    document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
+
 
 					// 2. Controllo Pioggia per ora di uscita
 					checkUmbrella(data.forecast.forecastday[0].hour);
