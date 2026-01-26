@@ -78,24 +78,51 @@
     <div id="countdownCard" class="hidden bg-white dark:bg-slate-900 rounded-3xl border-2 border-indigo-100 dark:border-indigo-900/50 p-10 text-center shadow-xl">
         <p class="text-primary font-black uppercase tracking-[0.2em] mb-4 text-sm">Sei libero tra:</p>
         <div id="timeRemaining" class="text-7xl md:text-9xl font-black text-indigo-900 dark:text-white tabular-nums tracking-tighter">00:00:00</div>
-                <div id="weatherAlert" class="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-8 border border-slate-100 dark:border-slate-700">
-					<br>
-                    <div class="flex flex-col items-center gap-4">
-                        <div id="weatherBigIcon" class="p-4 bg-white dark:bg-slate-900 rounded-full shadow-lg">
-                            </div>
-                        <div class="space-y-2">
-                            <p class="text-slate-500 dark:text-slate-400 font-bold uppercase text-xs tracking-widest">Previsioni per l'uscita</p>
-							<div class="space-x-2">
-                            <p id="weatherMessage" class="text-xl md:text-2xl font-bold text-slate-800 dark:text-slate-100 leading-relaxed">
-                                Calcolo il tempo previsto...
-							</p>
+			<div id="weatherAlert" class="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-8 border border-slate-100 dark:border-slate-700">
+				<div class="flex flex-col items-center gap-2">
+					<div class="flex flex-col items-center">
+						<div id="weatherBigIcon" class="p-2 bg-white dark:bg-slate-900 rounded-full shadow-lg mb-2"></div>
+						<div class="text-center">
+							<span id="weatherExitTemp" class="text-3xl font-black text-indigo-900 dark:text-white block">--°C</span>
+							<span id="weatherExitText" class="text-sm font-bold text-slate-500 uppercase tracking-widest">--</span>
 						</div>
-                    </div>
-                </div>
+					</div>
+					
+					<p id="weatherMessage" class="text-xl font-bold text-slate-800 dark:text-slate-100 leading-relaxed mt-4 max-w-md">
+						Inserisci l'orario per le previsioni...
+					</p>
+				</div>
+			</div>
     </div>
+	
 	        <br>
-        <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0"></a>
-    <script>
+       <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0"></a>
+
+<div class="text-center mt-6">
+    <button onclick="openTransportPopup()" class="inline-flex items-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold rounded-2xl transition-all shadow-lg active:scale-95">
+        <i data-lucide="bus text-yellow-900"></i>
+        VEDI BUS IN ARRIVO
+    </button>
+</div>
+
+<div id="transportModal" class="hidden fixed inset-0 z-[100] flex items-center justify-center bg-slate-900/60 backdrop-blur-sm p-4">
+    <div class="bg-white dark:bg-slate-900 w-full max-w-lg rounded-[2.5rem] shadow-2xl overflow-hidden border border-slate-200 dark:border-slate-800">
+        <div class="p-6 border-b border-slate-100 dark:border-slate-800 flex justify-between items-center bg-yellow-400">
+            <h3 class="font-black text-yellow-900 uppercase tracking-tighter flex items-center gap-2">
+                <i data-lucide="clock"></i> Prossimi Arrivi ATAC
+            </h3>
+            <button onclick="closeTransportPopup()" class="text-yellow-900 hover:scale-110"><i data-lucide="x"></i></button>
+        </div>
+        <div id="transportContent" class="p-6 max-h-[60vh] overflow-y-auto space-y-4">
+            <p class="text-center text-slate-500 italic">Siamo spiacenti purtroppo la sezione è in manutenzione. Ricaricare la pagina...</p>
+        </div>
+        <div class="p-4 bg-slate-50 dark:bg-slate-800/50 text-center">
+            <a href="trasporti.html" class="text-xs font-bold text-indigo-600 dark:text-indigo-400 underline">Gestisci fermate preferite</a>
+        </div>
+    </div>
+</div>
+
+<script>
 // --- CONFIGURAZIONE ---
     const API_KEY = '5487533995554d8fabe101832262601'; 
     const CITY = 'Rome';
@@ -149,6 +176,8 @@
     function displayWeatherAdvice(data) {
         const msgEl = document.getElementById('weatherMessage');
         const iconEl = document.getElementById('weatherBigIcon');
+		const tempExitEl = document.getElementById('weatherExitTemp');
+ 		const textExitEl = document.getElementById('weatherExitText');
         
         let condMsg = "";
         let tempMsg = "";
@@ -156,11 +185,14 @@
 
         const code = data.condition.code; // Usiamo i codici numerici per precisione
         const temp = data.temp_c;
+		const conditionText = data.condition.text;
         const wind = data.wind_kph || 0;
+		tempExitEl.innerText = `${Math.round(temp)}°C`;
+		textExitEl.innerText = conditionText;
 
         // --- LOGICA CONDIZIONI (Frase 1) ---
         if (code === 1000) {
-            condMsg = "Cielo limpido e soleggiato! Goditi il fine turno";
+            condMsg = "Cielo limpido e soleggiato! Goditi il il resto della giornata";
         } else if ([1003, 1006].includes(code)) {
             condMsg = "Qualche nuvola, ma il tempo regge. Buona uscita";
         } else if (code === 1009) {
@@ -184,9 +216,9 @@
             tempMsg = " e ricordati di bere molta acqua, fa caldissimo!";
         } else if (temp >= 22) {
             tempMsg = " e goditi questa splendida temperatura mite.";
-        } else if (temp <= 5) {
+        } else if (temp <= 9) {
             tempMsg = " e copriti bene: fuori si gela!";
-        } else if (temp <= 15) {
+        } else if (temp <= 16) {
             tempMsg = " e non dimenticare la giacca, l'aria è freschina.";
         } else {
             tempMsg = " e goditi il resto della tua giornata.";
@@ -230,6 +262,14 @@
         document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDark);
         document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDark);
     });
+
+	function openTransportPopup() {
+        document.getElementById('transportModal').classList.remove('hidden');
+        loadTransportData();
+        }
+	function closeTransportPopup() {
+	document.getElementById('transportModal').classList.add('hidden');
+		}
     </script>
 </body>
 </html>

@@ -1,4 +1,3 @@
-<link rel="icon" type="image/x-icon" href="img/favicon.ico" />
 <!DOCTYPE html>
 <html lang="it">
 <head>
@@ -17,77 +16,90 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="flex items-center gap-8">
                 <a href="index.html" class="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 font-black tracking-tighter">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-primary"></i> GESTIONE ORE
+                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-indigo-600"></i> GESTIONE ORE
                 </a>
                 <div class="hidden md:flex items-center gap-6">
-                    <a href="index.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Home</a>
-                    <a href="calcolo-ore.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Calcolo Odierno</a>
-                    <a href="analisi-pdf.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Analisi PDF</a>
+                    <a href="index.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Home</a>
+                    <a href="calcolo-ore.html" class="text-sm font-bold text-slate-500 hover:text-indigo-600 transition-colors">Calcolo Odierno</a>
+                    <a href="analisi-pdf.html" class="text-sm font-bold text-indigo-600">Analisi PDF</a>
                 </div>
             </div>
-        <div class="flex items-center gap-4 sm:gap-6">
-            <div id="nav-weather" class="hidden sm:flex items-center gap-3 text-xs font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 pr-6">
-                <img id="nav-weather-icon" src="" alt="tempo" class="w-8 h-8">
-                <div class="flex flex-col">
-                    <span id="nav-temp" class="text-slate-900 dark:text-white font-bold text-sm">--°C</span>
-                    <span id="nav-hum">Umidità: --%</span>
-                </div>
+            <div class="flex items-center gap-4">
+                <div id="nav-weather" class="hidden sm:flex items-center gap-3 border-r border-slate-200 dark:border-slate-800 pr-4">
+                    <img id="nav-weather-icon" src="" class="w-8 h-8">
+                    <div class="flex flex-col leading-tight">
+                        <span id="nav-temp" class="font-bold text-sm">--°C</span>
+                        <span id="nav-hum" class="text-[10px] opacity-60 uppercase tracking-tighter">Umidità: --%</span>
+                    </div>
+                </div> 
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5"></i>
+                    <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
+                </button>
             </div>
-            
-            <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-                <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5"></i>
-                <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
-            </button>
-        </div>
         </div>
     </nav>
 
+    <div class="flag-container">
+        <div class="flag-green"></div><div class="flag-white"></div><div class="flag-red"></div>
+    </div>
 
-        <div class="flag-container">
-            <div class="flag-green"></div><div class="flag-white"></div><div class="flag-red"></div>
+    <main class="max-w-5xl mx-auto py-12 px-6 space-y-12">
+        <div class="text-center">
+            <h1 class="text-4xl font-black text-indigo-900 dark:text-indigo-300 mb-2">Analisi Prospetti PDF</h1>
+            <p class="text-slate-500 dark:text-slate-400 font-medium">Confronta i saldi e calcola l'accumulo totale</p>
         </div>
 
-    </nav>
-
-    <main class="max-w-5xl mx-auto py-12 px-6 space-y-8">
-        <div class="grid md:grid-cols-2 gap-4">
-            <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center relative hover:border-indigo-400 transition-all">
-                <input type="file" id="filePrec" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer">
-                <i data-lucide="history" class="w-10 h-10 mx-auto mb-3 text-primary"></i>
-                <h2 class="font-bold text-indigo-900 dark:text-slate-300 text-sm">PROSPETTO MESE PRECEDENTE<br>(opzionale)</h2>
-                <p id="namePrec" class="text-xs text-indigo-500 mt-2 font-bold"></p>
+        <div class="grid md:grid-cols-2 gap-6">
+            <div class="group bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800 text-center relative hover:border-indigo-400 hover:bg-indigo-50/30 dark:hover:bg-indigo-950/20 transition-all cursor-pointer">
+                <input type="file" id="filePrec" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="history" class="w-8 h-8 text-slate-400 group-hover:text-indigo-500"></i>
+                </div>
+                <h2 class="font-bold text-indigo-900 dark:text-slate-300 text-xs uppercase tracking-widest">Mese Precedente</h2>
+                <p class="text-[10px] text-slate-400 uppercase mt-1">(Opzionale per saldo storico)</p>
+                <p id="namePrec" class="text-sm text-indigo-600 dark:text-indigo-400 mt-4 font-black truncate px-2"></p>
             </div>
 
-            <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl border-2 border-dashed border-slate-200 dark:border-slate-800 text-center relative hover:border-primary transition-all">
-                <input type="file" id="fileCorr" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer">
-                <i data-lucide="calendar" class="w-10 h-10 mx-auto mb-3 text-primary"></i>
-                <h2 class="font-bold text-indigo-900 dark:text-slate-300 text-sm">PROSPETTO MESE CORRENTE<br>(obbligatorio)</h2>
-                <p id="nameCorr" class="text-xs text-indigo-500 mt-2 font-bold"></p>
+            <div class="group bg-white dark:bg-slate-900 p-10 rounded-[2.5rem] border-2 border-dashed border-slate-200 dark:border-slate-800 text-center relative hover:border-emerald-400 hover:bg-emerald-50/30 dark:hover:bg-emerald-950/20 transition-all cursor-pointer">
+                <input type="file" id="fileCorr" accept=".pdf" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                <div class="w-16 h-16 bg-slate-100 dark:bg-slate-800 rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-transform">
+                    <i data-lucide="calendar-check" class="w-8 h-8 text-slate-400 group-hover:text-emerald-500"></i>
+                </div>
+                <h2 class="font-bold text-indigo-900 dark:text-slate-300 text-xs uppercase tracking-widest">Mese Corrente</h2>
+                <p class="text-[10px] text-slate-400 uppercase mt-1">(Obbligatorio per analisi)</p>
+                <p id="nameCorr" class="text-sm text-emerald-600 dark:text-emerald-400 mt-4 font-black truncate px-2"></p>
             </div>
         </div>
 
         <div class="text-center">
-            <button id="btnAnalizza" class="bg-indigo-600 text-white px-12 py-4 rounded-2xl font-black text-lg shadow-lg hover:bg-indigo-700 hover:scale-105 transition-all active:scale-95">
-                ANALIZZA SALDO ORE
+            <button id="btnAnalizza" class="bg-indigo-600 text-white px-10 py-4 rounded-2xl font-black text-lg shadow-xl hover:bg-indigo-700 hover:scale-105 transition-all active:scale-95 flex items-center gap-3 mx-auto">
+                <i data-lucide="bar-chart-3" class="w-6 h-6"></i> ANALIZZA DATI
             </button>
         </div>
 
-        <div id="reportArea" class="hidden animate-in fade-in slide-in-from-bottom-4 duration-500 pb-20"></div>
-        <br><br>
-        <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0"></a>
+        <div id="reportArea" class="hidden animate-in fade-in slide-in-from-bottom-8 duration-700 pb-20"></div>
+
+        <div class="flex justify-center pt-8">
+            <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0" class="opacity-50 hover:opacity-100 transition-opacity w-24"></a>
+        </div>
     </main>
 
     <script>
         pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
 
-        document.getElementById('filePrec').onchange = e => document.getElementById('namePrec').innerText = e.target.files[0].name;
-        document.getElementById('fileCorr').onchange = e => document.getElementById('nameCorr').innerText = e.target.files[0].name;
+        // Feedback nomi file
+        document.getElementById('filePrec').onchange = e => {
+            if(e.target.files[0]) document.getElementById('namePrec').innerText = "✓ " + e.target.files[0].name;
+        };
+        document.getElementById('fileCorr').onchange = e => {
+            if(e.target.files[0]) document.getElementById('nameCorr').innerText = "✓ " + e.target.files[0].name;
+        };
 
-        async function estraiDati(file, tipo) {
+        async function estraiDati(file) {
             const arrayBuffer = await file.arrayBuffer();
             const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
             let lines = [];
-
             for (let i = 1; i <= pdf.numPages; i++) {
                 const page = await pdf.getPage(i);
                 const content = await page.getTextContent();
@@ -102,35 +114,23 @@
                 });
             }
 
-            let nomeMese = "Mese";
-            let recMesePrec = 0;
-            let residuoBO = 0;
-            let flexMese = 0;
-            let extraCorrente = 0;
-            let flexCorrente = 0;
-
+            let data = { nomeMese: "Mese", recMesePrec: 0, residuoBO: 0, flexMese: 0, extraCorrente: 0, flexCorrente: 0 };
             lines.forEach(line => {
                 const clean = line.replace(/"/g, '').trim();
-
-                if (clean.includes("Prospetto Orari Mensile:")) nomeMese = clean.split(":")[1].trim();
-                
-                // Valori per Mese Precedente
-                if (clean.includes("RECUPERO DAL MESE PRECEDENTE")) recMesePrec = parseVal(clean);
+                if (clean.includes("Prospetto Orari Mensile:")) data.nomeMese = clean.split(":")[1].trim();
+                if (clean.includes("RECUPERO DAL MESE PRECEDENTE")) data.recMesePrec = parseVal(clean);
                 if (clean.includes("ACC.BO DIURNO")) {
                     const m = clean.match(/(\d{2}):(\d{2})/);
-                    if (m) residuoBO = (parseInt(m[1]) * 60) + parseInt(m[2]);
+                    if (m) data.residuoBO = (parseInt(m[1]) * 60) + parseInt(m[2]);
                 }
                 if (clean.includes("RITARDO MESE CORRENTE")) {
                     const m = clean.match(/(\d{2}):(\d{2})/);
-                    if (m) flexMese = (parseInt(m[1]) * 60) + parseInt(m[2]);
+                    if (m) data.flexMese = (parseInt(m[1]) * 60) + parseInt(m[2]);
                 }
-
-                // Valori per Mese Corrente (Somma righe)
-                if (clean.includes("ACCANTONATO BO") || clean.includes("RECUPERO (") || clean.includes("Presenza non prevista")) extraCorrente += parseVal(clean);
-                if (clean.includes("FLESSIBILITA")) flexCorrente += parseVal(clean);
+                if (clean.includes("ACCANTONATO BO") || clean.includes("RECUPERO (") || clean.includes("Presenza non prevista")) data.extraCorrente += parseVal(clean);
+                if (clean.includes("FLESSIBILITA")) data.flexCorrente += parseVal(clean);
             });
-
-            return { nomeMese, recMesePrec, residuoBO, flexMese, extraCorrente, flexCorrente };
+            return data;
         }
 
         function parseVal(line) {
@@ -146,143 +146,118 @@
             return `${mins < 0 ? '-' : ''}${h}h ${m.toString().padStart(2, '0')}m`;
         }
 
+        // Creazione riga report
+        function reportRow(label, value, isPositive) {
+            const color = isPositive ? 'text-emerald-500' : 'text-red-500';
+            const icon = isPositive ? 'plus-circle' : 'minus-circle';
+            return `
+                <div class="flex justify-between items-center py-3 border-b border-slate-50 dark:border-slate-800/50 last:border-0">
+                    <span class="text-slate-500 dark:text-slate-400 font-medium flex items-center gap-2 text-sm">
+                        <i data-lucide="${icon}" class="w-4 h-4 opacity-40"></i> ${label}
+                    </span>
+                    <span class="font-bold ${color}">${isPositive ? '+' : ''}${value}</span>
+                </div>`;
+        }
+
         document.getElementById('btnAnalizza').onclick = async () => {
             const fPrec = document.getElementById('filePrec').files[0];
             const fCorr = document.getElementById('fileCorr').files[0];
+            if (!fCorr) return alert("Carica il prospetto corrente!");
 
-            if (!fCorr) {
-                alert("Errore: Il caricamento del prospetto del MESE IN CORSO è obbligatorio.");
-                return;
-            }
-
-            const datiCorr = await estraiDati(fCorr, 'corr');
-            let datiPrec = null;
-            if (fPrec) datiPrec = await estraiDati(fPrec, 'prec');
+            const datiCorr = await estraiDati(fCorr);
+            const datiPrec = fPrec ? await estraiDati(fPrec) : null;
 
             const reportArea = document.getElementById('reportArea');
             reportArea.innerHTML = `
-                <div class="grid ${datiPrec ? 'md:grid-cols-2' : 'grid-cols-1'} gap-8 mt-10">
+                <div class="grid ${datiPrec ? 'md:grid-cols-2' : 'grid-cols-1'} gap-6 mt-12">
                     ${datiPrec ? `
-                    <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800">
-                        <h3 class="text-xl font-black text-slate-600 mb-6 uppercase tracking-tighter">${datiPrec.nomeMese}</h3>
-                        <div class="space-y-4">
-                            <div class="flex justify-between"><span>Accantonamento mese prec.</span><span class="font-bold text-emerald-500">+${formatTime(datiPrec.recMesePrec)}</span></div>
-                            <div class="flex justify-between">
-                                <span>Presenze extra</span>
-                                <span class="font-bold text-emerald-500">+${formatTime(datiPrec.residuoBO + datiPrec.flexMese - datiPrec.recMesePrec)}</span>
-                            </div>
-                            <div class="flex justify-between"><span>Flessibilità</span><span class="font-bold text-red-500">-${formatTime(datiPrec.flexMese)}</span></div>
-                            <div class="pt-4 border-t border-dashed flex justify-between font-black text-indigo-600 dark:text-slate-400 text-lg">
-                                <span>RESIDUO BO DIURNO</span><span>${formatTime(datiPrec.residuoBO)}</span>
-                            </div>
+                    <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                        <h3 class="text-indigo-900 dark:text-indigo-400 font-black mb-6 flex items-center gap-2">
+                            <i data-lucide="calendar"></i> ${datiPrec.nomeMese}
+                        </h3>
+                        ${reportRow('Accantonamento prec.', formatTime(datiPrec.recMesePrec), true)}
+                        ${reportRow('Presenze extra', formatTime(datiPrec.residuoBO + datiPrec.flexMese - datiPrec.recMesePrec), true)}
+                        ${reportRow('Flessibilità usata', formatTime(datiPrec.flexMese), false)}
+                        <div class="mt-4 pt-4 flex justify-between items-center text-indigo-600">
+                            <span class="text-[10px] font-black uppercase tracking-widest opacity-60">Residuo BO</span>
+                            <span class="text-2xl font-black tabular-nums">${formatTime(datiPrec.residuoBO)}</span>
                         </div>
                     </div>` : ''}
 
-                    <div class="bg-white dark:bg-slate-900 p-8 rounded-3xl shadow-xl border border-slate-200 dark:border-slate-800">
-                        <h3 class="text-xl font-black text-indigo-600 mb-6 uppercase tracking-tighter">${datiCorr.nomeMese}</h3>
-                        <div class="space-y-4">
-                            <div class="flex justify-between"><span>Extra del mese</span><span class="font-bold text-emerald-500">+${formatTime(datiCorr.extraCorrente)}</span></div>
-                            <div class="flex justify-between"><span>Flessibilità del mese</span><span class="font-bold text-red-500">-${formatTime(datiCorr.flexCorrente)}</span></div>
-                            <div class="pt-4 border-t border-dashed flex justify-between font-black text-slate-600 dark:text-white text-lg">
-                                <span>SALDO ATTUALE</span><span>${formatTime(datiCorr.extraCorrente - datiCorr.flexCorrente)}</span>
-                            </div>
+                    <div class="bg-white dark:bg-slate-900 p-8 rounded-[2rem] shadow-sm border border-slate-100 dark:border-slate-800">
+                        <h3 class="text-emerald-600 font-black mb-6 flex items-center gap-2">
+                            <i data-lucide="trending-up"></i> ${datiCorr.nomeMese}
+                        </h3>
+                        ${reportRow('Extra accumulato', formatTime(datiCorr.extraCorrente), true)}
+                        ${reportRow('Flessibilità mese', formatTime(datiCorr.flexCorrente), false)}
+                        <div class="mt-4 pt-4 flex justify-between items-center text-slate-800 dark:text-white">
+                            <span class="text-[10px] font-black uppercase tracking-widest opacity-60">Saldo Periodo</span>
+                            <span class="text-2xl font-black tabular-nums">${formatTime(datiCorr.extraCorrente - datiCorr.flexCorrente)}</span>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-10 bg-indigo-600 p-10 rounded-3xl text-white text-center shadow-2xl">
-                    <p class="text-sm font-bold uppercase opacity-70 tracking-widest">Saldo Finale Stimato</p>
-                    <p class="text-6xl font-black mt-2">
-                        ${formatTime((datiPrec ? datiPrec.residuoBO : 0) + (datiCorr.extraCorrente - datiCorr.flexCorrente))}
-                    </p>
-                    <p class="text-xs mt-4 opacity-50 italic">
-                        ${datiPrec ? `Residuo BO di ${datiPrec.nomeMese} e saldo ${datiCorr.nomeMese}` : `Saldo di ${datiCorr.nomeMese}`}
-                    </p>
+                <div class="mt-8 bg-gradient-to-br from-indigo-600 to-indigo-800 p-10 rounded-[3rem] text-white shadow-2xl relative overflow-hidden">
+                    <div class="relative z-10 flex flex-col items-center">
+                        <div class="bg-white/10 p-4 rounded-2xl mb-4 backdrop-blur-md">
+                            <i data-lucide="piggy-bank" class="w-8 h-8"></i>
+                        </div>
+                        <p class="text-[10px] font-black uppercase tracking-[0.3em] opacity-70">Tesoretto Ore Totale</p>
+                        <p class="text-7xl font-black mt-2 tabular-nums">
+                            ${formatTime((datiPrec ? datiPrec.residuoBO : 0) + (datiCorr.extraCorrente - datiCorr.flexCorrente))}
+                        </p>
+                    </div>
                 </div>
             `;
             reportArea.classList.remove('hidden');
             lucide.createIcons();
         };
 
-            // Logica Dark Mode (riutilizzabile in tutte le pagine)
-            const themeToggleBtn = document.getElementById('theme-toggle');
-            const darkIcon = document.getElementById('theme-toggle-dark-icon');
-            const lightIcon = document.getElementById('theme-toggle-light-icon');
+        // --- GESTIONE INTERFACCIA E METEO ---
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-            function applyTheme() {
-                if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                    document.documentElement.classList.add('dark');
-                    darkIcon.classList.add('hidden');
-                    lightIcon.classList.remove('hidden');
-                } else {
-                    document.documentElement.classList.remove('dark');
-                    darkIcon.classList.remove('hidden');
-                    lightIcon.classList.add('hidden');
-                }
+        function applyTheme() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
             }
+        }
 
-            themeToggleBtn.addEventListener('click', function() {
-                document.documentElement.classList.toggle('dark');
-                const isDark = document.documentElement.classList.contains('dark');
-                localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
-                applyTheme();
-            });
-
+        themeToggleBtn.addEventListener('click', () => {
+            document.documentElement.classList.toggle('dark');
+            localStorage.setItem('color-theme', document.documentElement.classList.contains('dark') ? 'dark' : 'light');
             applyTheme();
+        });
+
+        async function updateWeather() {
+            try {
+                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=5487533995554d8fabe101832262601&q=Rome&lang=it`);
+                const data = await response.json();
+                document.getElementById('nav-weather').classList.remove('hidden');
+                document.getElementById('nav-weather-icon').src = "https:" + data.current.condition.icon;
+                document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C`;
+                document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
+            } catch (e) { console.error("Meteo error", e); }
+        }
+
+        window.addEventListener('load', () => {
+            applyTheme();
+            updateWeather();
             lucide.createIcons();
-						
-			const WEATHER_API_KEY = "5487533995554d8fabe101832262601"; // <--- METTI QUI LA TUA CHIAVE
-			const CITY = "Rome";
-
-			async function updateWeather() {
-				try {
-					// Recuperiamo meteo attuale + previsioni orarie per oggi
-					const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=${CITY}&days=1&aqi=no&lang=it`);
-					const data = await response.json();
-
-					// 1. Aggiorna Navigazione
-                    const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
-                    document.getElementById('nav-weather').classList.remove('hidden');
-                    document.getElementById('nav-weather-icon').src = navIcon;
-                    document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
-                    document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
-
-
-					// 2. Controllo Pioggia per ora di uscita
-					checkUmbrella(data.forecast.forecastday[0].hour);
-				} catch (error) {
-					console.error("Errore meteo:", error);
-				}
-			}
-
-			function checkUmbrella(hourlyData) {
-				const exitText = document.getElementById('calculatedExit').innerText;
-				if (!exitText || exitText === "--:--") return;
-
-				const exitHour = parseInt(exitText.split(':')[0]);
-				const alertBox = document.getElementById('umbrella-alert');
-				const alertText = document.getElementById('umbrella-text');
-
-				// Cerchiamo l'ora corrispondente nei dati previsionali
-				const forecastAtExit = hourlyData.find(h => new Date(h.time).getHours() === exitHour);
-
-				if (forecastAtExit && (forecastAtExit.will_it_rain || forecastAtExit.condition.text.toLowerCase().includes('pioggia'))) {
-					alertBox.classList.remove('hidden');
-					alertText.innerText = `Porta l'ombrello! È prevista pioggia per le ${exitText}`;
-				} else {
-					alertBox.classList.add('hidden');
-				}
-			}
-
-			// Chiamata al caricamento
-			window.addEventListener('load', updateWeather);
-			// Aggiorna anche quando cambia l'orario di ingresso
-			document.getElementById('entryInput').addEventListener('change', () => {
-				// Piccolo delay per dare tempo al calcolo orario di finire
-				setTimeout(updateWeather, 500);
-			});
-			
-			
-            </script>
+            
+            // Fix: evita errore se entryInput non esiste in questa pagina
+            const entryInput = document.getElementById('entryInput');
+            if (entryInput) {
+                entryInput.addEventListener('change', () => setTimeout(updateWeather, 500));
+            }
+        });
+    </script>
 </body>
 </html>
