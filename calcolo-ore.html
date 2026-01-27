@@ -27,13 +27,13 @@
                 </div>
             </div>
         <div class="flex items-center gap-4 sm:gap-6">
-            <div id="nav-weather" class="hidden sm:flex items-center gap-3 text-xs font-medium text-slate-500 dark:text-slate-400 border-r border-slate-200 dark:border-slate-700 pr-6">
-                <img id="nav-weather-icon" src="" alt="tempo" class="w-8 h-8">
-                <div class="flex flex-col">
-                    <span id="nav-temp" class="text-slate-900 dark:text-white font-bold text-sm">--°C</span>
-                    <span id="nav-hum">Umidità: --%</span>
-                </div>
-            </div>
+                <div id="nav-weather" class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200 dark:border-slate-800">
+                    <img id="nav-weather-icon" src="" class="w-8 h-8">
+                    <div class="flex flex-col leading-tight">
+                        <span id="nav-temp" class="font-bold text-sm">--°C</span>
+                        <span id="nav-hum" class="text-[10px] opacity-60">Umidità: --%</span>
+                    </div>
+                </div>   
             
             <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
                 <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5"></i>
@@ -96,7 +96,8 @@
     </div>
 	
 	        <br>
-       <a href="https://www.weatherapi.com/" title="Free Weather API"><img src='//cdn.weatherapi.com/v4/images/weatherapi_logo.png' alt="Weather data by WeatherAPI.com" border="0"></a>
+Powered by <a href="https://www.weatherapi.com/" title="Free Weather API">WeatherAPI.com</a>
+
 
 <div class="text-center mt-6">
     <button onclick="openTransportPopup()" class="inline-flex items-center gap-2 px-6 py-3 bg-yellow-400 hover:bg-yellow-500 text-yellow-900 font-bold rounded-2xl transition-all shadow-lg active:scale-95">
@@ -123,74 +124,137 @@
 </div>
 
 <script>
-// --- CONFIGURAZIONE ---
-    const API_KEY = '5487533995554d8fabe101832262601'; 
-    const CITY = 'Rome';
-    let targetTime = null;
 
-    // Funzione centralizzata per aggiornare tutto
-    async function aggiornaTutto(valoreIngresso) {
-        if (!valoreIngresso) return;
-        
-        localStorage.setItem('entryTime', valoreIngresso);
-        
-        const [h, m] = valoreIngresso.split(':').map(Number);
-        const date = new Date();
-        date.setHours(h, m + (7 * 60 + 42), 0);
-        targetTime = date;
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+            // Logica Dark Mode (riutilizzabile in tutte le pagine)
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const darkIcon = document.getElementById('theme-toggle-dark-icon');
+        const lightIcon = document.getElementById('theme-toggle-light-icon');
 
-        const exitStr = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
-        document.getElementById('calculatedExit').innerText = exitStr;
-        document.getElementById('countdownCard').classList.remove('hidden');
-        
-        // Passiamo l'orario di uscita alla funzione meteo
-        await checkWeather(exitStr);
-    }
-
-    async function checkWeather(exitHourStr) {
-        try {
-            const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${CITY}&days=1&lang=it`);
-            if (!res.ok) throw new Error("Errore API");
-            const data = await res.json();
-            
-            // 1. UPDATE NAV (Sempre meteo attuale)
-            const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
-            document.getElementById('nav-weather').classList.remove('hidden');
-            document.getElementById('nav-weather-icon').src = navIcon;
-            document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
-            document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
-
-            // 2. UPDATE ALERT BOX (Meteo uscita)
-            if (exitHourStr) {
-                const exitHour = parseInt(exitHourStr.split(':')[0]);
-                // Cerchiamo l'ora esatta nelle previsioni orarie
-                const forecast = data.forecast.forecastday[0].hour.find(h => new Date(h.time).getHours() === exitHour);
-                displayWeatherAdvice(forecast || data.current);
+        function applyTheme() {
+            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                document.documentElement.classList.add('dark');
+                darkIcon.classList.add('hidden');
+                lightIcon.classList.remove('hidden');
+            } else {
+                document.documentElement.classList.remove('dark');
+                darkIcon.classList.remove('hidden');
+                lightIcon.classList.add('hidden');
             }
-        } catch (e) { 
-            console.error("Meteo Error:", e);
-            document.getElementById('weatherMessage').innerText = "Servizio meteo non disponibile.";
+        }
+
+        themeToggleBtn.addEventListener('click', function() {
+            document.documentElement.classList.toggle('dark');
+            const isDark = document.documentElement.classList.contains('dark');
+            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+            applyTheme();
+        });
+
+
+// --- CONFIGURAZIONE ---
+const API_KEY = '5487533995554d8fabe101832262601'; 
+const CITY = 'Rome';
+let targetTime = null;
+
+// Funzione centralizzata per aggiornare tutto (Ingresso -> Uscita -> Meteo)
+async function aggiornaTutto(valoreIngresso) {
+    if (!valoreIngresso) return;
+    
+    localStorage.setItem('entryTime', valoreIngresso);
+    
+    const [h, m] = valoreIngresso.split(':').map(Number);
+    const date = new Date();
+    date.setHours(h, m + (7 * 60 + 42), 0);
+    targetTime = date;
+
+    const exitStr = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
+    document.getElementById('calculatedExit').innerText = exitStr;
+    document.getElementById('countdownCard').classList.remove('hidden');
+    
+    await checkWeather(exitStr);
+}
+
+// NUOVA FUNZIONE: Gestisce la Cache e la Navigazione
+async function checkWeather(exitHourStr) {
+    const cached = localStorage.getItem('weatherCache');
+    const now = Date.now();
+    let weatherData = null;
+
+    // 1. TENTATIVO CARICAMENTO DALLA CACHE (30 minuti)
+    if (cached) {
+        const cacheEntry = JSON.parse(cached);
+        if (now - cacheEntry.timestamp < 1800000) { // 1.800.000 ms = 30 min
+            weatherData = cacheEntry.data;
+            renderNavWeather(weatherData, cacheEntry.timestamp);
         }
     }
 
+    // 2. SE NON C'È CACHE O È VECCHIA, FACCIO LA CHIAMATA API
+    if (!weatherData) {
+        try {
+            const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${CITY}&days=1&lang=it`);
+            if (!res.ok) throw new Error("Errore API");
+            weatherData = await res.json();
+            
+            // Salvo in cache
+            localStorage.setItem('weatherCache', JSON.stringify({
+                timestamp: now,
+                data: weatherData
+            }));
+            
+            renderNavWeather(weatherData, now);
+        } catch (e) { 
+            console.error("Meteo Error:", e);
+            document.getElementById('weatherMessage').innerText = "Servizio meteo non disponibile.";
+            return;
+        }
+    }
+
+    // 3. LOGICA PREVISIONE USCITA (La tua logica originale)
+    if (exitHourStr && weatherData) {
+        const exitHour = parseInt(exitHourStr.split(':')[0]);
+        const forecast = weatherData.forecast.forecastday[0].hour.find(h => new Date(h.time).getHours() === exitHour);
+        displayWeatherAdvice(forecast || weatherData.current);
+    }
+}
+
+    // Funzione per aggiornare la barra di navigazione con il timestamp
+    function renderNavWeather(data, timestamp) {
+        const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
+        
+        document.getElementById('nav-weather').classList.remove('hidden');
+        document.getElementById('nav-weather-icon').src = navIcon;
+        document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
+        
+        // Aggiunto l'orario dell'ultimo aggiornamento
+        document.getElementById('nav-hum').innerHTML = `Umidità: ${data.current.humidity}% | <span class="text-[10px] opacity-70">Aggiornato: ${timeStr}</span>`;
+    }
+
+    // LA TUA LOGICA DEI COMMENTI (Invariata)
     function displayWeatherAdvice(data) {
         const msgEl = document.getElementById('weatherMessage');
         const iconEl = document.getElementById('weatherBigIcon');
-		const tempExitEl = document.getElementById('weatherExitTemp');
- 		const textExitEl = document.getElementById('weatherExitText');
+        const tempExitEl = document.getElementById('weatherExitTemp');
+        const textExitEl = document.getElementById('weatherExitText');
         
         let condMsg = "";
         let tempMsg = "";
         let iconUrl = data.condition.icon.startsWith('http') ? data.condition.icon : "https:" + data.condition.icon;
 
-        const code = data.condition.code; // Usiamo i codici numerici per precisione
+        const code = data.condition.code;
         const temp = data.temp_c;
-		const conditionText = data.condition.text;
+        const conditionText = data.condition.text;
         const wind = data.wind_kph || 0;
-		tempExitEl.innerText = `${Math.round(temp)}°C`;
-		textExitEl.innerText = conditionText;
+        
+        tempExitEl.innerText = `${Math.round(temp)}°C`;
+        textExitEl.innerText = conditionText;
 
-        // --- LOGICA CONDIZIONI (Frase 1) ---
+        // --- LOGICA CONDIZIONI ---
         if (code === 1000) {
             condMsg = "Cielo limpido e soleggiato! Goditi il il resto della giornata";
         } else if ([1003, 1006].includes(code)) {
@@ -209,7 +273,7 @@
             condMsg = "Tempo variabile, preparati a tutto uscendo";
         }
 
-        // --- LOGICA TEMPERATURE & EXTRA (Frase 2) ---
+        // --- LOGICA TEMPERATURE ---
         if (wind > 40) {
             tempMsg = " e fai attenzione al vento forte che tira!";
         } else if (temp >= 30) {
@@ -228,7 +292,7 @@
         iconEl.innerHTML = `<img src="${iconUrl}" class="w-24 h-24 mx-auto" alt="meteo">`;
     }
 
-    // --- EVENT LISTENERS ---
+// --- EVENT LISTENERS & INIZIALIZZAZIONE ---
     document.getElementById('entryInput').addEventListener('change', (e) => {
         aggiornaTutto(e.target.value);
     });
@@ -253,14 +317,8 @@
             document.getElementById('entryInput').value = savedEntry;
             aggiornaTutto(savedEntry);
         } else {
-            checkWeather(); // Solo nav se non c'è orario
+            checkWeather(); // Aggiorna solo la nav se non c'è orario d'uscita
         }
-    });
-
-    document.getElementById('theme-toggle').addEventListener('click', () => {
-        const isDark = document.documentElement.classList.toggle('dark');
-        document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDark);
-        document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDark);
     });
 
 	function openTransportPopup() {
@@ -272,5 +330,4 @@
 		}
     </script>
 </body>
-
 </html>
