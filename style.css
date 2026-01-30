@@ -58,3 +58,19 @@
 .transition-all-custom {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
+
+
+.btn-google {
+    display: inline-block;
+    background-color: #4285F4; /* Blu Google */
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    border-radius: 5px;
+    font-weight: bold;
+    margin-top: 10px;
+}
+
+.btn-google:hover {
+    background-color: #357ae8;
+}
