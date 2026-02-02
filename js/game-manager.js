@@ -28,8 +28,8 @@ const GAMES_REPO = [
 
 function initDailyGame() {
     const today = new Date();
-  //  const dayIndex = today.getDate() % GAMES_REPO.length;
-    const dayIndex = 3; // Per test
+    const dayIndex = today.getDate() % GAMES_REPO.length;
+  //  const dayIndex = 3; // Per test
     const currentGame = GAMES_REPO[dayIndex];
 
     document.getElementById('game-title').innerText = currentGame.name;
