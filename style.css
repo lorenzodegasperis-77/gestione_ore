@@ -74,3 +74,76 @@
 .btn-google:hover {
     background-color: #357ae8;
 }
+
+
+/* Effetti di rotazione per il Memory */
+.perspective-1000 { perspective: 1000px; }
+.transform-style-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+.rotate-y-180 { transform: rotateY(180deg); }
+
+/* Per centrare bene i fronti delle carte */
+.card-inner div {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
+#word-display {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: nowrap !important; /* Forza l'unica riga */
+    width: 100%;
+}
+
+/* Rende i box delle lettere flessibili ma non troppo piccoli */
+.letter-box {
+    flex: 0 1 auto;
+    min-width: 32px;
+}
+
+
+/* Impedisce al gioco di essere tagliato */
+#game-viewport {
+    height: auto !important; /* Permette al contenitore di espandersi */
+    min-height: 450px;       /* Altezza minima per contenere 4 righe */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Classi per l'effetto 3D Flip */
+.perspective-1000 { perspective: 1000px; }
+.transform-style-3d { transform-style: preserve-3d; }
+.backface-hidden { backface-visibility: hidden; }
+.rotate-y-180 { transform: rotateY(180deg); }
+
+.card-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-transition: transform 0.6s;
+}
+.block-type-0 { background-color: #ef4444; } /* Rosso */
+.block-type-1 { background-color: #3b82f6; } /* Blu */
+.block-type-2 { background-color: #10b981; } /* Smeraldo */
+.block-type-3 { background-color: #f59e0b; } /* Ambra */
+.block-type-4 { background-color: #8b5cf6; } /* Viola */
+
+@keyframes bubble-pop {
+    0% { transform: translate(0, 0) scale(1); opacity: 1; }
+    100% { transform: translate(var(--dx), var(--dy)) scale(0); opacity: 0; }
+}
+
+.bubble {
+    position: absolute;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    z-index: 50;
+    animation: bubble-pop 0.6s ease-out forwards;
+}
+

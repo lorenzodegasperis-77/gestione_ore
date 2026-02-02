@@ -1,0 +1,300 @@
+id,destination,company,f_duration,comment,type,f_time
+1,Milano Linate,ITA Airways,70,Volo veloce per la capitale della moda. Almeno l'aperitivo è serio.,Business,15:00:00
+2,Parigi CDG,Air France,125,Atterraggio in grande stile nella città dell'amore. Innamorati della libertà.,Business/Turismo,15:05:00
+3,Londra Heathrow,British Airways,165,"Il mondo intero passa di qui. Tu passa e basta, non fermarti a lavorare!",Business,15:10:00
+4,Barcellona,Vueling,110,"Le tapas sono meglio della mensa aziendale, garantito. Vamos!",Turismo,15:15:00
+5,Catania,ITA Airways,75,"Arancino (col pizzo) e vista sull'Etna. Esplosivo, proprio come il tuo umore oggi.",Nazionale,15:20:00
+6,Londra Stansted,Ryanair,160,Il tempio dei voli low cost. Con 20 euro sei già in un altro stato mentale.,Low Cost,15:25:00
+7,Madrid,Iberia,145,"A Madrid nessuno ti chiederà il 'salto ore'. Solo un'altra caña, grazie!",Business,15:30:00
+8,Francoforte,Lufthansa,115,"La Manhattan europea. Ma stavolta guardala dal basso di un bar, non da un ufficio.",Business,15:35:00
+9,Palermo,Ryanair,70,"Caponata, cannoli e sole. A Palermo lo stress si annega nello zucchero.",Nazionale,15:40:00
+10,Amsterdam,KLM,150,Noleggia una bici e pedala lontano dai tuoi doveri. Occhio ai canali!,Business,15:45:00
+11,Monaco di Baviera,Lufthansa,95,"Birra, pretzel e giardini inglesi. Prost alla tua libertà ritrovata!",Business,15:50:00
+12,Berlino,Ryanair,130,Dalla scrivania alla techno in meno di 3 ore. Portati i vestiti neri.,Turismo,15:55:00
+13,Bruxelles,ITA Airways,125,"Cioccolato, cozze e politica. Almeno lì la burocrazia è istituzionale.",Business,16:00:00
+14,Nizza,ITA Airways,70,"Costa Azzurra, Promenade des Anglais e un bicchiere di rosé. Très chic!",Business,16:05:00
+15,Tel Aviv,EL AL,200,"Spiaggia, startup e vita notturna. Ma oggi niente startup, solo vita!",Business,16:10:00
+16,Ginevra,EasyJet,90,Precisione svizzera sul lago. Un posto calmo per chi ha i nervi a fior di pelle.,Business,16:15:00
+17,Zurigo,SWISS,95,Efficienza svizzera e bagni nel fiume. Pulizia mentale garantita.,Business,16:20:00
+18,Lisbona,Ryanair,185,"Dimentica il file Excel, i pastéis de nata e il fado ti aspettano. Saudade di cosa?",Turismo,16:25:00
+19,Atene,Aegean Airlines,120,Vai a consultare l'oracolo: magari sa dirti lui quando finiranno questi progetti.,Turismo,16:30:00
+20,Malta,Air Malta,85,"Storia, mare e pastizzi. Un'isola dove il sole splende quasi quanto il tuo desiderio di fuga.",Turismo,16:35:00
+21,Milano Linate,ITA Airways,70,Volo veloce per la capitale della moda. Almeno l'aperitivo è serio.,Business,17:00:00
+22,Bari,ITA Airways,65,Focaccia barese e lungomare. La felicità esiste e non ha bisogno di slide.,Nazionale,17:05:00
+23,Venezia,ITA Airways,65,"Niente auto, solo barche. Un ritmo lento per dimenticare la frenesia.",Nazionale,17:10:00
+24,Copenhagen,SAS,155,Hygge e design. La felicità danese è incompatibile con lo straordinario non pagato.,Business,17:15:00
+25,Varsavia,LOT,140,"Rinata dalle ceneri, moderna e vibrante. Una sorpresa continua.",Business,17:20:00
+26,Istanbul,Turkish Airlines,160,"Due continenti, un solo obiettivo: mangiare kebab e dimenticare l'ufficio.",Business/Hub,17:25:00
+27,Cagliari,ITA Airways,65,Un volo sopra il Tirreno e sei nel paradiso sardo. I fenicotteri non mandano email.,Nazionale,17:30:00
+28,Marsiglia,Ryanair,85,"Il fascino del vecchio porto e un pastis ghiacciato. La vita è bella, uscendo.",Turismo,17:35:00
+29,Manchester,Ryanair,170,"Musica, calcio e spirito operaio. Ma oggi l'unico operaio in sciopero sei tu!",Turismo/Lavoro,17:40:00
+30,Dubai,Emirates,350,"Shopping e grattacieli infiniti. Se devi scappare, fallo in grande stile.",Intercontinentale,17:45:00
+31,Doha,Qatar Airways,330,Futuro e deserto. Uno scalo verso la libertà o una meta per chi ama il caldo vero.,Intercontinentale,17:50:00
+32,New York JFK,ITA Airways,555,"La Grande Mela. Se riesci a farcela lì, riuscirai a licenziarti ovunque.",Intercontinentale,18:00:00
+33,Miami,ITA Airways,640,Ocean Drive e palme. Metti gli occhiali da sole e diventa un altro uomo.,Intercontinentale,18:10:00
+34,Tirana,Wizz Air,85,Ottimo tempismo! Se scappi ora arrivi in tempo per un buek caldo in centro.,Business/Turismo,18:15:00
+35,Praga,Wizz Air,115,La città magica. Una birra in piazza della Città Vecchia e i problemi svaniscono.,Turismo,18:20:00
+36,Budapest,Wizz Air,105,Terme e Ruin Pubs. Il posto perfetto per bollire via lo stress lavorativo.,Turismo,18:25:00
+37,Vienna,Austrian Airlines,100,"Sacher, valzer e palazzi imperiali. Sentiti un imperatore per un weekend.",Business,18:30:00
+38,Lione,EasyJet,95,Bouchon e cucina d'eccellenza. Un tour gastronomico per dimenticare lo stress.,Business/Turismo,18:35:00
+39,Tolosa,ITA Airways,105,"La città rosa. Spazio, aeronautica e ottima cucina francese.",Business,18:40:00
+40,Cracovia,Ryanair,120,Storia e fascino polacco. E una vodka che ti farà scordare l'ultimo update di Windows.,Turismo,18:45:00
+41,Stoccolma,Norwegian,190,Venezia del nord. Eleganza scandinava tra acqua e design.,Turismo,18:50:00
+42,Oslo,Norwegian,195,Fiordi e design scandinavo. Un bagno di freddo per schiarirsi le idee.,Turismo,18:55:00
+43,Helsinki,Finnair,205,"Sauna e design nordico. Sudare per lo stress? No, meglio sudare in sauna.",Business,19:00:00
+44,Lussemburgo,Luxair,120,"Piccolo stato, grandi stipendi. Magari trovi un lavoro migliore mentre sei lì?",Business,19:05:00
+45,Belgrado,Air Serbia,95,La città bianca che non dorme mai. Proprio come te prima della consegna del budget.,Business,19:10:00
+46,Bucarest,Tarom,130,La Parigi dell'est. Vita notturna intensa per dimenticare il grigiore del cubicolo.,Business,19:15:00
+47,Sofia,Bulgaria Air,110,Bulgaria economica e accogliente. Ai piedi del monte Vitosha lo stress sparisce.,Turismo,19:20:00
+48,Casablanca,Royal Air Maroc,195,"Suonala ancora, Sam. Ma non suonare la sveglia per domani mattina.",Turismo/Lavoro,19:25:00
+49,Tunisi,Tunisair,80,"Souk, mare e rovine di Cartagine. Il fascino del Maghreb a un passo da casa.",Business,19:30:00
+50,Algeri,Air Algerie,120,La 'Bianca' ti aspetta. Lascia che il vento del Mediterraneo porti via le tue notifiche.,Business,19:35:00
+51,Il Cairo,EgyptAir,195,"Piramidi e caos millenario. Davanti all'eternità, la tua 'urgenza' svanisce.",Business/Turismo,19:40:00
+52,Milano Linate,ITA Airways,70,Volo veloce per la capitale della moda. Almeno l'aperitivo è serio.,Business,19:45:00
+53,Londra City,ITA Airways,150,"Atterri nel cuore della finanza, ma tu scappa subito verso il primo pub!",Business,19:50:00
+54,Dublino,Aer Lingus,190,Una pinta di Guinness ti farà dimenticare quella tremenda email del capo.,Turismo/Business,19:55:00
+55,Abu Dhabi,Etihad Airways,345,Sabbia bollente e lusso sfrenato. Decisamente meglio della sedia ergonomica rotta.,Intercontinentale,20:00:00
+56,San Paolo,LATAM,715,Metropoli infinita. Perditi tra i grattacieli e non farti trovare mai più.,Intercontinentale,20:15:00
+57,Buenos Aires,Aerolineas Argentinas,830,Tango e asado. Una passione che nessun file PowerPoint potrà mai eguagliare.,Intercontinentale,20:30:00
+58,Tokyo Haneda,ITA Airways,760,Atterri direttamente in città. Tokyo ti avvolgerà nel suo ritmo frenetico ma magico.,Intercontinentale,20:40:00
+59,Seul,Korean Air,690,"Tecnologia estrema e templi antichi. Il futuro è adesso, ed è senza ufficio.",Intercontinentale,20:50:00
+60,Pechino,Air China,630,La Grande Muraglia ti proteggerà dalle email urgenti dei colleghi.,Intercontinentale,21:00:00
+61,Brindisi,ITA Airways,70,Porta del Salento. Un tuffo dove l'acqua è blu e il Wi-Fi è un optional.,Nazionale,21:05:00
+62,Reggio Calabria,ITA Airways,75,Bronzi di Riace e bergamotto. Un tuffo nella storia davanti allo Stretto.,Nazionale,21:10:00
+63,Trieste,ITA Airways,65,"Città di confine, caffè storici e vento. Un posto per poeti e sognatori.",Nazionale,21:15:00
+64,Genova,ITA Airways,65,Caruggi e focaccia. Perdersi nel porto per ritrovarsi umani.,Nazionale,21:20:00
+65,Verona,Volotea,60,"Amore, opera e vino. Una fuga romantica con te stesso.",Nazionale,21:25:00
+66,Olbia,AeroItalia,60,Costa Smeralda. Sei pronto a sentirti un VIP per qualche giorno?,Nazionale,21:30:00
+67,Lamezia Terme,ITA Airways,70,"Calabria, mare e peperoncino. Brucia i ponti (e le scadenze) con gusto.",Nazionale,21:35:00
+68,Edimburgo,Ryanair,185,Castelli infestati e leggende. Magari un fantasma farà il lavoro al posto tuo.,Turismo,21:40:00
+69,Bordeaux,Ryanair,120,Vino rosso e castelli. Un calice di Bordeaux risolve più problemi di un ticket IT.,Turismo,21:45:00
+70,Siviglia,Ryanair,160,"Flamenco, sole e tapas. La gioia di vivere spagnola ti contagerà.",Turismo,21:50:00
+71,Valencia,Vueling,120,Paella e Città delle Scienze. Una città che brilla di luce propria (e senza neon).,Turismo,21:55:00
+72,Malaga,Vueling,150,Costa del Sol e musei di Picasso. Un mix perfetto di cultura e relax.,Turismo,22:00:00
+73,Porto,TAP Portugal,180,Vino Porto e rive del Douro. La saudade portoghese è più dolce dello stress romano.,Turismo,22:05:00
+74,Nantes,Volotea,130,Le macchine dell'isola di Jules Verne ti aspettano. Fantasia al potere!,Turismo,22:10:00
+75,Strasburgo,Volotea,105,"Tra Francia e Germania. Canali, case a graticcio e ottima birra.",Business,22:15:00
+76,Bologna,ITA Airways,60,"La grassa, la dotta, la rossa. Lascia le tabelle e pensa alle tagliatelle.",Business,22:20:00
+77,Amburgo,Eurowings,135,Canali e vita notturna. A St. Pauli non ti chiederanno il resoconto settimanale.,Turismo,22:25:00
+78,Stoccarda,Eurowings,100,Auto di lusso e parchi. Una città tedesca che sa come viziare i visitatori.,Business,22:30:00
+79,Dusseldorf,Eurowings,125,Moda e birra scura. Raffinatezza tedesca per un'evasione di classe.,Business,22:35:00
+80,Colonia,Eurowings,120,La cattedrale e la birra Kölsch. Un sorso alla volta verso la libertà.,Business,22:40:00
+81,Marsiglia,Ryanair,85,"Il fascino del vecchio porto e un pastis ghiacciato. La vita è bella, uscendo.",Turismo,15:10:00
+82,Alicante,Vueling,135,"Paella, sole e movida. A Madrid nessuno sa cosa sia un 'salto ore'.",Turismo,15:20:00
+83,Bilbao,Vueling,130,Guggenheim e pintxos. L'arte di vivere batte l'arte di procrastinare.,Business/Turismo,15:45:00
+84,Ibiza,Vueling,115,Non solo discoteche. Scappa nelle calette segrete dove il Wi-Fi è solo un miraggio.,Turismo,16:00:00
+85,Palma di Maiorca,Ryanair,110,Mare cristallino e vita notturna. Il mix ideale per dimenticare il desk.,Turismo,16:15:00
+86,Minorca,Neos,95,Sorella calma di Maiorca. Calette silenziose per chi ha bisogno di staccare il cervello.,Turismo,16:30:00
+87,Gran Canaria,Binter Canarias,255,Dune di sabbia e sole eterno. Praticamente una vacanza che non finisce mai.,Turismo,17:00:00
+88,Tenerife Sud,Ryanair,270,Eterna estate tra spiagge nere e il vulcano Teide. Scappa al caldo!,Turismo,17:15:00
+89,Lanzarote,Ryanair,250,"Paesaggi lunari e vulcani. Se ti senti su un altro pianeta, è perché lo sei.",Turismo,17:40:00
+90,Fuerteventura,Wizz Air,245,Vento e libertà. L'unico impegno sarà decidere in quale spiaggia andare.,Turismo,18:00:00
+91,Madeira,Wizz Air,230,"L'isola dell'eterna primavera. Fiori, trekking e niente email.",Turismo,18:15:00
+92,Ponta Delgada,Azores Airlines,270,"Azzorre. Balene, vulcani e verde infinito. Il paradiso terrestre esiste.",Turismo,18:45:00
+93,Reykjavik,Icelandair,295,"Geyser e aurora boreale. Un po' freschino, ma tra i vulcani non c'è Wi-Fi.",Turismo,15:50:00
+94,Tallinn,Air Baltic,195,Estonia medievale e digitale. Atterra nel passato e scorda il futuro lavorativo.,Business/Turismo,16:10:00
+95,Riga,Air Baltic,185,"Fascino baltico e Art Nouveau. Elegante, fredda, bellissima.",Business/Turismo,16:40:00
+96,Vilnius,Wizz Air,175,"La capitale più barocca del nord. Piccola, verde e piena di fascino.",Turismo/Lavoro,17:10:00
+97,Lubiana,ITA Airways,65,"Verde, piccola e bellissima. Un gioiello sloveno dove lo stress non è ammesso.",Business,17:30:00
+98,Zagabria,Croatia Airlines,70,Croazia continentale. Musei curiosi e caffè all'aperto tutto l'anno.,Business,18:15:00
+99,Spalato,Croatia Airlines,65,Vivere dentro il palazzo di Diocleziano. Storia e mare a portata di mano.,Turismo,18:50:00
+100,Dubrovnik,ITA Airways,70,"La perla dell'Adriatico. Ti sentirai un re, o un personaggio di Game of Thrones.",Turismo,19:15:00
+101,Sarajevo,Wizz Air,75,Dove l'oriente incontra l'occidente. Una città con un'anima profonda.,Turismo/Lavoro,19:40:00
+102,Skopje,Wizz Air,95,"Macedonia, tra statue giganti e bazar antico. Un mix bizzarro ma affascinante.",Turismo/Lavoro,20:00:00
+103,Pristina,Wizz Air,100,"Kosovo, una capitale giovane e dinamica per chi ama le mete insolite.",Turismo/Lavoro,20:25:00
+104,Podgorica,Air Montenegro,80,"Montenegro, montagne selvagge e laghi incantati. Una meta per veri esploratori.",Business/Turismo,20:50:00
+105,Yerevan,Wizz Air,240,"Armenia, ospitalità incredibile e vista sull'Ararat. Un viaggio nell'anima.",Turismo/Lavoro,21:15:00
+106,Baku,Azerbaijan Airlines,270,Tra architettura futuristica e fiamme perenni. Praticamente come l'ufficio il lunedì mattina.,Business,21:45:00
+107,Tbilisi,Georgian Airways,250,"Georgia, vino millenario e ospitalità. Un posto che ti scalda il cuore.",Turismo/Lavoro,22:10:00
+108,Amman,Royal Jordanian,210,Petra ti aspetta. Le rovine romane sono comunque più solide dei tuoi server.,Business/Turismo,16:20:00
+109,Gedda,Saudia,285,"Mar Rosso e modernità saudita. Un viaggio verso l'ignoto, lontano dal solito tran-tran.",Business,16:50:00
+110,Riad,Saudia,310,Il cuore dell'Arabia Saudita. Un viaggio nel futuro che sta nascendo.,Business,17:30:00
+111,Madinat al-Kuwait,Kuwait Airways,330,Architettura moderna e souk. Un contrasto affascinante lontano da Roma.,Business,18:20:00
+112,Manama,Gulf Air,345,"Bahrain, modernità e tradizione tra le onde del Golfo.",Business,19:00:00
+113,Muscat,Oman Air,375,"Oman, il deserto che incontra il mare in un'atmosfera da Mille e una Notte.",Business/Turismo,20:15:00
+114,New Delhi,ITA Airways,510,"Un vortice di spezie, colori e storia. Un viaggio che ti cambia la prospettiva.",Intercontinentale,20:45:00
+115,Mumbai,Air India,530,La città che non dorme mai nel cuore dell'India. Un'esperienza travolgente.,Intercontinentale,21:15:00
+116,Bangkok,Thai Airways,665,Street food e caos creativo. A Bangkok il traffico è meglio della tua casella email.,Intercontinentale,22:00:00
+117,Singapore,Singapore Airlines,735,"Pulizia, ordine e giardini futuristici. Il paradiso (organizzato) degli impiegati.",Intercontinentale,22:30:00
+118,Ho Chi Minh,Vietnam Airlines,705,Motorette e storia. Un vortice di energia per ricaricare le tue pile scariche.,Intercontinentale,23:00:00
+119,Città del Messico,Aeromexico,770,"Tacos, tequila e colori. Un'esplosione di vita contro il grigio ufficio.",Intercontinentale,23:15:00
+120,Cancun,Neos,680,"Sabbia bianca e margarita. Se ti cercano, dì che sei entrato in un loop temporale Maya.",Turismo,23:30:00
+121,Punta Cana,Neos,630,"Repubblica Dominicana. Palme, cocco e nient'altro da fare se non relax.",Turismo,23:45:00
+122,L'Avana,Blue Panorama,650,"Auto d'epoca, rum e tempo che si è fermato. Il sogno di ogni impiegato.",Turismo,23:55:00
+123,Salonicco,Ryanair,110,Grecia bizantina e cibo fantastico. Una città che sa come godersi la vita.,Turismo,15:05:00
+124,Corfù,Ryanair,95,"Sissi amava questo posto, e anche tu lo amerai quando spegnerai lo smartphone.",Turismo,15:35:00
+125,Rodi,Ryanair,165,"Sole 300 giorni l'anno. Se parti oggi, becchi sicuramente il giorno giusto.",Turismo,16:10:00
+126,Chania,Ryanair,135,"Creta ti chiama. Gyros, mare e la lentezza greca che tanto ti manca.",Turismo,16:45:00
+127,Santorini,Ryanair,130,Case bianche e tetti blu. La tua foto qui farà morire d'invidia tutto l'ufficio.,Turismo,17:20:00
+128,Mykonos,Ryanair,125,"Festa o relax totale? In ogni caso, il tramonto qui batte qualsiasi screensaver.",Turismo,17:55:00
+129,Cefalonia,Ryanair,105,Mare cristallino e pace. L'unico 'blu' che vogliamo vedere è quello dello Ionio.,Turismo,18:30:00
+130,Zante,Ryanair,110,Spiaggia del Relitto. Unisciti ai resti di quella nave e dimentica l'ufficio.,Turismo,19:05:00
+131,Paphos,Ryanair,190,"Cipro, archeologia e mare. Dove è nata Afrodite, tu farai rinascere il tuo spirito.",Turismo,19:40:00
+132,Larnaca,Wizz Air,205,"Cipro, sole e meze. Il Mediterraneo orientale ti accoglie a braccia aperte.",Turismo,20:15:00
+133,Eilat,Ryanair,240,Mar Rosso e barriera corallina. Pesci colorati batte grafici a torta.,Turismo,20:50:00
+134,Aqaba,Ryanair,230,Mar Rosso e relax. Le uniche 'scadenze' lì riguardano la crema solare.,Turismo,21:25:00
+135,Bratislava,Ryanair,100,"Piccola, accogliente e vicina. Ideale per una fuga lampo senza troppi programmi.",Turismo,15:15:00
+136,Kosice,Ryanair,105,Slovacchia da scoprire. Prezzi bassi e fascino dell'est per un'evasione low-cost.,Turismo,16:00:00
+137,Brno,Ryanair,95,Repubblica Ceca alternativa. Birra economica e zero stress da ufficio open-space.,Turismo,16:45:00
+138,Ostrava,Ryanair,100,Repubblica Ceca industriale e creativa. Per chi cerca mete fuori dai radar.,Turismo,17:30:00
+139,Breslavia,Ryanair,110,Caccia agli gnomi per le strade della città. Molto più divertente della caccia ai bug.,Turismo/Lavoro,18:15:00
+140,Poznan,Ryanair,120,Polonia colorata e vivace. Un break economico per uno spirito libero.,Turismo/Lavoro,19:00:00
+141,Danzica,Ryanair,135,"Affacciata sul Baltico, tra ambra e storia. Un respiro di aria gelida ma pura.",Turismo/Lavoro,19:45:00
+142,Szczecin,Ryanair,130,"Stettino, un angolo di Polonia affacciato sull'acqua da scoprire.",Turismo,20:30:00
+143,Vilnius,Ryanair,170,"La capitale più barocca del nord. Piccola, verde e piena di fascino.",Turismo/Lavoro,21:15:00
+144,Kaunas,Ryanair,165,"Lituania alternativa. Giovane, artistica e molto, molto lontana dal tuo desk.",Turismo,22:00:00
+145,Perugia,ITA Airways,45,"Umbria, cioccolato e jazz. Una fuga di classe a due passi da casa.",Nazionale,15:40:00
+146,Pescara,ITA Airways,50,Arrosticini e mare. La soluzione abruzzese a ogni crisi esistenziale.,Nazionale,16:15:00
+147,Ancona,ITA Airways,55,"Tra il Conero e il mare, l'unico meeting sarà con un buon bicchiere di Rosso Conero.",Nazionale,17:00:00
+148,Firenze,ITA Airways,50,"Un classico. Davanti al David ti sentirai piccolo, ma almeno libero.",Nazionale,17:45:00
+149,Pisa,ITA Airways,55,"La torre pende, ma la tua voglia di restare in ufficio è già crollata.",Nazionale,18:30:00
+150,Bolzano,SkyAlps,70,"Aria di montagna e speck. Se scappi qui, il capo penserà che sei andato a sciare.",Business/Turismo,19:15:00
+151,Comiso,AeroItalia,80,Sicilia barocca e silenzio. Ideale per chi vuole far perdere le proprie tracce.,Nazionale,20:00:00
+152,Pantelleria,DAT,90,Dammusi e vento. Un'isola dura ma bellissima per chi vuole sparire davvero.,Nazionale,20:45:00
+153,Lampedusa,DAT,95,Più vicini all'Africa che all'Italia. Acqua turchese e zero pensieri lavorativi.,Nazionale,21:30:00
+154,Alghero,AeroItalia,60,Un volo breve per il paradiso sardo. Aragosta batte tramezzino del bar 1 a 0.,Nazionale,22:15:00
+155,Parigi Orly,Vueling,120,"Vicina alla città. Se scappi ora, stasera sei a cena nel Marais.",Business/Turismo,15:10:00
+156,Parigi Orly,Transavia,125,"Vicina alla città. Se scappi ora, stasera sei a cena nel Marais.",Low Cost,16:30:00
+157,Lione,Volotea,95,Bouchon e cucina d'eccellenza. Un tour gastronomico per dimenticare lo stress.,Turismo,17:50:00
+158,Bordeaux,Volotea,115,Vino rosso e castelli. Un calice di Bordeaux risolve più problemi di un ticket IT.,Turismo,19:10:00
+159,Nantes,EasyJet,130,Le macchine dell'isola di Jules Verne ti aspettano. Fantasia al potere!,Turismo,20:30:00
+160,Lille,Volotea,125,Fascino fiammingo in Francia. Moules-frites e un'atmosfera che ti rigenera.,Turismo,21:45:00
+161,Londra Gatwick,Wizz Air,160,Il gate per l'Inghilterra. Una corsa sul treno verso la libertà (e il fish & chips).,Low Cost,15:20:00
+162,Londra Gatwick,EasyJet,165,Il gate per l'Inghilterra. Una corsa sul treno verso la libertà (e il fish & chips).,Low Cost,16:40:00
+163,Manchester,Jet2,175,"Musica, calcio e spirito operaio. Ma oggi l'unico operaio in sciopero sei tu!",Turismo,18:00:00
+164,Birmingham,Jet2,165,Dall'ufficio alla vera rivoluzione industriale. Peaky Blinders style!,Turismo,19:20:00
+165,Leeds,Jet2,170,Yorkshire autentico. Pub storici e gente simpatica per un break senza fronzoli.,Turismo,20:40:00
+166,Glasgow,Jet2,190,"Musica dal vivo e spirito scozzese. Più rude di Edimburgo, ma più vera.",Turismo,22:00:00
+167,Belfast,EasyJet,185,Tra storia e pub leggendari. Un brindisi alla faccia di chi è rimasto in postazione.,Turismo,23:00:00
+168,Colonia,Ryanair,125,La cattedrale e la birra Kölsch. Un sorso alla volta verso la libertà.,Turismo,15:15:00
+169,Stoccarda,Eurowings,95,Auto di lusso e parchi. Una città tedesca che sa come viziare i visitatori.,Business,16:25:00
+170,Dusseldorf,ITA Airways,130,Moda e birra scura. Raffinatezza tedesca per un'evasione di classe.,Business,17:35:00
+171,Hannover,Eurowings,130,Fiere e giardini. Un angolo di Germania ordinato per riordinare le idee.,Business,18:45:00
+172,Norimberga,Ryanair,100,Storia e pan di zenzero. Un fascino medievale per un'evasione nel tempo.,Turismo,20:00:00
+173,Brema,Ryanair,135,Segui i musicanti di Brema: anche loro hanno mollato tutto per una vita migliore.,Turismo,21:15:00
+174,Dortmund,Wizz Air,130,Calcio e birra. Un weekend ignorante è quello che serve per resettare il cervello.,Turismo,22:30:00
+175,Basilea,EasyJet,90,"Svizzera, ordine e precisione. Almeno lì se dici che finisci alle 17, finisci alle 17.",Business/Turismo,15:30:00
+176,Ginevra,ITA Airways,95,Precisione svizzera sul lago. Un posto calmo per chi ha i nervi a fior di pelle.,Business,16:45:00
+177,Zurigo,ITA Airways,100,Efficienza svizzera e bagni nel fiume. Pulizia mentale garantita.,Business,18:00:00
+178,Lugano,Silver Air,80,"Laghi e finanza, ma con vista sulle Alpi. Un lusso che ti meriti dopo questa settimana.",Business,19:15:00
+179,Innsbruck,SkyAlps,70,"Alpi e aria pura. Respira profondamente, non senti profumo di libertà?",Turismo,20:30:00
+180,Graz,ITA Airways,80,Design e cultura austriaca. Una chicca nascosta per chi cerca tranquillità.,Business,21:45:00
+181,Salisburgo,Eurowings,85,Musica di Mozart e montagne. Un'atmosfera da fiaba per dimenticare la realtà.,Turismo,22:50:00
+182,Rotterdam,Transavia,140,Architettura folle e il porto più grande d'Europa. Modernità pura.,Business,15:25:00
+183,Eindhoven,Ryanair,135,"Design e tecnologia. Ma usiamola per prenotare un hotel, non per lavorare.",Turismo,16:50:00
+184,Anversa,Air Antwerp,130,Diamanti e birra belga. Un investimento migliore del tuo tempo in questa riunione.,Business,18:10:00
+185,Charleroi,Ryanair,125,"Punto strategico per il Belgio. Scappa, la birra trappista sta finendo!",Low Cost,19:30:00
+186,Ostenda,TUI Fly,140,"Il mare del Belgio. Fascino malinconico ma rigenerante, lontano dal caos.",Turismo,20:50:00
+187,Cork,Ryanair,195,Il vero spirito irlandese. Tra verdi colline e pub dove nessuno conosce il tuo LinkedIn.,Turismo,15:40:00
+188,Shannon,Ryanair,200,Il cuore verde dell'Irlanda. Scogliere di Moher e vento in faccia.,Turismo,17:20:00
+189,Knock,Ryanair,205,"Nel cuore dell'Irlanda rurale. Un miracolo è quello che serve per finire il lavoro, o per scappare.",Turismo,19:00:00
+190,Cardiff,Ryanair,160,Castelli gallesi e rugby. Un po' di sano agonismo fuori dalle riunioni di budget.,Turismo,20:40:00
+191,Aberdeen,Loganair,195,Dalle nebbie dell'ufficio a quelle della Scozia. Almeno lì c'è il whisky buono.,Lavoro/Turismo,22:15:00
+192,Malaga,Ryanair,165,Costa del Sol e musei di Picasso. Un mix perfetto di cultura e relax.,Turismo,15:50:00
+193,Siviglia,Wizz Air,165,"Flamenco, sole e tapas. La gioia di vivere spagnola ti contagerà.",Turismo,17:10:00
+194,Granada,Vueling,150,L'Alhambra ti lascerà senza fiato. Molto più delle scale dell'ufficio.,Turismo,18:30:00
+195,Santiago de Compostela,Ryanair,175,"Che tu faccia il cammino o no, arrivare qui è una liberazione.",Turismo,19:50:00
+196,Vigo,Iberia,165,"Galizia autentica, pesce incredibile e isole Cies. Un segreto ben custodito.",Business/Turismo,21:10:00
+197,La Coruna,Volotea,170,"Galizia, oceano e fari. Un posto per riflettere e guardare l'orizzonte.",Turismo,22:30:00
+198,Santander,Ryanair,145,"Spagna del Nord, spiagge eleganti e surf. Un tocco di classe al tuo viaggio.",Turismo,23:45:00
+199,Faro,Ryanair,180,"Algarve, scogliere e surf. Il rumore delle onde coprirà quello della tastiera.",Turismo,15:15:00
+200,Funchal,TAP Portugal,235,Fiori e vino di Madeira. Un'isola magica dove il tempo si ferma (finalmente).,Turismo,16:40:00
+201,Terceira,Azores Airlines,285,Azzorre autentiche. Un'isola verde dove le mucche sono più dei residenti.,Turismo,18:20:00
+202,Marrakech,Royal Air Maroc,200,Dal grigio dell'ufficio ai colori del souk. Contrattare per un tappeto è meglio che con il capo.,Turismo,15:30:00
+203,Agadir,Ryanair,220,"Oceano, surf e pesce fresco. L'unico 'muro' che vedrai sarà quello d'acqua.",Turismo,17:00:00
+204,Tangeri,Air Arabia,190,Porta dell'Africa. Il fascino degli scrittori e degli artisti ti aspetta.,Turismo/Lavoro,18:30:00
+205,Fez,Ryanair,195,Perdersi nella Medina è l'unico modo per non essere trovati dai colleghi.,Turismo,20:00:00
+206,Nador,Ryanair,190,Marocco autentico e mare. Un angolo meno noto ma tutto da scoprire.,Turismo,21:30:00
+207,Monastir,Tunisair,85,"Tunisia, spiagge e storia. Un break mediterraneo a pochi chilometri da casa.",Turismo,16:15:00
+208,Djerba,Tunisair,100,Sole tunisino tutto l'anno. Il deserto è l'unico posto senza ricezione 5G.,Turismo,17:45:00
+209,Alessandria,EgyptAir,180,"Dalla biblioteca aziendale a quella d'Egitto. Un po' più di storia, un po' meno noia.",Business/Turismo,19:15:00
+210,Luxor,EgyptAir,225,"Templi e Nilo. Se gli antichi egizi hanno costruito questo, tu puoi chiudere Excel.",Turismo,20:45:00
+211,Hurghada,Air Cairo,230,Subacquea e relax. Sotto il mare non prendono nemmeno le chiamate d'emergenza.,Turismo,22:15:00
+212,Marsa Alam,Neos,240,Tartarughe marine e barriera corallina. Sott'acqua non prendono i messaggi vocali.,Turismo,23:30:00
+213,Dakar,ITA Airways,370,Il fascino del Senegal. Dal caos del centro alle spiagge dell'isola di Gorée.,Lavoro/Turismo,15:05:00
+214,Accra,ITA Airways,390,Un salto in Ghana? Il ritmo di Accra ti farà dimenticare quello del timbra-cartellini.,Lavoro/Turismo,16:20:00
+215,Lagos,ITA Airways,375,Energia nigeriana pura. Un ritmo travolgente per dimenticare la monotonia.,Lavoro,17:40:00
+216,Addis Abeba,Ethiopian Airlines,390,"Culla dell'umanità e del caffè. Quello vero, mica quello della macchinetta al piano 2.",Business/Hub,22:45:00
+217,Nairobi,ITA Airways,465,Kenya! Dal safari alla metropoli. L'unico 'leone' che temerai non sarà il tuo capo.,Turismo/Lavoro,23:15:00
+218,Antananarivo,Neos,660,"Madagascar! Se non ti trovano i lemure, non ti troverà nemmeno il Project Manager.",Turismo,23:45:00
+219,Mauritius,Alitalia,630,Un giardino nell'Oceano Indiano. Un posto dove le 'riunioni' si fanno con i pesci.,Turismo,23:55:00
+220,Male,ITA Airways,585,Maldive. Serve aggiungere altro? Atterri e dimentichi persino il tuo nome.,Turismo,22:00:00
+221,Colombo,SriLankan Airlines,615,"Sri Lanka, spezie e tè. Un viaggio spirituale per ritrovare la pazienza persa.",Turismo,21:30:00
+222,Islamabad,Pakistan Int. Airlines,470,Un viaggio insolito tra montagne e cultura. Per chi vuole staccare davvero dai soliti circuiti.,Lavoro,20:00:00
+223,Lahore,Pakistan Int. Airlines,490,Cultura e cibo pakistano. Un'esperienza sensoriale totale lontano dal monitor.,Lavoro,21:00:00
+224,Tashkent,Uzbekistan Airways,380,"Uzbekistan, sulla Via della Seta. Un viaggio leggendario lontano dalla routine.",Turismo/Business,22:30:00
+225,Almaty,Air Astana,430,"Kazakistan? Se vuoi sparire davvero e non farti trovare dal capo, è il posto giusto.",Business,23:00:00
+226,Ulaanbaatar,MIAT Mongolian,570,"Mongolia. Se vuoi essere davvero irraggiungibile, questa è la tua meta.",Turismo,23:30:00
+227,Hanoi,Vietnam Airlines,680,Caos magnetico e caffè all'uovo. Un'avventura che vale più di mille meeting.,Turismo/Business,23:45:00
+228,Taipei,China Airlines,760,"Taiwan, tra mercati notturni e grattacieli. Un'isola di energia pura.",Business,23:55:00
+229,Manila,Philippine Airlines,795,"Filippine, un caos vibrante che ti farà sentire vivo come non mai.",Lavoro,23:30:00
+230,Perth,Qantas,960,Australia Occidentale. Il punto più isolato del mondo. Perfetto no?,Intercontinentale,15:15:00
+231,Sydney,Qantas,1260,"Opera House e surf. Se vai così lontano, non possono chiederti di rientrare prima.",Intercontinentale,16:45:00
+232,Melbourne,ITA Airways,1320,La città più vivibile del mondo. Forse perché è a 24 ore di volo dal tuo ufficio?,Intercontinentale,18:15:00
+233,Auckland,Air New Zealand,1440,"Dall'altra parte del mondo. Se provano a chiamarti, avrai la scusa del fuso orario.",Intercontinentale,19:45:00
+234,San Francisco,United Airlines,750,"Ponte, nebbia e libertà. Lascia il cuore lì, ma lascia il lavoro qui.",Business/Turismo,15:10:00
+235,Los Angeles,ITA Airways,790,Hollywood ti aspetta. Recita la parte di quello che non ha mai avuto un ufficio.,Business/Turismo,15:40:00
+236,Chicago O'Hare,American Airlines,645,La città del vento. Lascia che soffi via tutte le tue responsabilità.,Business,16:10:00
+237,Dallas,American Airlines,710,Tutto è più grande in Texas. Compreso il tuo desiderio di non tornare mai più.,Business,16:40:00
+238,Atlanta,Delta Air Lines,655,Dagli uffici di Roma a quelli della Coca-Cola. Almeno lì il marketing è frizzante.,Business/Hub,17:10:00
+239,Detroit,Delta Air Lines,630,La città dei motori. Metti la quarta e sfreccia via dalla tua postazione.,Business/Hub,17:40:00
+240,Philadelphia,American Airlines,615,Corri sulle scale come Rocky. Hai appena vinto il match contro la routine!,Business,18:10:00
+241,Montreal,Air Canada,535,Un pezzo di Francia in Nord America. Poutine e sorrisi per ricaricare le pile.,Turismo/Business,18:40:00
+242,Vancouver,Air Canada,690,Tra mare e montagne canadesi. La natura ti rimetterà al mondo.,Turismo,19:10:00
+243,Città del Capo,ITA Airways,680,"Ai confini del mondo. Tra balene e pinguini, il capo sembrerà un lontano ricordo.",Turismo,21:50:00
+244,Johannesburg,ITA Airways,645,Sudafrica selvaggio. Dalla giungla di cemento alla savana vera.,Business,22:30:00
+245,Luanda,TAAG,510,"Angola, tra petrolio e spiagge. Un'avventura per cuori forti.",Lavoro,23:10:00
+246,Belo Horizonte,LATAM,675,"Brasile! Ritmo, allegria e niente notifiche push. Solo pão de queijo.",Lavoro,23:40:00
+247,Santiago del Cile,LATAM,860,Tra le Ande e l'oceano. Una capitale vibrante ai piedi delle montagne.,Business,23:55:00
+248,Lima,LATAM,825,Capitale gastronomica del mondo. Ceviche batte insalatina scondita della pausa pranzo.,Turismo,23:15:00
+249,Bogotà,Avianca,715,Altitudine e caffè colombiano. Per chi ha bisogno di una carica che Teams non può dare.,Turismo/Business,22:45:00
+250,Caracas,Conviasa,640,"Tropici e adrenalina. Un viaggio per chi non ha paura di nulla, nemmeno del licenziamento.",Lavoro,23:50:00
+251,Milano Malpensa,ITA Airways,70,"Porta per il mondo o per lo shopping. In ogni caso, sei fuori ufficio.",Business,15:30:00
+252,Milano Malpensa,ITA Airways,70,"Porta per il mondo o per lo shopping. In ogni caso, sei fuori ufficio.",Business,17:30:00
+253,Milano Malpensa,ITA Airways,70,"Porta per il mondo o per lo shopping. In ogni caso, sei fuori ufficio.",Business,19:30:00
+254,Milano Malpensa,ITA Airways,70,"Porta per il mondo o per lo shopping. In ogni caso, sei fuori ufficio.",Business,21:30:00
+255,Torino,ITA Airways,70,"Eleganza sabauda, cioccolato e cinema. Una fuga di classe sotto le Alpi.",Business,15:15:00
+256,Torino,ITA Airways,70,"Eleganza sabauda, cioccolato e cinema. Una fuga di classe sotto le Alpi.",Business,17:15:00
+257,Torino,ITA Airways,70,"Eleganza sabauda, cioccolato e cinema. Una fuga di classe sotto le Alpi.",Business,19:15:00
+258,Torino,ITA Airways,70,"Eleganza sabauda, cioccolato e cinema. Una fuga di classe sotto le Alpi.",Business,21:15:00
+259,Venezia,ITA Airways,65,"Niente auto, solo barche. Un ritmo lento per dimenticare la frenesia.",Business,15:45:00
+260,Venezia,ITA Airways,65,"Niente auto, solo barche. Un ritmo lento per dimenticare la frenesia.",Business,18:45:00
+261,Genova,ITA Airways,65,Caruggi e focaccia. Perdersi nel porto per ritrovarsi umani.,Business,16:20:00
+262,Genova,ITA Airways,65,Caruggi e focaccia. Perdersi nel porto per ritrovarsi umani.,Business,18:20:00
+263,Genova,ITA Airways,65,Caruggi e focaccia. Perdersi nel porto per ritrovarsi umani.,Business,20:20:00
+264,Trieste,ITA Airways,65,"Città di confine, caffè storici e vento. Un posto per poeti e sognatori.",Business,15:10:00
+265,Trieste,ITA Airways,65,"Città di confine, caffè storici e vento. Un posto per poeti e sognatori.",Business,18:10:00
+266,Trieste,ITA Airways,65,"Città di confine, caffè storici e vento. Un posto per poeti e sognatori.",Business,21:10:00
+267,Bologna,ITA Airways,60,"La grassa, la dotta, la rossa. Lascia le tabelle e pensa alle tagliatelle.",Business,17:00:00
+268,Bologna,ITA Airways,60,"La grassa, la dotta, la rossa. Lascia le tabelle e pensa alle tagliatelle.",Business,20:00:00
+269,Verona,ITA Airways,60,"Amore, opera e vino. Una fuga romantica con te stesso.",Business,16:35:00
+270,Verona,ITA Airways,60,"Amore, opera e vino. Una fuga romantica con te stesso.",Business,19:35:00
+271,Catania,Ryanair,85,"Arancino (col pizzo) e vista sull'Etna. Esplosivo, proprio come il tuo umore oggi.",Nazionale,16:50:00
+272,Catania,Wizz Air,85,"Arancino (col pizzo) e vista sull'Etna. Esplosivo, proprio come il tuo umore oggi.",Nazionale,18:50:00
+273,Catania,ITA Airways,85,"Arancino (col pizzo) e vista sull'Etna. Esplosivo, proprio come il tuo umore oggi.",Nazionale,20:50:00
+274,Palermo,Ryanair,75,"Caponata, cannoli e sole. A Palermo lo stress si annega nello zucchero.",Nazionale,17:40:00
+275,Palermo,Wizz Air,75,"Caponata, cannoli e sole. A Palermo lo stress si annega nello zucchero.",Nazionale,19:40:00
+276,Palermo,ITA Airways,75,"Caponata, cannoli e sole. A Palermo lo stress si annega nello zucchero.",Nazionale,21:40:00
+277,Lamezia Terme,Ryanair,70,"Calabria, mare e peperoncino. Brucia i ponti (e le scadenze) con gusto.",Nazionale,18:15:00
+278,Lamezia Terme,ITA Airways,70,"Calabria, mare e peperoncino. Brucia i ponti (e le scadenze) con gusto.",Nazionale,22:15:00
+279,Bari,Ryanair,65,Focaccia barese e lungomare. La felicità esiste e non ha bisogno di slide.,Nazionale,17:30:00
+280,Bari,ITA Airways,65,Focaccia barese e lungomare. La felicità esiste e non ha bisogno di slide.,Nazionale,20:30:00
+281,Brindisi,Ryanair,75,Porta del Salento. Un tuffo dove l'acqua è blu e il Wi-Fi è un optional.,Nazionale,18:45:00
+282,Brindisi,ITA Airways,75,Porta del Salento. Un tuffo dove l'acqua è blu e il Wi-Fi è un optional.,Nazionale,22:45:00
+283,Cagliari,Ryanair,70,Un volo sopra il Tirreno e sei nel paradiso sardo. I fenicotteri non mandano email.,Nazionale,16:15:00
+284,Cagliari,ITA Airways,70,Un volo sopra il Tirreno e sei nel paradiso sardo. I fenicotteri non mandano email.,Nazionale,19:15:00
+285,Cagliari,ITA Airways,70,Un volo sopra il Tirreno e sei nel paradiso sardo. I fenicotteri non mandano email.,Nazionale,22:15:00
+286,Alghero,AeroItalia,60,Un volo breve per il paradiso sardo. Aragosta batte tramezzino del bar 1 a 0.,Nazionale,18:30:00
+287,Olbia,ITA Airways,55,Costa Smeralda. Sei pronto a sentirti un VIP per qualche giorno?,Nazionale,17:50:00
+288,Olbia,AeroItalia,55,Costa Smeralda. Sei pronto a sentirti un VIP per qualche giorno?,Nazionale,20:50:00
+289,Reggio Calabria,ITA Airways,75,Bronzi di Riace e bergamotto. Un tuffo nella storia davanti allo Stretto.,Nazionale,18:25:00
+290,Pantelleria,ITA Airways,75,Dammusi e vento. Un'isola dura ma bellissima per chi vuole sparire davvero.,Nazionale,15:30:00
+291,Lampedusa,ITA Airways,85,Più vicini all'Africa che all'Italia. Acqua turchese e zero pensieri lavorativi.,Nazionale,16:45:00
+292,Londra Stansted,Ryanair,165,Il tempio dei voli low cost. Con 20 euro sei già in un altro stato mentale.,Low Cost,18:20:00
+293,Londra Stansted,Ryanair,165,Il tempio dei voli low cost. Con 20 euro sei già in un altro stato mentale.,Low Cost,21:45:00
+294,Parigi Beauvais,Ryanair,130,"Atterri lontano, ma la Tour Eiffel ti aspetta. Vale ogni chilometro.",Turismo,17:15:00
+295,Parigi Beauvais,Ryanair,130,"Atterri lontano, ma la Tour Eiffel ti aspetta. Vale ogni chilometro.",Turismo,20:30:00
+296,Bruxelles Charleroi,Ryanair,125,"Il gate per il risparmio. Con quello che risparmi sul volo, ci compri la libertà.",Low Cost,16:55:00
+297,Bruxelles Charleroi,Ryanair,125,"Il gate per il risparmio. Con quello che risparmi sul volo, ci compri la libertà.",Low Cost,21:10:00
+298,Budapest,Ryanair,110,Terme e Ruin Pubs. Il posto perfetto per bollire via lo stress lavorativo.,Turismo,19:25:00
+299,Cracovia,Ryanair,120,Storia e fascino polacco. E una vodka che ti farà scordare l'ultimo update di Windows.,Turismo,21:55:00
