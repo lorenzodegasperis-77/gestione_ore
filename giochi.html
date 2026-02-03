@@ -8,6 +8,12 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
+	
+	<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+	<script src="js/supabase-client.js" defer></script>
+	<script src="js/game-manager.js" defer></script>
+	
+	
     <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen font-sans">
@@ -74,9 +80,18 @@
             </div>
 
     </div>
+	
+	
+	<div class="mt-8 bg-white dark:bg-slate-900 rounded-2xl p-6 border border-slate-200 dark:border-slate-800">
+    <h3 class="font-bold mb-4 flex items-center gap-2">
+        <i data-lucide="trophy" class="text-amber-500 w-4 h-4"></i> Classifica Globale
+    </h3>
+    <div id="scoreboardContainer" class="space-y-2">
+        </div>
+</div>
+	
 </main>
 
-    <script src="js/game-manager.js"></script>
     <script>
         lucide.createIcons();
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -162,6 +177,26 @@
 			
             initDailyGame(); // Inizializza il gioco del giorno
         });
+		
+		async function mostraClassifica() {
+    const punteggi = await getTopScores('Analisi PDF');
+    const container = document.getElementById('scoreboardContainer');
+    
+    if (punteggi.length === 0) {
+        container.innerHTML = '<p class="text-xs text-slate-400">Nessun record presente.</p>';
+        return;
+    }
+
+    container.innerHTML = punteggi.map((s, i) => `
+        <div class="flex justify-between items-center p-2 bg-slate-50 rounded-lg border border-slate-100">
+            <span class="text-xs font-bold text-slate-700">${i + 1}. ${s.player}</span>
+            <span class="text-xs font-black text-indigo-600">${s.points} pt</span>
+        </div>
+    `).join('');
+}
+
+// Chiamala al caricamento della pagina
+window.onload = mostraClassifica;
     </script>
 </body>
 </html>
