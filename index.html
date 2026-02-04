@@ -63,7 +63,7 @@
 
 		<div class="grid md:grid-cols-3 gap-8 w-full max-w-6xl">
             <a href="calcolo-ore.html" class="group">
-                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-8 text-center transition-all-custom group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-indigo-500">
+                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-8 text-center transition-all-custom group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary">
                     <div class="bg-indigo-50 dark:bg-indigo-900/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i data-lucide="clock" class="w-10 h-10 text-indigo-600 dark:text-indigo-400"></i>
                     </div>
@@ -73,7 +73,7 @@
             </a>
 
             <a href="analisi-pdf.html" class="group">
-                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-8 text-center transition-all-custom group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-indigo-500">
+                <div class="h-full bg-white dark:bg-slate-900 border-2 border-primary-light dark:border-slate-800 rounded-3xl p-8 text-center transition-all-custom group-hover:-translate-y-2 group-hover:shadow-2xl group-hover:border-primary">
                     <div class="bg-red-100 dark:bg-red-900/20 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
                         <i data-lucide="file-text" class="w-10 h-10 text-red-500 dark:text-red-400"></i>
                     </div>
@@ -94,16 +94,69 @@
         </div>
 
 
+<div class="w-full max-w-6xl mt-12">
+    <a href="http://26.150.20.201/Mensa/indexNEW.php" target="_blank" class="group block">
+        <div class="relative overflow-hidden bg-white dark:bg-slate-900 border-2 border-emerald-100 dark:border-emerald-900/30 rounded-3 p-6 transition-all group-hover:shadow-lg group-hover:border-emerald-500">
+            <div class="absolute -right-6 -top-6 text-emerald-50 dark:text-emerald-900/10 transition-transform group-hover:scale-110 group-hover:-rotate-12">
+                <i data-lucide="utensils-crosses" class="w-32 h-32"></i>
+            </div>
+
+            <div class="relative flex flex-col md:flex-row items-center justify-between gap-6">
+                <div class="flex items-center gap-5">
+                    <div class="flex-shrink-0 w-14 h-14 bg-emerald-100 dark:bg-emerald-900/40 rounded-2xl flex items-center justify-center shadow-inner">
+                        <i data-lucide="utensils" class="w-7 h-7 text-emerald-600 dark:text-emerald-400"></i>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-black text-indigo-900 dark:text-indigo-300 tracking-tight">Menù della Mensa</h3>
+                        <p class="text-sm text-slate-500 dark:text-slate-400 font-medium">Scopri cosa c'è in tavola oggi e pianifica la tua pausa.</p>
+                    </div>
+                </div>
+                
+                <div class="flex items-center gap-2 px-6 py-3 bg-emerald-600 group-hover:bg-emerald-700 text-white rounded-2xl font-bold text-sm transition-colors shadow-lg shadow-emerald-200 dark:shadow-none">
+                    VAI AL MENÙ 
+                    <i data-lucide="external-link" class="w-4 h-4"></i>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>
+
+<!--
+<div id="curiosita-box" class="w-full max-w-6xl mt-8"></div>
+-->
+
+<div class="mt-6 border-t pt-4">
+    <h4 class="centered text-xs font-black text-slate-600 uppercase mb-3">Rassegna Stampa</h4>
+    <div class="flex flex-wrap gap-2">
+        <a href="https://www.ansa.it" target="_blank" class="px-3 py-1 bg-green-600 hover:bg-green-700 text-white rounded-full text-xs font-bold transition-colors">ANSA</a>
+        <a href="https://www.ilpost.it" target="_blank" class="px-3 py-1 bg-black hover:bg-gray-700 rounded-full text-xs text-white font-bold transition-colors">IL POST</a>
+        <a href="https://www.repubblica.it" target="_blank" class="px-3 py-1 bg-white hover:bg-gray-200 rounded-full text-black text-xs font-bold transition-colors">REPUBBLICA</a>
+<a href="https://news.google.it" target="_blank" class="px-3 py-1 bg-white dark:bg-slate-800 hover:bg-slate-100 dark:hover:bg-slate-700 rounded-full text-xs font-bold transition-colors shadow-sm border border-slate-200 dark:border-slate-700">
+    <span class="text-[#4285F4]">G</span><span class="text-[#EA4335]">o</span><span class="text-[#FBBC05]">o</span><span class="text-[#4285F4]">g</span><span class="text-[#34A853]">l</span><span class="text-[#EA4335]">e</span>
+    <span class="text-slate-600 dark:text-slate-300 ml-1">NEWS</span>
+</a>
+    </div>
+</div>
+
 
     <div class="flex justify-center pt-8">
       Powered by <a href="https://www.weatherapi.com/" title="Free Weather API">WeatherAPI.com</a>
     </div>
 
-    </main>
 
+
+    </main>
+<!--    
+<script src="js/daily_news.js"></script>
+-->
     <script>
         lucide.createIcons();
-		
+	window.addEventListener('load', () => {
+    updateWeather();
+    // Aggiungiamo un piccolissimo ritardo per essere sicuri che il DB sia pronto
+    setTimeout(mostraCuriosita, 100); 
+    setInterval(() => updateWeather(), 1800000);
+});
             if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
             document.documentElement.classList.add('dark');
         } else {
@@ -185,6 +238,80 @@
 		
 
         applyTheme();
+		
+		
+// Aggiungi questa chiamata dentro l'evento load esistente
+window.addEventListener('load', () => {
+    updateWeather();
+    mostraCuriosita(); // <--- AGGIUNTO QUI
+    setInterval(() => updateWeather(), 1800000);
+});
+
+let currentCuriositaIndex = 0;
+
+function mostraCuriosita() {
+    const oggi = new Date();
+    const giorno = String(oggi.getDate()).padStart(2, '0');
+    const mese = oggi.getMonth() + 1;
+    const annoCorrente = oggi.getFullYear(); // Recuperiamo l'anno attuale
+    const container = document.getElementById('curiosita-box');
+
+    if (!container) return;
+
+    const dbs = {
+        1: { nome: "Gennaio", dati: window.GENNAIO_DB || (typeof GENNAIO_DB !== 'undefined' ? GENNAIO_DB : null) },
+        2: { nome: "Febbraio", dati: window.FEBBRAIO_DB || (typeof FEBBRAIO_DB !== 'undefined' ? FEBBRAIO_DB : null) },
+        3: { nome: "Marzo", dati: window.MARZO_DB || (typeof MARZO_DB !== 'undefined' ? MARZO_DB : null) },
+        4: { nome: "Aprile", dati: window.APRILE_DB || (typeof APRILE_DB !== 'undefined' ? APRILE_DB : null) },
+        5: { nome: "Maggio", dati: window.MAGGIO_DB || (typeof MAGGIO_DB !== 'undefined' ? MAGGIO_DB : null) },
+        6: { nome: "Giugno", dati: window.GIUGNO_DB || (typeof GIUGNO_DB !== 'undefined' ? GIUGNO_DB : null) },
+        7: { nome: "Luglio", dati: window.LUGLIO_DB || (typeof LUGLIO_DB !== 'undefined' ? LUGLIO_DB : null) },
+        8: { nome: "Agosto", dati: window.AGOSTO_DB || (typeof AGOSTO_DB !== 'undefined' ? AGOSTO_DB : null) },
+        9: { nome: "Settembre", dati: window.SETTEMBRE_DB || (typeof SETTEMBRE_DB !== 'undefined' ? SETTEMBRE_DB : null) },
+        10: { nome: "Ottobre", dati: window.OTTOBRE_DB || (typeof OTTOBRE_DB !== 'undefined' ? OTTOBRE_DB : null) },
+        11: { nome: "Novembre", dati: window.NOVEMBRE_DB || (typeof NOVEMBRE_DB !== 'undefined' ? NOVEMBRE_DB : null) },
+        12: { nome: "Dicembre", dati: window.DICEMBRE_DB || (typeof DICEMBRE_DB !== 'undefined' ? DICEMBRE_DB : null) }
+    };
+
+    const meseAttuale = dbs[mese];
+
+    if (meseAttuale && meseAttuale.dati && meseAttuale.dati[giorno]) {
+        const eventi = meseAttuale.dati[giorno];
+        
+        /* LOGICA "UNA ALL'ANNO":
+           Usiamo l'operatore modulo (%) sulla lunghezza dell'array degli eventi.
+           L'indice sarà fisso per tutto l'anno solare.
+        */
+        const indiceAnno = annoCorrente % eventi.length;
+        const eventoDelGiorno = eventi[indiceAnno];
+
+        container.innerHTML = `
+            <div class="bg-white dark:bg-slate-900 border-2 border-indigo-100 dark:border-slate-800 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
+                    <div class="flex items-center gap-4">
+                        <div class="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl">
+                            <i data-lucide="sparkles" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></i>
+                        </div>
+                        <div>
+                            <h3 class="text-xl font-black text-indigo-900 dark:text-indigo-300">Accadde Oggi</h3>
+                            <p class="text-indigo-500 dark:text-indigo-400 font-bold text-xs uppercase tracking-widest">${giorno} ${meseAttuale.nome} ${annoCorrente}</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-transparent hover:border-indigo-100 dark:hover:border-indigo-500/20 transition-all">
+                    <p class="text-lg text-slate-700 dark:text-slate-200 leading-relaxed italic">
+                        "${eventoDelGiorno}"
+                    </p>
+                </div>
+                <div class="mt-4 text-right">
+                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Pillola storica dell'anno</span>
+                </div>
+            </div>
+        `;
+        lucide.createIcons();
+    }
+}
 
     </script>
 </body>

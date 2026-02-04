@@ -3,11 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-	<link rel="icon" type="image/x-icon" href="img/favicon.ico" />
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico" />
     <title>Area Relax - Gioco del Giorno</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <link rel="stylesheet" href="style.css">
+    
+    <script src="js/game-manager.js" defer></script>
+    
     <script>tailwind.config = { darkMode: 'class' }</script>
 </head>
 <body class="bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-200 min-h-screen font-sans">
@@ -16,18 +19,18 @@
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex justify-between h-16 items-center">
             <div class="flex items-center gap-8">
                 <a href="index.html" class="flex items-center gap-2 text-indigo-900 dark:text-indigo-400 font-black tracking-tighter">
-                    <i data-lucide="layout-dashboard" class="w-5 h-5 text-primary"></i> GESTIONE ORE
+                    <i data-lucide="layout-dashboard" class="w-5 h-5"></i> GESTIONE ORE
                 </a>
-<div class="hidden md:flex items-center gap-6">
-    <a href="index.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Home</a>
-    <a href="calcolo-ore.html" 	class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Calcolo Odierno</a>
-    <a href="analisi-pdf.html" 	class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Analisi PDF</a>
-    <a href="giochi.html" 		class="text-sm font-bold text-slate-500 hover:text-primary flex items-center gap-1 transition-colors">
-	<i data-lucide="gamepad-2" class="w-4 h-4"></i> Relax
-    </a>
-</div>
+                <div class="hidden md:flex items-center gap-6">
+                    <a href="index.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Home</a>
+                    <a href="calcolo-ore.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Calcolo Odierno</a>
+                    <a href="analisi-pdf.html" class="text-sm font-bold text-slate-500 hover:text-primary transition-colors">Analisi PDF</a>
+                    <a href="giochi.html" class="text-sm font-bold text-primary flex items-center gap-1 transition-colors">
+                        <i data-lucide="gamepad-2" class="w-4 h-4"></i> Relax
+                    </a>
+                </div>
             </div>
-<div class="flex items-center gap-4">
+            <div class="flex items-center gap-4">
                 <div id="nav-weather" class="hidden sm:flex items-center gap-2 border-r pr-4 border-slate-200 dark:border-slate-800">
                     <img id="nav-weather-icon" src="" class="w-8 h-8">
                     <div class="flex flex-col leading-tight">
@@ -35,132 +38,177 @@
                         <span id="nav-hum" class="text-[10px] opacity-60">Umidità: --%</span>
                     </div>
                 </div>   
-				
-            <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
-                <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5"></i>
-                <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
-            </button>
-        </div>
+                <button id="theme-toggle" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all">
+                    <i id="theme-toggle-dark-icon" data-lucide="moon" class="w-5 h-5"></i>
+                    <i id="theme-toggle-light-icon" data-lucide="sun" class="w-5 h-5 hidden"></i>
+                </button>
+            </div>
         </div>
     </nav>
-	
-        <div class="flag-container">
-            <div class="flag-green"></div>
-            <div class="flag-white"></div>
-            <div class="flag-red"></div>
-        </div>
 
+    <main class="max-w-2xl mx-auto py-8 px-4">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-tighter">Area Relax</h1>
+            <p class="text-slate-500 font-medium text-sm">Una sfida diversa ogni giorno.</p>
+        </header>
 
-<main class="max-w-2xl mx-auto py-8 px-4">
-    <header class="text-center mb-8">
-        <h1 class="text-3xl font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-tighter">Area Relax</h1>
-        <p class="text-slate-500 font-medium text-sm">Una sfida diversa ogni giorno.</p>
-    </header>
-
-    <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-indigo-500/20 shadow-2xl overflow-hidden">
-        
-        <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
-            <div>
-                <h2 id="game-title" class="font-black uppercase text-xl tracking-tight">---</h2>
-                <p id="game-instructions" class="text-indigo-200 text-xs font-bold leading-tight mt-1"></p>
+        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-indigo-500/20 shadow-2xl overflow-hidden mb-12">
+            <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
+                <div>
+                    <h2 id="game-title" class="font-black uppercase text-xl tracking-tight">Inizializzazione...</h2>
+                    <p id="game-instructions" class="text-indigo-200 text-xs font-bold leading-tight mt-1"></p>
+                </div>
+                <div class="text-right">
+                    <span class="text-[10px] font-bold uppercase opacity-70 block">Miglior Punteggio</span>
+                    <div id="game-stats" class="font-black text-2xl text-amber-300">--</div>
+                </div>
             </div>
-            <div class="text-right">
-                <span class="text-[10px] font-bold uppercase opacity-70 block">Miglior Punteggio</span>
-                <div id="game-stats" class="font-black text-2xl text-amber-300">--</div>
+            <div id="game-canvas" class="min-h-[400px] w-full relative bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 text-center">
+                <p class="text-slate-400 animate-pulse">Caricamento sfida odierna...</p>
             </div>
         </div>
 
-        <div id="game-canvas" class="min-h-[400px] w-full relative bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4">
+        <div class="w-full bg-white dark:bg-slate-900 border-2 border-indigo-100 dark:border-slate-800 rounded-3xl p-6 shadow-lg">
+            <div class="flex items-center gap-3 mb-6">
+                <i data-lucide="trophy" class="w-6 h-6 text-amber-500"></i>
+                <h3 class="text-xl font-black text-indigo-900 dark:text-indigo-300 tracking-tight">Top 10 Globale</h3>
             </div>
+            <div id="leaderboard-list" class="space-y-3">
+                <p class="text-center text-slate-400 text-sm animate-pulse italic">Sincronizzazione record...</p>
+            </div>
+        </div>
+    </main>
 
-    </div>
-</main>
-
-    <script src="js/game-manager.js"></script>
     <script>
-        lucide.createIcons();
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-            document.documentElement.classList.add('dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-        }
+        // CONFIGURAZIONE GOOGLE SHEETS
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylxFX1xo3uvQ54ktBuqN8gOp5aC9bFkyXo02-EPtWjvZcfssvBX2tmPMp-7Stf63sY/exec";
+
+        // 1. Funzione per salvare il punteggio
+// 1. Funzione aggiornata per salvare il punteggio con pop-up
+async function salvaRecord(score, gameId) {
+    const player = prompt(`Complimenti! Hai totalizzato ${score}. Inserisci il tuo nome per la classifica odierna:`);
+
+    if (!player || player.trim() === "") {
+        alert("Punteggio non registrato.");
+        return;
+    }
+
+    try {
+        // Prepariamo la data odierna in formato YYYY-MM-DD per il confronto
+        const oggi = new Date().toISOString().split('T')[0];
+
+        await fetch(SCRIPT_URL, {
+            method: 'POST',
+            mode: 'no-cors', 
+            body: JSON.stringify({ 
+                nome: player, 
+                punteggio: score, 
+                gioco: gameId,
+                data: oggi // Inviando la data rendiamo il filtro più robusto
+            })
+        });
+
+        alert("Record salvato! Vediamo se sei in Top 10...");
+        setTimeout(caricaClassifica, 1500);
+    } catch (e) {
+        console.error("Errore salvataggio:", e);
+    }
+}
+        // 2. Funzione per leggere la classifica
+async function caricaClassifica() {
+    const list = document.getElementById('leaderboard-list');
+    
+    // Recuperiamo il gioco del giorno corrente calcolato da game-manager.js
+    const today = new Date();
+    const dayIndex = today.getDate() % GAMES_REPO.length;
+    const currentGameId = GAMES_REPO[dayIndex].id;
+    const dataOggi = today.toISOString().split('T')[0];
+
+    // Aggiorna il titolo della classifica per chiarezza
+    const trophyTitle = document.querySelector('h3.text-xl');
+    if(trophyTitle) trophyTitle.innerText = `Top 10 di oggi (${GAMES_REPO[dayIndex].name})`;
+
+    try {
+        const response = await fetch(SCRIPT_URL, {
+            method: 'GET',
+            redirect: 'follow'
+        });
         
-        // Logica Dark Mode (riutilizzabile in tutte le pagine)
-        const themeToggleBtn = document.getElementById('theme-toggle');
-        const darkIcon = document.getElementById('theme-toggle-dark-icon');
-        const lightIcon = document.getElementById('theme-toggle-light-icon');
+        const data = await response.json();
+        
+        // FILTRO: Teniamo solo i record del gioco attuale E della data odierna
+        const recordsFiltrati = data
+            .filter(user => {
+                // Se lo script ritorna la data, controlliamo entrambi
+                const matchGioco = user.gioco === currentGameId;
+                const matchData = user.data ? user.data.split('T')[0] === dataOggi : true; 
+                return matchGioco && matchData;
+            })
+            // Ordiniamo per punteggio decrescente
+            .sort((a, b) => b.punteggio - a.punteggio)
+            // Prendiamo solo i primi 10
+            .slice(0, 10);
 
-        function applyTheme() {
-            if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-                document.documentElement.classList.add('dark');
-                darkIcon.classList.add('hidden');
-                lightIcon.classList.remove('hidden');
-            } else {
-                document.documentElement.classList.remove('dark');
-                darkIcon.classList.remove('hidden');
-                lightIcon.classList.add('hidden');
-            }
+        if (recordsFiltrati.length === 0) {
+            list.innerHTML = `<p class="text-center text-slate-400 text-sm py-4 italic">Nessun record per la sfida di oggi. Comincia tu!</p>`;
+            return;
         }
 
-        themeToggleBtn.addEventListener('click', function() {
-            document.documentElement.classList.toggle('dark');
-            const isDark = document.documentElement.classList.contains('dark');
-            localStorage.setItem('color-theme', isDark ? 'dark' : 'light');
+        list.innerHTML = recordsFiltrati.map((user, i) => `
+            <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-transparent hover:border-indigo-100 transition-all">
+                <div class="flex items-center gap-3">
+                    <span class="flex items-center justify-center w-6 h-6 rounded-full ${i < 3 ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'} dark:bg-indigo-900/40 dark:text-indigo-400 text-xs font-bold">${i+1}</span>
+                    <span class="font-bold text-slate-700 dark:text-slate-200">${user.nome}</span>
+                </div>
+                <span class="font-black text-indigo-600 dark:text-indigo-400">${user.punteggio}</span>
+            </div>
+        `).join('');
+    } catch (e) {
+        console.error("Errore fetch classifica:", e);
+        list.innerHTML = `<p class="text-center text-red-400 text-xs">Impossibile caricare i record odierni.</p>`;
+    }
+}
+
+        // 3. Logica Meteo e Temi
+        const WEATHER_API_KEY = "5487533995554d8fabe101832262601";
+        const CITY = "Rome";
+
+        async function updateWeather() {
+            try {
+                const response = await fetch(`https://api.weatherapi.com/v1/current.json?key=${WEATHER_API_KEY}&q=${CITY}&lang=it`);
+                const data = await response.json();
+                document.getElementById('nav-weather').classList.remove('hidden');
+                document.getElementById('nav-weather-icon').src = "https:" + data.current.condition.icon;
+                document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
+                document.getElementById('nav-hum').innerText = `Umidità: ${data.current.humidity}%`;
+            } catch (error) { console.error("Meteo error:", error); }
+        }
+
+        // Gestione Tema
+        function applyTheme() {
+            const isDark = localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches);
+            document.documentElement.classList.toggle('dark', isDark);
+            document.getElementById('theme-toggle-dark-icon').classList.toggle('hidden', isDark);
+            document.getElementById('theme-toggle-light-icon').classList.toggle('hidden', !isDark);
+        }
+
+        document.getElementById('theme-toggle').addEventListener('click', () => {
+            const newTheme = document.documentElement.classList.contains('dark') ? 'light' : 'dark';
+            localStorage.setItem('color-theme', newTheme);
             applyTheme();
         });
-		
-			const WEATHER_API_KEY = "5487533995554d8fabe101832262601";
-			const CITY = "Rome";
 
-            async function updateWeather(force = false) {
-                const cached = localStorage.getItem('weatherCache');
-                const now = Date.now();
-                
-                // Se abbiamo dati recenti (meno di 30 min) e non è richiesto il refresh forzato
-                if (!force && cached) {
-                    const weather = JSON.parse(cached);
-                    if (now - weather.timestamp < 1800000) {
-                        renderNavWeather(weather.data, weather.timestamp);
-                        return;
-                    }
-                }
-
-                try {
-                    const response = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${WEATHER_API_KEY}&q=${CITY}&days=1&aqi=no&lang=it`);
-                    const data = await response.json();
-                    const cacheEntry = { timestamp: now, data: data };
-                    localStorage.setItem('weatherCache', JSON.stringify(cacheEntry));
-                    renderNavWeather(data, now);
-                } catch (error) {
-                    console.error("Errore meteo:", error);
-                }
-            }
-
-            function renderNavWeather(data, timestamp) {
-                const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-                const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
-                
-                document.getElementById('nav-weather').classList.remove('hidden');
-                document.getElementById('nav-weather-icon').src = navIcon;
-                document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
-                
-                // Aggiornamento Umidità + Orario
-                document.getElementById('nav-hum').innerHTML = `Umidità: ${data.current.humidity}% | <span class="opacity-70">Aggiornato: ${timeStr}</span>`;
-            }
-
-            // Avvio al caricamento
-            window.addEventListener('load', () => {
-                updateWeather();
-                // Refresh automatico ogni 30 minuti se la pagina resta aperta
-                setInterval(() => updateWeather(), 1800000);
-            });
-
-        applyTheme();
-
-
+        // 4. Inizializzazione Unica all'avvio
         window.addEventListener('load', () => {
-			
-            initDailyGame(); // Inizializza il gioco del giorno
+            lucide.createIcons();
+            applyTheme();
+            updateWeather();
+            caricaClassifica();
+            
+            // Avvio del gioco (se definito in game-manager.js)
+            if (typeof initDailyGame === "function") {
+                initDailyGame();
+            }
         });
     </script>
 </body>

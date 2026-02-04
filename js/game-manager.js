@@ -21,15 +21,15 @@ const GAMES_REPO = [
 	{ 
     id: 'dungeon-numbers', 
     name: 'Dungeon dei Numeri', 
-    instructions: 'Riempi la griglia 4x4. Ogni riga, colonna e quadrato 2x2 deve contenere i numeri da 1 a 4 senza ripetizioni!',
+    instructions: 'Riempi la griglia. Ogni riga, colonna e quadrato 2x3 deve avere numeri da 1 a 6 senza ripetizioni!',
     init: startDungeonNumbers 
 }
 ];
 
 function initDailyGame() {
     const today = new Date();
-    const dayIndex = today.getDate() % GAMES_REPO.length;
-  //  const dayIndex = 3; // Per test
+  const dayIndex = today.getDate() % GAMES_REPO.length;
+  //const dayIndex = 3; // Per test
     const currentGame = GAMES_REPO[dayIndex];
 
     document.getElementById('game-title').innerText = currentGame.name;
@@ -80,6 +80,11 @@ let matchedPairs = 0;
 
 function startMemoryGame() {
     const container = document.getElementById('game-canvas');
+	hasFlippedCard = false;
+    lockBoard = false;
+    firstCard = null;
+    secondCard = null;
+    matchedPairs = 0;
     container.innerHTML = `
         <div class="flex flex-col items-center w-full">
             <div id="live-timer" class="mb-4 text-2xl font-black text-indigo-600 dark:text-indigo-400">0s</div>
@@ -259,18 +264,15 @@ function checkGhostWord() {
 
 // --- UTILITY: SALVATAGGIO ---
 function saveGameScore(gameId, newScore, msg) {
-    const best = localStorage.getItem(`best_${gameId}`) || 0;
-    let finalMsg = `${msg}\nPunteggio: ${newScore}`;
+    // 1. Mostriamo prima il messaggio di fine gioco (es: "Tempo scaduto!")
+    alert(msg);
     
-    if (newScore > best) {
-        localStorage.setItem(`best_${gameId}`, newScore);
-        finalMsg += "\nNUOVO RECORD PERSONALE! 🏆";
-    }
+    // 2. Chiamiamo la funzione che sta nell'HTML per chiedere il nome e inviare a Google
+    // Passiamo il punteggio e il nome leggibile del gioco
+    const gameName = GAMES_REPO.find(g => g.id === gameId)?.name || gameId;
     
-    setTimeout(() => {
-        alert(finalMsg);
-        initDailyGame();
-    }, 500);
+    // Questa chiamata attiva il prompt per il nome
+    salvaRecord(newScore, gameId);
 }
 
 let grid = [];
@@ -358,11 +360,12 @@ function generatePieces() {
         pieceEl.className = "p-2 bg-white/50 dark:bg-slate-800/50 rounded-lg cursor-grab active:cursor-grabbing border-2 border-slate-200 dark:border-slate-700 shadow-sm";
         pieceEl.draggable = true;
         
-        pieceEl.ondragstart = (e) => {
-            e.dataTransfer.setData("pieceData", JSON.stringify({ index: pieceIndex, elId: i }));
-            pieceEl.classList.add('opacity-50');
-        };
-        pieceEl.ondragend = () => pieceEl.classList.remove('opacity-50');
+		pieceEl.ondragstart = (e) => {
+		e.dataTransfer.setData("pieceData", JSON.stringify({ index: pieceIndex, elId: i }));
+			setTimeout(() => pieceEl.classList.add('opacity-50'), 0); // Piccolo delay per il ghost image
+		};
+		
+		pieceEl.ondragend = () => pieceEl.classList.remove('opacity-50');
 
         const preview = document.createElement('div');
         preview.className = "grid gap-1";
