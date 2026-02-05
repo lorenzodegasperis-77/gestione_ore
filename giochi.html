@@ -45,43 +45,51 @@
             </div>
         </div>
     </nav>
+	
+	        <div class="flag-container">
+            <div class="flag-green"></div>
+            <div class="flag-white"></div>
+            <div class="flag-red"></div>
+        </div>
 
-    <main class="max-w-2xl mx-auto py-8 px-4">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-tighter">Area Relax</h1>
-            <p class="text-slate-500 font-medium text-sm">Una sfida diversa ogni giorno.</p>
-        </header>
 
-        <div class="bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-indigo-500/20 shadow-2xl overflow-hidden mb-12">
+<main class="max-w-6xl mx-auto py-8 px-4"> <header class="text-center mb-8">
+        <h1 class="text-3xl font-black text-indigo-900 dark:text-indigo-300 uppercase tracking-tighter">Area Relax</h1>
+        <p class="text-slate-500 font-medium text-sm">Scegli la tua sfida e scala la classifica settimanale.</p>
+    </header>
+
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-8" id="game-menu"></div>
+
+    <div class="flex flex-col lg:flex-row gap-8 items-start">
+        
+        <div class="w-full lg:flex-1 bg-white dark:bg-slate-900 rounded-[2.5rem] border-4 border-indigo-500/20 shadow-2xl overflow-hidden">
             <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
-                <div>
-                    <h2 id="game-title" class="font-black uppercase text-xl tracking-tight">Inizializzazione...</h2>
-                    <p id="game-instructions" class="text-indigo-200 text-xs font-bold leading-tight mt-1"></p>
-                </div>
-                <div class="text-right">
-                    <span class="text-[10px] font-bold uppercase opacity-70 block">Miglior Punteggio</span>
-                    <div id="game-stats" class="font-black text-2xl text-amber-300">--</div>
-                </div>
-            </div>
-            <div id="game-canvas" class="min-h-[400px] w-full relative bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 text-center">
-                <p class="text-slate-400 animate-pulse">Caricamento sfida odierna...</p>
+    <div>
+        <h2 id="game-title" class="font-black uppercase text-xl tracking-tight">Seleziona un gioco</h2>
+        <p id="game-instructions" class="text-indigo-200 text-xs font-bold leading-tight mt-1">Scegli tra i pulsanti sopra per iniziare.</p>
+    </div>
+    </div>
+            <div id="game-canvas" class="min-h-[500px] w-full relative bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 text-center">
+                <i data-lucide="gamepad-2" class="w-16 h-16 text-slate-300 mb-4"></i>
+                <p class="text-slate-400 font-bold uppercase tracking-widest">Seleziona una sfida</p>
             </div>
         </div>
 
-        <div class="w-full bg-white dark:bg-slate-900 border-2 border-indigo-100 dark:border-slate-800 rounded-3xl p-6 shadow-lg">
+        <div class="w-full lg:w-80 bg-white dark:bg-slate-900 border-2 border-indigo-100 dark:border-slate-800 rounded-3xl p-6 shadow-lg sticky lg:top-24">
             <div class="flex items-center gap-3 mb-6">
                 <i data-lucide="trophy" class="w-6 h-6 text-amber-500"></i>
-                <h3 class="text-xl font-black text-indigo-900 dark:text-indigo-300 tracking-tight">Top 10 Globale</h3>
+                <h3 id="leaderboard-title" class="text-lg font-black text-indigo-900 dark:text-indigo-300 tracking-tight leading-none">Top Settimanale</h3>
             </div>
             <div id="leaderboard-list" class="space-y-3">
-                <p class="text-center text-slate-400 text-sm animate-pulse italic">Sincronizzazione record...</p>
+                <p class="text-center text-slate-400 text-sm italic">Seleziona un gioco...</p>
             </div>
         </div>
-    </main>
 
+    </div>
+</main>
     <script>
         // CONFIGURAZIONE GOOGLE SHEETS
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbylxFX1xo3uvQ54ktBuqN8gOp5aC9bFkyXo02-EPtWjvZcfssvBX2tmPMp-7Stf63sY/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyzfTgXyVZxvR9sO_nOFmXcXKsqJyNxavHAOpsHzMdbFUp7_LI4q7BbXDGzD9U1o3N/exec";
 
         // 1. Funzione per salvare il punteggio
 // 1. Funzione aggiornata per salvare il punteggio con pop-up
@@ -114,62 +122,75 @@ async function salvaRecord(score, gameId) {
         console.error("Errore salvataggio:", e);
     }
 }
-        // 2. Funzione per leggere la classifica
+        // Funzione per leggere la classifica
 async function caricaClassifica() {
+    if (!window.currentGameId) return;
     const list = document.getElementById('leaderboard-list');
     
-    // Recuperiamo il gioco del giorno corrente calcolato da game-manager.js
-    const today = new Date();
-    const dayIndex = today.getDate() % GAMES_REPO.length;
-    const currentGameId = GAMES_REPO[dayIndex].id;
-    const dataOggi = today.toISOString().split('T')[0];
-
-    // Aggiorna il titolo della classifica per chiarezza
-    const trophyTitle = document.querySelector('h3.text-xl');
-    if(trophyTitle) trophyTitle.innerText = `Top 10 di oggi (${GAMES_REPO[dayIndex].name})`;
+    // Calcolo data limite (1 settimana fa)
+    const unaSettimanaFa = new Date();
+    unaSettimanaFa.setDate(unaSettimanaFa.getDate() - 7);
 
     try {
-        const response = await fetch(SCRIPT_URL, {
-            method: 'GET',
-            redirect: 'follow'
-        });
-        
+        const response = await fetch(SCRIPT_URL);
         const data = await response.json();
         
-        // FILTRO: Teniamo solo i record del gioco attuale E della data odierna
         const recordsFiltrati = data
             .filter(user => {
-                // Se lo script ritorna la data, controlliamo entrambi
-                const matchGioco = user.gioco === currentGameId;
-                const matchData = user.data ? user.data.split('T')[0] === dataOggi : true; 
-                return matchGioco && matchData;
+                const dataRecord = new Date(user.timestamp || user.data);
+                return user.gioco === window.currentGameId && dataRecord >= unaSettimanaFa;
             })
-            // Ordiniamo per punteggio decrescente
             .sort((a, b) => b.punteggio - a.punteggio)
-            // Prendiamo solo i primi 10
             .slice(0, 10);
 
         if (recordsFiltrati.length === 0) {
-            list.innerHTML = `<p class="text-center text-slate-400 text-sm py-4 italic">Nessun record per la sfida di oggi. Comincia tu!</p>`;
+            list.innerHTML = `<p class="text-center text-slate-400 py-4 italic text-sm">Nessun record nell'ultima settimana.</p>`;
             return;
         }
 
-        list.innerHTML = recordsFiltrati.map((user, i) => `
-            <div class="flex items-center justify-between p-3 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-transparent hover:border-indigo-100 transition-all">
-                <div class="flex items-center gap-3">
-                    <span class="flex items-center justify-center w-6 h-6 rounded-full ${i < 3 ? 'bg-amber-100 text-amber-600' : 'bg-indigo-100 text-indigo-600'} dark:bg-indigo-900/40 dark:text-indigo-400 text-xs font-bold">${i+1}</span>
-                    <span class="font-bold text-slate-700 dark:text-slate-200">${user.nome}</span>
+list.innerHTML = recordsFiltrati.map((user, i) => {
+            // Logica per Medaglie ed estetica Podio
+            let badge = i + 1;
+            let fontSize = "text-sm";
+            let fontWeight = "font-bold";
+            let bgClass = "bg-slate-50 dark:bg-slate-800/50";
+            let emoji = "";
+
+            if (i === 0) { // PRIMO POSTO
+                badge = "🥇";
+                fontSize = "text-xl";
+                fontWeight = "font-black";
+                bgClass = "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800";
+            } else if (i === 1) { // SECONDO POSTO
+                badge = "🥈";
+                fontSize = "text-lg";
+                fontWeight = "font-extrabold";
+                bgClass = "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700";
+            } else if (i === 2) { // TERZO POSTO
+                badge = "🥉";
+                fontSize = "text-base";
+                fontWeight = "font-bold";
+                bgClass = "bg-orange-50 dark:bg-orange-900/10 border-orange-100 dark:border-orange-900/30";
+            }
+
+            return `
+                <div class="flex items-center justify-between p-4 ${bgClass} rounded-2xl border transition-all shadow-sm">
+                    <div class="flex items-center gap-4">
+                        <span class="flex items-center justify-center w-8 h-8 text-lg">${badge}</span>
+                        <span class="${fontSize} ${fontWeight} text-slate-800 dark:text-slate-100 tracking-tight">${user.nome}</span>
+                    </div>
+                    <div class="flex flex-col items-end">
+                        <span class="${fontSize} font-black text-indigo-600 dark:text-indigo-400">${user.punteggio}</span>
+                        <span class="text-[9px] uppercase opacity-50 font-bold">punti</span>
+                    </div>
                 </div>
-                <span class="font-black text-indigo-600 dark:text-indigo-400">${user.punteggio}</span>
-            </div>
-        `).join('');
+            `;
+        }).join('');
     } catch (e) {
-        console.error("Errore fetch classifica:", e);
-        list.innerHTML = `<p class="text-center text-red-400 text-xs">Impossibile caricare i record odierni.</p>`;
+        list.innerHTML = `<p class="text-center text-red-400 text-xs">Errore nel caricamento classifica.</p>`;
     }
 }
-
-        // 3. Logica Meteo e Temi
+        // Logica Meteo e Temi
         const WEATHER_API_KEY = "5487533995554d8fabe101832262601";
         const CITY = "Rome";
 

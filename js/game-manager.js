@@ -1,158 +1,160 @@
-// --- CONFIGURAZIONE GIOCHI ---
-const GAMES_REPO = [
-    { 
-        id: 'memory', 
-        name: 'Memory', 
-        instructions: 'Trova le coppie. Velocità e memoria sono tutto!',
-        init: startMemoryGame 
-    },
-    { 
-        id: 'word-guess', 
-        name: 'Parola Fantasma', 
-        instructions: 'Indovina la parola. Le lettere corrette si bloccano in posizione!',
-        init: startGhostWordGame 
-    },
-	{ 
-    id: 'blocks', 
-    name: 'Color Blocks', 
-    instructions: 'Trascina i pezzi sulla griglia. Completa righe o colonne per distruggerle!',
-    init: startBlocksGame 
-	},
-	{ 
-    id: 'dungeon-numbers', 
-    name: 'Dungeon dei Numeri', 
-    instructions: 'Riempi la griglia. Ogni riga, colonna e quadrato 2x3 deve avere numeri da 1 a 6 senza ripetizioni!',
-    init: startDungeonNumbers 
+// Gestione Selezione Libera
+function createGameMenu() {
+    const menu = document.getElementById('game-menu');
+    if (!menu) return;
+    menu.innerHTML = GAMES_REPO.map((game, index) => `
+        <button onclick="selectAndInitGame(${index})" id="btn-game-${game.id}" 
+            class="game-btn p-3 rounded-xl font-bold text-xs uppercase tracking-tighter border-2 border-slate-200 dark:border-slate-800 text-slate-500 hover:border-indigo-500 transition-all bg-white dark:bg-slate-900 shadow-sm">
+            ${game.name}
+        </button>
+    `).join('');
 }
-];
 
-function initDailyGame() {
-    const today = new Date();
-  const dayIndex = today.getDate() % GAMES_REPO.length;
-  //const dayIndex = 3; // Per test
-    const currentGame = GAMES_REPO[dayIndex];
-
-    document.getElementById('game-title').innerText = currentGame.name;
-    document.getElementById('game-instructions').innerText = currentGame.instructions;
+function selectAndInitGame(index) {
+    const game = GAMES_REPO[index];
+    window.currentGameId = game.id;
     
-    const record = localStorage.getItem(`best_${currentGame.id}`) || "--";
-    document.getElementById('game-stats').innerText = record === "--" ? "--" : record + " pt";
+    // Gestione estetica bottoni
+// 1. Reset: riportiamo tutti i bottoni allo stato "inattivo"
+document.querySelectorAll('.game-btn').forEach(b => {
+    // Rimuoviamo le classi dello stato "attivo"
+    b.classList.remove('bg-indigo-600', 'bg-indigo-500', 'text-white', 'border-indigo-600', 'border-indigo-700');
+    
+    // AGGIUNGIAMO esplicitamente le classi dello stato "inattivo"
+    b.classList.add('text-slate-500', 'bg-white', 'dark:bg-slate-900', 'border-slate-200', 'dark:border-slate-800');
+});
 
-    // Invece di far partire il gioco, mostriamo il pulsante di Start
+// 2. Attivazione: impostiamo lo stato "attivo" sul bottone cliccato
+const activeBtn = document.getElementById(`btn-game-${game.id}`);
+if (activeBtn) {
+    // FONDAMENTALE: Rimuoviamo le classi che mandano in conflitto il colore
+    activeBtn.classList.remove('text-slate-500', 'bg-white', 'dark:bg-slate-900', 'border-slate-200', 'dark:border-slate-800');
+    
+    // Ora aggiungiamo quelle dell'evidenziazione
+    activeBtn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
+}
+
+    // Aggiorna testi interfaccia
+    document.getElementById('game-title').innerText = game.name;
+    document.getElementById('game-instructions').innerText = game.instructions;
+	const lbTitle = document.getElementById('leaderboard-title');
+	if (lbTitle) {
+		lbTitle.innerHTML = `Campioni della settimana: <span class="text-indigo-500">${game.name}</span>`;
+	}
+	const record = localStorage.getItem(`best_${game.id}`) || "--";
+	const statsEl = document.getElementById('game-stats');
+	if (statsEl) {
+		statsEl.innerText = record === "--" ? "--" : record + " pt";
+	}
+    // Mostra schermata di avvio
     const container = document.getElementById('game-canvas');
     container.innerHTML = `
-        <div class="flex flex-col items-center justify-center p-12 text-center border-4 border-dashed border-slate-200 dark:border-slate-800 rounded-[3rem] bg-white/50 dark:bg-slate-900/50">
-            <div class="w-20 h-20 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-6">
-                <i data-lucide="play" class="w-10 h-10 text-indigo-600 fill-current"></i>
+        <div class="flex flex-col items-center justify-center p-8 text-center bg-white dark:bg-slate-900 rounded-[2rem] shadow-inner">
+             <div class="w-16 h-16 bg-indigo-100 dark:bg-indigo-900/30 rounded-full flex items-center justify-center mb-4">
+                <i data-lucide="play" class="w-8 h-8 text-indigo-600 fill-current"></i>
             </div>
-            <h2 class="text-2xl font-black text-slate-800 dark:text-white mb-2">Sei pronto?</h2>
-            <p class="text-slate-500 dark:text-slate-400 mb-8 max-w-[250px]">Il timer partirà non appena clicchi il tasto qui sotto.</p>
-            
-            <button onclick="GAMES_REPO[${dayIndex}].init()" class="group relative px-10 py-5 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-2xl transition-all shadow-xl hover:scale-105 active:scale-95 overflow-hidden">
-                <span class="relative z-10 flex items-center gap-3 text-lg">
-                    INIZIA A GIOCARE <i data-lucide="arrow-right" class="w-5 h-5"></i>
-                </span>
-                <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-1000"></div>
+            <button onclick="GAMES_REPO[${index}].init()" class="px-8 py-4 bg-indigo-600 hover:bg-indigo-700 text-white font-black rounded-xl transition-all shadow-lg active:scale-95">
+                AVVIA SFIDA
             </button>
         </div>`;
     
-    lucide.createIcons();
+    if (window.lucide) lucide.createIcons();
+    if (typeof caricaClassifica === "function") caricaClassifica();
 }
+
+function initDailyGame() {
+    createGameMenu();
+    selectAndInitGame(0); 
+}
+
+
+
+// --- CONFIGURAZIONE GIOCHI ---
+const GAMES_REPO = [
+    { id: 'memory', name: 'Memory', instructions: 'Trova le coppie. Velocità e memoria sono tutto!', init: startMemoryGame },
+    { id: 'word-guess', name: 'Parola Fantasma', instructions: 'Indovina la parola. Le lettere corrette si bloccano!', init: startGhostWordGame },
+    { id: 'blocks', name: 'Color Blocks', instructions: 'Completa righe o colonne per distruggerle!', init: startBlocksGame },
+    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Sudoku 6x6: riempi la griglia correttamente!', init: startDungeonNumbers }
+];
+
 // --- UTILITY: TIMER ---
-let startTime;
-let timerInterval;
+let startTime, timerInterval;
 
 function startGlobalTimer() {
     startTime = Date.now();
     timerInterval = setInterval(() => {
         const delta = Date.now() - startTime;
-        const seconds = Math.floor(delta / 1000);
         const display = document.getElementById('live-timer');
-        if (display) display.innerText = seconds + "s";
+        if (display) display.innerText = Math.floor(delta / 1000) + "s";
     }, 1000);
 }
 
-// --- LOGICA GIOCO: MEMORY (Semplificata UI) ---
-let hasFlippedCard = false;
-let lockBoard = false;
-let firstCard, secondCard;
-let matchedPairs = 0;
+function saveGameScore(gameId, newScore, msg) {
+    alert(msg);
+    const oldRecord = localStorage.getItem(`best_${gameId}`) || 0;
+    if (newScore > oldRecord) {
+        localStorage.setItem(`best_${gameId}`, newScore);
+        const stats = document.getElementById('game-stats');
+        if (stats) stats.innerText = newScore + " pt";
+    }
+    if (typeof salvaRecord === "function") salvaRecord(newScore, gameId);
+}
+// --- GIOCO: MEMORY  ---
+let hasFlippedCard, lockBoard, firstCard, secondCard, matchedPairs;
 
 function startMemoryGame() {
     const container = document.getElementById('game-canvas');
-	hasFlippedCard = false;
-    lockBoard = false;
-    firstCard = null;
-    secondCard = null;
-    matchedPairs = 0;
-    container.innerHTML = `
-        <div class="flex flex-col items-center w-full">
-            <div id="live-timer" class="mb-4 text-2xl font-black text-indigo-600 dark:text-indigo-400">0s</div>
-            <div id="memory-grid" class="grid grid-cols-4 gap-2 sm:gap-4 p-4 w-full max-w-md mx-auto"></div>
-        </div>`;
+    [hasFlippedCard, lockBoard, matchedPairs] = [false, false, 0];
+    container.innerHTML = `<div class="flex flex-col items-center w-full"><div id="live-timer" class="mb-4 text-2xl font-black text-indigo-600">0s</div><div id="memory-grid" class="grid grid-cols-4 gap-2 p-4 w-full max-w-md mx-auto"></div></div>`;
     
     const icons = ['zap', 'heart', 'anchor', 'coffee', 'sun', 'moon', 'star', 'cloud'];
     const deck = [...icons, ...icons].sort(() => Math.random() - 0.5);
-
-    matchedPairs = 0;
+    
     clearInterval(timerInterval);
     startGlobalTimer();
 
     const grid = document.getElementById('memory-grid');
-    deck.forEach((icon) => {
+    deck.forEach(icon => {
         const card = document.createElement('div');
-        card.className = "group h-20 sm:h-24 w-full perspective-1000 cursor-pointer";
-        card.innerHTML = `
-            <div class="relative w-full h-full transition-transform duration-500 transform-style-3d shadow-xl rounded-xl card-inner" data-icon="${icon}">
-                <div class="absolute w-full h-full backface-hidden bg-indigo-600 rounded-xl border-2 border-white/20 flex items-center justify-center text-white">
-                    <i data-lucide="help-circle"></i>
-                </div>
-                <div class="absolute w-full h-full backface-hidden bg-white dark:bg-slate-800 rotate-y-180 rounded-xl border-4 border-indigo-500 flex items-center justify-center">
-                    <i data-lucide="${icon}" class="text-indigo-600"></i>
-                </div>
-            </div>`;
-        card.addEventListener('click', flipMemoryCard);
+        card.className = "group h-20 sm:h-24 w-full cursor-pointer";
+        card.innerHTML = `<div class="relative w-full h-full transition-transform duration-500 transform-style-3d card-inner" data-icon="${icon}">
+            <div class="absolute w-full h-full backface-hidden bg-indigo-600 rounded-xl flex items-center justify-center text-white"><i data-lucide="help-circle"></i></div>
+            <div class="absolute w-full h-full backface-hidden bg-white dark:bg-slate-800 rotate-y-180 rounded-xl border-4 border-indigo-500 flex items-center justify-center"><i data-lucide="${icon}" class="text-indigo-600"></i></div>
+        </div>`;
+        card.onclick = flipMemoryCard;
         grid.appendChild(card);
     });
     lucide.createIcons();
 }
 
 function flipMemoryCard() {
-    const innerCard = this.querySelector('.card-inner');
-    if (lockBoard || innerCard.classList.contains('rotate-y-180') || innerCard === firstCard) return;
-    innerCard.classList.add('rotate-y-180');
-    if (!hasFlippedCard) { hasFlippedCard = true; firstCard = innerCard; return; }
-    secondCard = innerCard;
-    checkMemoryMatch();
-}
-
-function checkMemoryMatch() {
-    const isMatch = firstCard.dataset.icon === secondCard.dataset.icon;
-    if (isMatch) {
+    const inner = this.querySelector('.card-inner');
+    if (lockBoard || inner.classList.contains('rotate-y-180') || inner === firstCard) return;
+    inner.classList.add('rotate-y-180');
+    if (!hasFlippedCard) { hasFlippedCard = true; firstCard = inner; return; }
+    secondCard = inner;
+    lockBoard = true;
+    if (firstCard.dataset.icon === secondCard.dataset.icon) {
         matchedPairs++;
-        [firstCard, secondCard].forEach(c => c.querySelector('.bg-white').classList.add('bg-emerald-50', 'border-emerald-500'));
         if (matchedPairs === 8) endMemoryGame();
-        resetBoard();
+        [hasFlippedCard, lockBoard] = [false, false];
     } else {
-        lockBoard = true;
         setTimeout(() => {
             firstCard.classList.remove('rotate-y-180');
             secondCard.classList.remove('rotate-y-180');
-            resetBoard();
+            [hasFlippedCard, lockBoard] = [false, false];
         }, 1000);
     }
 }
 
-function resetBoard() { [hasFlippedCard, lockBoard] = [false, false]; [firstCard, secondCard] = [null, null]; }
-
 function endMemoryGame() {
     clearInterval(timerInterval);
-    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-    const score = Math.max(100, 1000 - (timeTaken * 10)); // Formula punti Memory
-    saveGameScore('memory', score, `Completato in ${timeTaken}s!`);
+    const time = Math.floor((Date.now() - startTime) / 1000);
+    saveGameScore('memory', Math.max(100, 1000 - (time * 10)), `Finito in ${time}s!`);
 }
 
-// --- GIOCO: PAROLA FANTASMA (UI Compatta) ---
+
+// --- GIOCO: PAROLA FANTASMA ---
 const WORDS_DB = [
     "STRADA", "CUCINA", "LAVORO", "COMPUTER", "PIZZA", "UFFICIO", "DOMANI", "ESTATE", "VIAGGIO", 
     "PERSONALE", "TESTING", "VERIFICARE", "PROGETTO", "SINTESI", "BATTERIA", "TELEFONO", "LIBRO",
@@ -170,15 +172,10 @@ let guessedLetters = [];
 let wordAttempts = 0;
 
 function startGhostWordGame() {
-	const today = new Date(); // <--- MANCAVA QUESTA RIGA
-	// Calcola il giorno dell'anno (0-364)
-	const start = new Date(today.getFullYear(), 0, 0);
-	const diff = today - start;
-	const oneDay = 1000 * 60 * 60 * 24;
-	const dayOfYear = Math.floor(diff / oneDay);
-
-	// Usa il giorno dell'anno per scegliere la parola
-	secretWord = WORDS_DB[dayOfYear % WORDS_DB.length].toUpperCase();    guessedLetters = Array(secretWord.length).fill("_");
+    const randomIndex = Math.floor(Math.random() * WORDS_DB.length);
+    secretWord = WORDS_DB[randomIndex].toUpperCase();
+    
+    guessedLetters = Array(secretWord.length).fill("_");
     wordAttempts = 0;
     
     clearInterval(timerInterval);
@@ -262,18 +259,8 @@ function checkGhostWord() {
     }
 }
 
-// --- UTILITY: SALVATAGGIO ---
-function saveGameScore(gameId, newScore, msg) {
-    // 1. Mostriamo prima il messaggio di fine gioco (es: "Tempo scaduto!")
-    alert(msg);
-    
-    // 2. Chiamiamo la funzione che sta nell'HTML per chiedere il nome e inviare a Google
-    // Passiamo il punteggio e il nome leggibile del gioco
-    const gameName = GAMES_REPO.find(g => g.id === gameId)?.name || gameId;
-    
-    // Questa chiamata attiva il prompt per il nome
-    salvaRecord(newScore, gameId);
-}
+
+// GIOCO BLOCCHI
 
 let grid = [];
 let pieces = [];
@@ -486,15 +473,17 @@ function createBubbles(el) {
     }
 }
 
+// SUDOKU 6x6
 let sudokuSolution = [];
 let sudokuInitial = [];
 
 function startDungeonNumbers() {
     const container = document.getElementById('game-canvas');
+    // Aumentiamo la max-width per far stare la griglia 6x6
     container.innerHTML = `
-        <div class="flex flex-col items-center gap-6 w-full max-w-sm mx-auto">
+        <div class="flex flex-col items-center gap-6 w-full max-w-md mx-auto">
             <div id="live-timer" class="text-2xl font-black text-indigo-600 dark:text-indigo-400">0s</div>
-            <div id="sudoku-grid" class="grid grid-cols-4 gap-2 p-2 bg-slate-200 dark:bg-slate-800 rounded-2xl shadow-inner border-4 border-slate-300 dark:border-slate-700">
+            <div id="sudoku-grid" class="grid grid-cols-6 gap-1 p-2 bg-slate-200 dark:bg-slate-800 rounded-2xl shadow-inner border-4 border-slate-300 dark:border-slate-700">
             </div>
             <div class="flex gap-2 w-full">
                 <button onclick="checkSudoku()" class="flex-1 py-4 bg-emerald-600 hover:bg-emerald-700 text-white font-black rounded-xl shadow-lg transition-all active:scale-95">
@@ -504,32 +493,34 @@ function startDungeonNumbers() {
         </div>
     `;
 
-    generateSudoku();
-    renderSudoku();
+    generateSudoku6x6();
+    renderSudoku6x6();
     clearInterval(timerInterval);
     startGlobalTimer();
 }
 
-function generateSudoku() {
-    // Usiamo una generazione deterministica sicura per il 4x4
-    // Uno schema base che funziona sempre:
+function generateSudoku6x6() {
+    // Schema base per un 6x6 con blocchi 2x3
+    // Spostamento riga per riga: 0, 3, 1, 4, 2, 5 (per mantenere l'unicità nei blocchi)
     const base = [
-        [1, 2, 3, 4],
-        [3, 4, 1, 2],
-        [2, 1, 4, 3],
-        [4, 3, 2, 1]
+        [1, 2, 3, 4, 5, 6],
+        [4, 5, 6, 1, 2, 3],
+        [2, 3, 1, 5, 6, 4],
+        [5, 6, 4, 2, 3, 1],
+        [3, 1, 2, 6, 4, 5],
+        [6, 4, 5, 3, 1, 2]
     ];
     
-    // Per variare, rimescoliamo i numeri (es. tutti gli 1 diventano 3, etc.)
-    const mapping = [1, 2, 3, 4].sort(() => Math.random() - 0.5);
+    // Rimescoliamo i numeri per rendere ogni partita diversa
+    const mapping = [1, 2, 3, 4, 5, 6].sort(() => Math.random() - 0.5);
     sudokuSolution = base.map(row => row.map(val => mapping[val - 1]));
     
-    // Creiamo il puzzle nascondendo i numeri
+    // Creiamo il puzzle nascondendo i numeri (circa il 50% delle celle)
     sudokuInitial = sudokuSolution.map(row => [...row]);
     let hidden = 0;
-    while (hidden < 10) { // Nascondiamo 10 numeri per una sfida media
-        let r = Math.floor(Math.random() * 4);
-        let c = Math.floor(Math.random() * 4);
+    while (hidden < 18) { 
+        let r = Math.floor(Math.random() * 6);
+        let c = Math.floor(Math.random() * 6);
         if (sudokuInitial[r][c] !== null) {
             sudokuInitial[r][c] = null;
             hidden++;
@@ -537,36 +528,41 @@ function generateSudoku() {
     }
 }
 
-function renderSudoku() {
+function renderSudoku6x6() {
     const gridEl = document.getElementById('sudoku-grid');
     gridEl.innerHTML = '';
 
-    for (let r = 0; r < 4; r++) {
-        for (let c = 0; c < 4; c++) {
+    for (let r = 0; r < 6; r++) {
+        for (let c = 0; c < 6; c++) {
             const val = sudokuInitial[r][c];
             const cell = document.createElement('div');
             
-            // Stile per i bordi dei quadranti 2x2
-            const borderClasses = `${c === 1 ? 'border-r-4 border-slate-400' : ''} ${r === 1 ? 'border-b-4 border-slate-400' : ''}`;
+            // LOGICA BORDI 2x3: 
+            // - Bordo destro ogni 3 colonne (c=2)
+            // - Bordo inferiore ogni 2 righe (r=1, r=3)
+            const hasRightBorder = (c === 2);
+            const hasBottomBorder = (r === 1 || r === 3);
+            
+            const borderClasses = `
+                ${hasRightBorder ? 'border-r-4 border-slate-400 dark:border-slate-600' : 'border-r border-slate-300 dark:border-slate-700'} 
+                ${hasBottomBorder ? 'border-b-4 border-slate-400 dark:border-slate-600' : 'border-b border-slate-300 dark:border-slate-700'}
+            `;
             
             if (val !== null) {
-                // Cella precompilata (fissa)
-                cell.className = `w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-400 font-black text-2xl rounded-lg ${borderClasses}`;
+                cell.className = `w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-slate-100 dark:bg-slate-900 text-slate-400 font-black text-xl ${borderClasses}`;
                 cell.innerText = val;
             } else {
-                // Cella input per l'utente
-                cell.className = `w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-black text-2xl rounded-lg shadow-sm ${borderClasses}`;
+                cell.className = `w-12 h-12 sm:w-14 sm:h-14 flex items-center justify-center bg-white dark:bg-slate-700 text-indigo-600 dark:text-indigo-400 font-black text-xl shadow-sm ${borderClasses}`;
                 const input = document.createElement('input');
                 input.type = 'number';
-                input.min = 1;
-                input.max = 4;
-                input.className = 'w-full h-full bg-transparent text-center outline-none focus:ring-2 ring-indigo-500 rounded-lg';
+                input.className = 'w-full h-full bg-transparent text-center outline-none focus:bg-indigo-50 dark:focus:bg-indigo-900/20 transition-colors';
                 input.dataset.r = r;
                 input.dataset.c = c;
-                // Impedisce l'inserimento di più di un numero o numeri errati
+                
                 input.oninput = (e) => {
-                    if (e.target.value > 4) e.target.value = 4;
-                    if (e.target.value < 1) e.target.value = '';
+                    let v = e.target.value;
+                    if (v > 6) e.target.value = 6;
+                    if (v < 1) e.target.value = '';
                 };
                 cell.appendChild(input);
             }
@@ -580,40 +576,37 @@ function checkSudoku() {
     const currentGrid = sudokuInitial.map(row => [...row]);
     let isComplete = true;
 
-    // 1. Popoliamo la griglia corrente con i valori inseriti
     inputs.forEach(input => {
         const r = parseInt(input.dataset.r);
         const c = parseInt(input.dataset.c);
         const val = parseInt(input.value);
         if (!val) isComplete = false;
         currentGrid[r][c] = val || 0;
-        // Reset classi errore
         input.parentElement.classList.remove('bg-red-100', 'dark:bg-red-900/30');
     });
 
     if (!isComplete) {
-        alert("Ops! Hai lasciato qualche cella vuota.");
+        alert("La griglia non è completa!");
         return;
     }
 
-    // 2. Validazione Logica Reale (non solo confronto con la soluzione)
     let hasErrors = false;
 
-    for (let i = 0; i < 4; i++) {
-        for (let j = 0; j < 4; j++) {
+    for (let i = 0; i < 6; i++) {
+        for (let j = 0; j < 6; j++) {
             const val = currentGrid[i][j];
             let error = false;
 
-            // Controlla riga
+            // Righe e Colonne
             if (currentGrid[i].filter(v => v === val).length > 1) error = true;
-            // Controlla colonna
             if (currentGrid.map(row => row[j]).filter(v => v === val).length > 1) error = true;
-            // Controlla quadrante 2x2
+
+            // Quadrante 2x3 (2 righe, 3 colonne)
             const startR = Math.floor(i / 2) * 2;
-            const startC = Math.floor(j / 2) * 2;
+            const startC = Math.floor(j / 3) * 3;
             let countInBox = 0;
             for (let r = startR; r < startR + 2; r++) {
-                for (let c = startC; c < startC + 2; c++) {
+                for (let c = startC; c < startC + 3; c++) {
                     if (currentGrid[r][c] === val) countInBox++;
                 }
             }
@@ -630,9 +623,9 @@ function checkSudoku() {
     if (!hasErrors) {
         clearInterval(timerInterval);
         const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-        const score = Math.max(100, 2000 - (timeTaken * 15));
-        saveGameScore('dungeon-numbers', score, `PERFETTO!\nGriglia risolta correttamente in ${timeTaken}s.`);
+        const score = Math.max(100, 3000 - (timeTaken * 10));
+        saveGameScore('dungeon-numbers', score, `SUDOKU COMPLETATO!\nTempo: ${timeTaken}s`);
     } else {
-        alert("C'è un errore di logica! Controlla le celle evidenziate in rosso.");
+        alert("Ci sono errori nella griglia. Le celle errate sono evidenziate.");
     }
 }
