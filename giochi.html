@@ -89,7 +89,7 @@
 </main>
     <script>
         // CONFIGURAZIONE GOOGLE SHEETS
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwyzfTgXyVZxvR9sO_nOFmXcXKsqJyNxavHAOpsHzMdbFUp7_LI4q7BbXDGzD9U1o3N/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxFrDUqJuJOMsb9_9qfccGul2WHSQo9V--Pi1OieXtD5v_VsuJktDsC1wCeJ3A0XuH5/exec";
 
         // 1. Funzione per salvare il punteggio
 // 1. Funzione aggiornata per salvare il punteggio con pop-up
@@ -126,10 +126,13 @@ async function salvaRecord(score, gameId) {
 async function caricaClassifica() {
     if (!window.currentGameId) return;
     const list = document.getElementById('leaderboard-list');
+    const oraAttuale = new Date();
+    const giornoSettimana = oraAttuale.getDay(); 
+    const diffALunedi = giornoSettimana === 0 ? 6 : giornoSettimana - 1;
     
-    // Calcolo data limite (1 settimana fa)
-    const unaSettimanaFa = new Date();
-    unaSettimanaFa.setDate(unaSettimanaFa.getDate() - 7);
+    const inizioSettimana = new Date(oraAttuale);
+    inizioSettimana.setDate(oraAttuale.getDate() - diffALunedi);
+    inizioSettimana.setHours(0, 0, 0, 0); 
 
     try {
         const response = await fetch(SCRIPT_URL);
@@ -138,59 +141,40 @@ async function caricaClassifica() {
         const recordsFiltrati = data
             .filter(user => {
                 const dataRecord = new Date(user.timestamp || user.data);
-                return user.gioco === window.currentGameId && dataRecord >= unaSettimanaFa;
+                return user.gioco === window.currentGameId && dataRecord >= inizioSettimana;
             })
             .sort((a, b) => b.punteggio - a.punteggio)
             .slice(0, 10);
 
         if (recordsFiltrati.length === 0) {
-            list.innerHTML = `<p class="text-center text-slate-400 py-4 italic text-sm">Nessun record nell'ultima settimana.</p>`;
+            list.innerHTML = `<p class="text-center text-slate-400 py-4 italic text-sm">Nessun record recente.</p>`;
             return;
         }
 
-list.innerHTML = recordsFiltrati.map((user, i) => {
-            // Logica per Medaglie ed estetica Podio
+        list.innerHTML = recordsFiltrati.map((user, i) => {
             let badge = i + 1;
-            let fontSize = "text-sm";
-            let fontWeight = "font-bold";
-            let bgClass = "bg-slate-50 dark:bg-slate-800/50";
-            let emoji = "";
+            let fontSize = "text-sm", fontWeight = "font-bold", bgClass = "bg-slate-50 dark:bg-slate-800/50";
 
-            if (i === 0) { // PRIMO POSTO
-                badge = "🥇";
-                fontSize = "text-xl";
-                fontWeight = "font-black";
-                bgClass = "bg-amber-50 dark:bg-amber-900/20 border-amber-200 dark:border-amber-800";
-            } else if (i === 1) { // SECONDO POSTO
-                badge = "🥈";
-                fontSize = "text-lg";
-                fontWeight = "font-extrabold";
-                bgClass = "bg-slate-100 dark:bg-slate-800 border-slate-200 dark:border-slate-700";
-            } else if (i === 2) { // TERZO POSTO
-                badge = "🥉";
-                fontSize = "text-base";
-                fontWeight = "font-bold";
-                bgClass = "bg-orange-50 dark:bg-orange-900/10 border-orange-100 dark:border-orange-900/30";
-            }
+            if (i === 0) { badge = "🥇"; fontSize = "text-xl"; fontWeight = "font-black"; bgClass = "bg-amber-50 dark:bg-amber-900/20 border-amber-200"; }
+            else if (i === 1) { badge = "🥈"; fontSize = "text-lg"; fontWeight = "font-extrabold"; bgClass = "bg-slate-100 dark:bg-slate-800 border-slate-200"; }
+            else if (i === 2) { badge = "🥉"; fontSize = "text-base"; fontWeight = "font-bold"; bgClass = "bg-orange-50 dark:bg-orange-900/10 border-orange-100"; }
 
             return `
                 <div class="flex items-center justify-between p-4 ${bgClass} rounded-2xl border transition-all shadow-sm">
                     <div class="flex items-center gap-4">
                         <span class="flex items-center justify-center w-8 h-8 text-lg">${badge}</span>
-                        <span class="${fontSize} ${fontWeight} text-slate-800 dark:text-slate-100 tracking-tight">${user.nome}</span>
+                        <span class="${fontSize} ${fontWeight} text-slate-800 dark:text-slate-100">${user.nome}</span>
                     </div>
                     <div class="flex flex-col items-end">
                         <span class="${fontSize} font-black text-indigo-600 dark:text-indigo-400">${user.punteggio}</span>
-                        <span class="text-[9px] uppercase opacity-50 font-bold">punti</span>
                     </div>
-                </div>
-            `;
+                </div>`;
         }).join('');
     } catch (e) {
-        list.innerHTML = `<p class="text-center text-red-400 text-xs">Errore nel caricamento classifica.</p>`;
+        console.error("Errore classifica:", e);
+        list.innerHTML = `<p class="text-center text-red-400 text-xs">Errore nel caricamento.</p>`;
     }
-}
-        // Logica Meteo e Temi
+}        // Logica Meteo e Temi
         const WEATHER_API_KEY = "5487533995554d8fabe101832262601";
         const CITY = "Rome";
 
