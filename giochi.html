@@ -44,13 +44,14 @@
                 </button>
             </div>
         </div>
-    </nav>
-	
-	        <div class="flag-container">
+			        <div class="flag-container">
             <div class="flag-green"></div>
             <div class="flag-white"></div>
             <div class="flag-red"></div>
         </div>
+    </nav>
+	
+
 
 
 <main class="max-w-6xl mx-auto py-8 px-4"> <header class="text-center mb-8">
@@ -66,7 +67,7 @@
             <div class="bg-indigo-600 p-6 text-white flex justify-between items-center">
     <div>
         <h2 id="game-title" class="font-black uppercase text-xl tracking-tight">Seleziona un gioco</h2>
-        <p id="game-instructions" class="text-indigo-200 text-xs font-bold leading-tight mt-1">Scegli tra i pulsanti sopra per iniziare.</p>
+        <p id="game-instructions" class="text-indigo-200 italic leading-tight mt-1">Scegli tra i pulsanti sopra per iniziare.</p>
     </div>
     </div>
             <div id="game-canvas" class="min-h-[500px] w-full relative bg-slate-50 dark:bg-slate-950 flex flex-col items-center justify-center p-4 text-center">
@@ -94,11 +95,19 @@
         // 1. Funzione per salvare il punteggio
 // 1. Funzione aggiornata per salvare il punteggio con pop-up
 async function salvaRecord(score, gameId) {
+	const MAX_CARATTERI = 15;
     const player = prompt(`Complimenti! Hai totalizzato ${score}. Inserisci il tuo nome per la classifica odierna:`);
 
     if (!player || player.trim() === "") {
         alert("Punteggio non registrato.");
         return;
+    }
+
+	// CONTROLLO LUNGHEZZA
+    if (player.length > MAX_CARATTERI) {
+        alert(`Il nome è troppo lungo! Usa massimo ${MAX_CARATTERI} caratteri.`);
+        // Rilanciamo la funzione per far inserire di nuovo il nome
+        return salvaRecord(score, gameId); 
     }
 
     try {

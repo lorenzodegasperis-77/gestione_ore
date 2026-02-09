@@ -45,13 +45,13 @@
             </button>
         </div>
         </div>
-    </nav>
-
-        <div class="flag-container">
+		        <div class="flag-container">
             <div class="flag-green"></div>
             <div class="flag-white"></div>
             <div class="flag-red"></div>
         </div>
+    </nav>
+
 
     <main class="max-w-4xl mx-auto py-12 px-6">
         <header class="mb-8">
@@ -59,29 +59,51 @@
             <p id="currentDate" class="text-slate-500 dark:text-slate-400 capitalize font-medium"></p>
         </header>
 
-        <div class="grid md:grid-cols-2 gap-6 mb-8">
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                <div class="bg-primary p-4 text-white font-bold flex items-center gap-2">
-                    <i data-lucide="clock" class="w-5 h-5"></i> Orario Ingresso
-                </div>
-                <div class="p-8">
-                    <input type="time" id="entryInput" class="w-full text-3xl font-bold bg-slate-50 dark:bg-slate-800 border-2 border-slate-200 dark:border-slate-700 rounded-xl p-4 text-center text-indigo-900 dark:text-white outline-none focus:border-primary transition-all">
-                </div>
-            </div>
+<div class="grid md:grid-cols-2 gap-8 mb-8 items-start">
+<div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden">
+    <div class="bg-indigo-500/80 p-4 text-white font-bold flex items-center gap-2">
+        <i data-lucide="clock" class="w-5 h-5"></i> 
+        <span class="uppercase text-sm tracking-wide">Orario Ingresso</span>
+    </div>
 
-            <div class="bg-white dark:bg-slate-900 rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden">
-                <div class="bg-emerald-500 p-4 text-white font-bold flex items-center gap-2 dark:bg-emerald-700">
-                    <i data-lucide="log-out" class="w-5 h-5"></i> Uscita Prevista
-                </div>
-                <div class="p-8 text-center">
-                    <div id="calculatedExit" class="text-6xl font-black text-emerald-500 dark:text-emerald-600">--:--</div>
-                </div>
-            </div>
-		</div>
+    <div class="p-6 flex flex-col gap-4">
+        <div class="relative flex items-center">
+            <input type="time" id="entryInput" 
+                class="w-full text-4xl font-black bg-slate-50 dark:bg-slate-800 border-2 border-slate-100 dark:border-slate-700 rounded-2xl p-5 text-center text-indigo-900 dark:text-white outline-none focus:border-indigo-500 transition-all shadow-inner">
+        </div>
+
+<div class="flex flex-col gap-1">
+    <div class="flex items-center justify-between bg-slate-50 dark:bg-slate-800/50 p-1.5 pr-4 rounded-2xl border-2 border-red-600 shadow-sm">
+        <div class="bg-red-700 text-white px-4 py-2 rounded-xl font-black uppercase text-[10px] tracking-tight shrink-0 shadow-sm min-w-[100px] text-center">
+            Flessibilità
+        </div>
+        <div class="flex items-center justify-end flex-1 gap-1">
+            <input type="time" id="flessibilita" name="flessibilita" value="00:00"
+                class="w-28 text-2xl font-black text-red-500 bg-transparent border-none p-0 text-right outline-none focus:ring-0">
+        </div>
+    </div>
+    <p class="text-[10px] text-red-500 font-bold px-2 italic text-right">Massimo 1 ora consentita</p>
+</div>
+    </div>
+</div>
+
+    <div class="bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden h-full">
+        <div class="bg-emerald-500 p-4 text-white font-bold flex items-center gap-2">
+            <i data-lucide="log-out" class="w-5 h-5"></i> 
+            <span class="uppercase text-sm tracking-wide">Uscita Prevista</span>
+        </div>
+        <div class="p-10 text-center flex items-center justify-center min-h-[10px]">
+            <div id="calculatedExit" class="text-6xl font-black text-emerald-500 tracking-tighter">--:--</div>
+        </div>
+			<div class= "italic text-center text-orange-400 dark:text-white">
+			<h3> NB: Il testo è arancione se è <br> stata inserita flessibilità.</h3>
+			</div>
+    </div>
+</div>
 			
     <div id="countdownCard" class="hidden bg-white dark:bg-slate-900 rounded-3xl border-2 border-indigo-100 dark:border-indigo-900/50 p-10 text-center shadow-xl">
         <p class="text-primary font-black uppercase tracking-[0.2em] mb-4 text-sm">Sei libero tra:</p>
-        <div id="timeRemaining" class="text-7xl px-8:text-9xl font-black text-indigo-900 dark:text-white tabular-nums tracking-tighter">00:00:00</div>
+        <div id="timeRemaining" class="text-6xl px-8:text-9xl font-black text-indigo-900 dark:text-white tabular-nums tracking-tighter">00:00:00</div>
         <br>
 			<div id="weatherAlert" class="bg-slate-50 dark:bg-slate-800/50 rounded-[2rem] p-8 border border-slate-100 dark:border-slate-700">
 				<div class="flex flex-col items-center gap-2">
@@ -178,7 +200,6 @@
 <script>
 
     lucide.createIcons();
-
     // ------------------ DARK MODE ------------------
     if (localStorage.getItem('color-theme') === 'dark'
       || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
@@ -232,23 +253,82 @@ const CITY = 'Rome';
 let targetTime = null;
 
 // Funzione centralizzata per aggiornare tutto (Ingresso -> Uscita -> Meteo)
-async function aggiornaTutto(valoreIngresso) {
+async function aggiornaTutto() {
+    const entryInput = document.getElementById('entryInput');
+    const flexInput = document.getElementById('flessibilita');
+    
+    const valoreIngresso = entryInput.value;
+    const valoreFlessibilita = flexInput.value || "00:00";
+    
     if (!valoreIngresso) return;
+
+    // --- CONTROLLO BLOCCO FLESSIBILITÀ (MAX 1 ORA) ---
+    const [hFlexCheck, mFlexCheck] = valoreFlessibilita.split(':').map(Number);
+    if (hFlexCheck > 1 || (hFlexCheck === 1 && mFlexCheck > 0)) {
+        alert("⚠️ ATTENZIONE: La flessibilità massima consentita è di 1 ora. Inserisci nuovamente l'orario.");
+        flexInput.value = "00:00"; // Reset visivo
+        localStorage.setItem('flexTime', "00:00");
+        aggiornaTutto(); // Riesegue il calcolo con 00:00
+        return;
+    }
     
+    // Salviamo le preferenze
     localStorage.setItem('entryTime', valoreIngresso);
+    localStorage.setItem('flexTime', valoreFlessibilita);
     
-    const [h, m] = valoreIngresso.split(':').map(Number);
+    // 1. Convertiamo l'ingresso in minuti totali
+    const [hEntry, mEntry] = valoreIngresso.split(':').map(Number);
+    
+    // 2. Convertiamo la flessibilità in minuti totali
+    const totalFlexMinutes = (hFlexCheck * 60) + mFlexCheck;
+    
+    // 3. Calcolo: Ingresso + 7h 42m (462 min) - Flessibilità
+    const workDayMinutes = (7 * 60) + 42;
+    const finalMinutes = (hEntry * 60) + mEntry + workDayMinutes - totalFlexMinutes;
+    
+    // 4. Creiamo l'oggetto Date per l'uscita
     const date = new Date();
-    date.setHours(h, m + (7 * 60 + 42), 0);
+    date.setHours(Math.floor(finalMinutes / 60));
+    date.setMinutes(finalMinutes % 60);
+    date.setSeconds(0);
     targetTime = date;
 
-    const exitStr = date.getHours().toString().padStart(2, '0') + ":" + date.getMinutes().toString().padStart(2, '0');
+    // 5. Formattiamo la stringa per la UI
+    const exitStr = date.getHours().toString().padStart(2, '0') + ":" + 
+                    date.getMinutes().toString().padStart(2, '0');
+    
     document.getElementById('calculatedExit').innerText = exitStr;
     document.getElementById('countdownCard').classList.remove('hidden');
     
+    // Colora l'uscita in rosso se c'è flessibilità
+    const exitEl = document.getElementById('calculatedExit');
+    if (totalFlexMinutes > 0) {
+        exitEl.classList.replace('text-emerald-500', 'text-orange-400');
+    } else {
+        exitEl.classList.replace('text-orange-400', 'text-emerald-500');
+    }
+    
+    // Aggiorniamo il meteo
     await checkWeather(exitStr);
 }
 
+// Modifica al caricamento della pagina (window.load)
+window.addEventListener('load', () => {
+    lucide.createIcons();
+    const savedEntry = localStorage.getItem('entryTime');
+    const savedFlex = localStorage.getItem('flexTime');
+    
+    if (savedFlex) {
+        document.getElementById('flessibilita').value = savedFlex;
+    }
+    
+    if (savedEntry) {
+        document.getElementById('entryInput').value = savedEntry;
+        aggiornaTutto();
+    } else {
+        checkWeather(); 
+    }
+});
 // NUOVA FUNZIONE: Gestisce la Cache e la Navigazione
 async function checkWeather(exitHourStr) {
     const cached = localStorage.getItem('weatherCache');
@@ -364,9 +444,13 @@ async function checkWeather(exitHourStr) {
     }
 
 // --- EVENT LISTENERS & INIZIALIZZAZIONE ---
-    document.getElementById('entryInput').addEventListener('change', (e) => {
-        aggiornaTutto(e.target.value);
-    });
+	document.getElementById('entryInput').addEventListener('change', (e) => {
+		aggiornaTutto();
+	});
+	
+	document.getElementById('flessibilita').addEventListener('input', () => {
+    aggiornaTutto();
+	});
 
     setInterval(() => {
         if (!targetTime) return;
