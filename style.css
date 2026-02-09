@@ -131,6 +131,11 @@
 .block-type-2 { background-color: #10b981; } /* Smeraldo */
 .block-type-3 { background-color: #f59e0b; } /* Ambra */
 .block-type-4 { background-color: #8b5cf6; } /* Viola */
+.block-type-5 { background-color: #EA0000; } /* Rosso */
+.block-type-6 { background-color: #FF00FF; } /* Magenta */
+.block-type-7 { background-color: #00CCFF; } /* Turchese */
+
+
 
 @keyframes bubble-pop {
     0% { transform: translate(0, 0) scale(1); opacity: 1; }
@@ -147,3 +152,7 @@
     animation: bubble-pop 0.6s ease-out forwards;
 }
 
+#chess-board span {
+    pointer-events: none; /* Impedisce che le scritte disturbino il click/drag */
+    opacity: 0.9;
+}
