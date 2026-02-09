@@ -14,23 +14,15 @@ function selectAndInitGame(index) {
     const game = GAMES_REPO[index];
     window.currentGameId = game.id;
     
-    // Gestione estetica bottoni
-// 1. Reset: riportiamo tutti i bottoni allo stato "inattivo"
 document.querySelectorAll('.game-btn').forEach(b => {
-    // Rimuoviamo le classi dello stato "attivo"
     b.classList.remove('bg-indigo-600', 'bg-indigo-500', 'text-white', 'border-indigo-600', 'border-indigo-700');
     
-    // AGGIUNGIAMO esplicitamente le classi dello stato "inattivo"
     b.classList.add('text-slate-500', 'bg-white', 'dark:bg-slate-900', 'border-slate-200', 'dark:border-slate-800');
 });
 
-// 2. Attivazione: impostiamo lo stato "attivo" sul bottone cliccato
 const activeBtn = document.getElementById(`btn-game-${game.id}`);
 if (activeBtn) {
-    // FONDAMENTALE: Rimuoviamo le classi che mandano in conflitto il colore
     activeBtn.classList.remove('text-slate-500', 'bg-white', 'dark:bg-slate-900', 'border-slate-200', 'dark:border-slate-800');
-    
-    // Ora aggiungiamo quelle dell'evidenziazione
     activeBtn.classList.add('bg-indigo-600', 'text-white', 'border-indigo-600');
 }
 
@@ -71,10 +63,12 @@ function initDailyGame() {
 
 // --- CONFIGURAZIONE GIOCHI ---
 const GAMES_REPO = [
-    { id: 'memory', name: 'Memory', instructions: 'Trova le coppie. Velocità e memoria sono tutto!', init: startMemoryGame },
-    { id: 'word-guess', name: 'Parola Fantasma', instructions: 'Indovina la parola. Le lettere corrette si bloccano!', init: startGhostWordGame },
-    { id: 'blocks', name: 'Color Blocks', instructions: 'Completa righe o colonne per distruggerle!', init: startBlocksGame },
-    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Sudoku 6x6: riempi la griglia correttamente!', init: startDungeonNumbers }
+    { id: 'memory', name: 'Memory', instructions: 'Una sfida per la mente: scopri le tessere e trova tutte le coppie. In questa sfida la rapidità fa la differenza tra un principiante e un vero campione.', init: startMemoryGame },
+    { id: 'word-guess', name: 'Parola Fantasma', instructions: 'Una sfida di intuito: digita le parole per tentare di indovinare la parola segreta. Trova la soluzione, ma attento a non sbagliare. Devi essere veloce e preciso.', init: startGhostWordGame },
+    { id: 'blocks', name: 'Color Blocks', instructions: 'Trascina i blocchi colorati sulla griglia per riempire righe o colonne e farle esplodere. Pianifica le tue mosse per distruggere più linee contemporaneamente e sfruttare i bonus combo.', init: startBlocksGame },
+    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Entra nel dungeon della logica con questo Sudoku 6x6. Riempi ogni cella cosicché ogni riga, colonna e settore 2x3 abbia numeri da 1 a 6 senza ripetizioni nel più breve tempo possibile.', init: startDungeonNumbers },
+	{ id: 'chess-puzzle', name: 'Scacco matto', instructions: 'Sfida il tuo intuito tattico! Risolvi puzzle scacchistici trovando la mossa vincente: matto in uno o guadagno di materiale decisivo. Attento però gli errori costano caro!', init: startChessGame }
+
 ];
 
 // --- UTILITY: TIMER ---
@@ -90,16 +84,21 @@ function startGlobalTimer() {
 }
 
 function saveGameScore(gameId, newScore, msg) {
+    // Arrotondiamo sempre il punteggio per pulizia
+    const finalScore = Math.round(newScore);
     alert(msg);
+    
     const oldRecord = localStorage.getItem(`best_${gameId}`) || 0;
-    if (newScore > oldRecord) {
-        localStorage.setItem(`best_${gameId}`, newScore);
+    if (finalScore > oldRecord) {
+        localStorage.setItem(`best_${gameId}`, finalScore);
         const stats = document.getElementById('game-stats');
-        if (stats) stats.innerText = newScore + " pt";
+        if (stats) stats.innerText = finalScore + " pt";
     }
-    if (typeof salvaRecord === "function") salvaRecord(newScore, gameId);
+    if (typeof salvaRecord === "function") salvaRecord(finalScore, gameId);
 }
+
 // --- GIOCO: MEMORY  ---
+
 let hasFlippedCard, lockBoard, firstCard, secondCard, matchedPairs;
 
 function startMemoryGame() {
@@ -134,12 +133,30 @@ function flipMemoryCard() {
     if (!hasFlippedCard) { hasFlippedCard = true; firstCard = inner; return; }
     secondCard = inner;
     lockBoard = true;
+
     if (firstCard.dataset.icon === secondCard.dataset.icon) {
+        // --- LOGICA COPPIA TROVATA ---
         matchedPairs++;
+        
+        // Selezioniamo il retro della carta (quello con l'icona) per entrambe
+        const front1 = firstCard.querySelector('.rotate-y-180');
+        const front2 = secondCard.querySelector('.rotate-y-180');
+        
+        // Cambiamo il bordo in verde e l'icona in verde
+        [front1, front2].forEach(el => {
+            el.classList.remove('border-indigo-500'); // Rimuoviamo il blu
+            el.classList.add('border-emerald-500', 'bg-emerald-50', 'dark:bg-emerald-900/20'); // Bordo e sfondo verde
+            
+            const icon = el.querySelector('i');
+            if (icon) {
+                icon.classList.remove('text-indigo-600');
+                icon.classList.add('text-emerald-600'); // Icona verde
+            }
+        });
+
         if (matchedPairs === 8) endMemoryGame();
         [hasFlippedCard, lockBoard] = [false, false];
-    } else {
-        setTimeout(() => {
+    } else {        setTimeout(() => {
             firstCard.classList.remove('rotate-y-180');
             secondCard.classList.remove('rotate-y-180');
             [hasFlippedCard, lockBoard] = [false, false];
@@ -149,8 +166,11 @@ function flipMemoryCard() {
 
 function endMemoryGame() {
     clearInterval(timerInterval);
-    const time = Math.floor((Date.now() - startTime) / 1000);
-    saveGameScore('memory', Math.max(100, 1000 - (time * 10)), `Finito in ${time}s!`);
+	const time = Math.floor((Date.now() - startTime) / 1000);
+    // Formula: 2000 base - 25 punti per ogni secondo.
+    // Esempio: 40s = 1000pt | 60s = 500pt
+    const score = Math.max(100, 2000 - (time * 25));
+    saveGameScore('memory', score, `Ottima memoria! Finito in ${time}s.`);
 }
 
 
@@ -170,6 +190,8 @@ const WORDS_DB = [
 let secretWord = "";
 let guessedLetters = [];
 let wordAttempts = 0;
+let hintCount = 0; // Contatore indizi
+let historyWords = []; // Cronologia parole inserite
 
 function startGhostWordGame() {
     const randomIndex = Math.floor(Math.random() * WORDS_DB.length);
@@ -177,30 +199,44 @@ function startGhostWordGame() {
     
     guessedLetters = Array(secretWord.length).fill("_");
     wordAttempts = 0;
+	hintCount = 0;
+	historyWords =[];
     
     clearInterval(timerInterval);
     startGlobalTimer();
 
-    const container = document.getElementById('game-canvas');
+const container = document.getElementById('game-canvas');
     container.innerHTML = `
-        <div class="flex flex-col items-center w-full max-w-md p-4 gap-6">
+        <div class="flex flex-col items-center w-full max-w-md p-4 gap-4">
             <div id="live-timer" class="text-xl font-bold text-indigo-500">0s</div>
             
             <div id="word-display" class="flex gap-1 sm:gap-2 justify-center w-full overflow-hidden py-4">
                 ${renderGhostWord()}
             </div>
             
-            <div class="w-full space-y-4">
+            <div class="w-full space-y-3">
                 <input type="text" id="word-input" autocomplete="off" placeholder="Scrivi parola..." 
                     class="w-full p-4 rounded-2xl border-2 border-slate-200 dark:border-slate-800 dark:bg-slate-900 outline-none focus:border-indigo-500 uppercase font-black text-center text-2xl tracking-tighter shadow-inner">
                 
-                <button onclick="checkGhostWord()" class="w-full py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black shadow-lg transition-all active:scale-95">
-                    TENTA LA PAROLA
-                </button>
+                <div class="flex gap-2">
+                    <button onclick="checkGhostWord()" class="flex-[2] py-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-2xl font-black shadow-lg transition-all active:scale-95">
+                        TENTA
+                    </button>
+                    <button onclick="getGhostHint()" class="flex-1 py-4 bg-amber-500 hover:bg-amber-600 text-white rounded-2xl font-black shadow-lg transition-all active:scale-95 text-xs">
+                        INDIZIO
+                    </button>
+                </div>
             </div>
 
-            <div id="word-feedback" class="text-xs font-black text-slate-400 uppercase tracking-widest">
-                Tentativi: 0
+            <div class="w-full flex justify-between items-center px-2">
+                <div id="word-feedback" class="text-xs font-black text-slate-400 uppercase tracking-widest">
+                    Errori: 0
+                </div>
+                <div class="text-[10px] font-bold text-amber-600 uppercase">Indizi: <span id="hint-display">0</span></div>
+            </div>
+
+            <div id="word-history" class="w-full bg-slate-50 dark:bg-slate-800/50 rounded-xl p-3 min-h-[60px] flex flex-wrap gap-2 items-start content-start border border-dashed border-slate-200 dark:border-slate-700">
+                <span class="text-[10px] text-slate-400 w-full uppercase font-bold mb-1">Cronologia:</span>
             </div>
         </div>`;
     
@@ -215,7 +251,6 @@ function startGhostWordGame() {
 }
 
 function renderGhostWord() {
-    // Calcoliamo una larghezza dinamica per non farle andare a capo
     const boxSize = secretWord.length > 8 ? 'w-8 h-10 sm:w-10 sm:h-14' : 'w-10 h-14 sm:w-12 sm:h-16';
     const fontSize = secretWord.length > 8 ? 'text-lg sm:text-2xl' : 'text-2xl sm:text-3xl';
 
@@ -230,64 +265,114 @@ function checkGhostWord() {
     const attempt = input.value.trim().toUpperCase();
     if (!attempt) return;
     
-    wordAttempts++;
-    document.getElementById('word-feedback').innerText = `Tentativi: ${wordAttempts}`;
+    // Aggiungi alla cronologia visiva
+    updateHistory(attempt);
 
     let foundSomething = false;
     for (let i = 0; i < secretWord.length; i++) {
+        // Se la lettera inserita è corretta nella posizione esatta
         if (attempt[i] === secretWord[i] && guessedLetters[i] === "_") {
             guessedLetters[i] = secretWord[i];
             foundSomething = true;
         }
     }
 
-    document.getElementById('word-display').innerHTML = renderGhostWord();
-    input.value = "";
-
-    // Feedback visivo se non si trova nulla
+    // NUOVA LOGICA ERRORE: 
+    // Conta come errore (tentativo speso) solo se non è stata indovinata NEMMENO UNA lettera
     if (!foundSomething) {
+        wordAttempts++;
+        document.getElementById('word-feedback').innerText = `Errori: ${wordAttempts}`;
         input.classList.add('animate-pulse', 'border-red-400');
         setTimeout(() => input.classList.remove('animate-pulse', 'border-red-400'), 500);
     }
 
-    if (!guessedLetters.includes("_")) {
-        clearInterval(timerInterval);
-        const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-        // Calcolo Punteggio: 1000 base, -2 per secondo, -20 per tentativo
-        const score = Math.max(50, (1000 - (timeTaken * 2)) - (wordAttempts * 20));
-        saveGameScore('word-guess', score, `Indovinata! "${secretWord}"\nIn ${wordAttempts} tentativi e ${timeTaken} secondi.`);
+    document.getElementById('word-display').innerHTML = renderGhostWord();
+    input.value = "";
+
+    if (!guessedLetters.includes("_")) endGameGhost();
+}
+
+function getGhostHint() {
+    // Trova gli indici delle lettere ancora nascoste
+    let hiddenIndices = [];
+    guessedLetters.forEach((l, i) => { if (l === "_") hiddenIndices.push(i); });
+
+    if (hiddenIndices.length > 0) {
+        hintCount++;
+        document.getElementById('hint-display').innerText = hintCount;
+        
+        const randomIndex = hiddenIndices[Math.floor(Math.random() * hiddenIndices.length)];
+        guessedLetters[randomIndex] = secretWord[randomIndex];
+        
+        document.getElementById('word-display').innerHTML = renderGhostWord();
+        
+        if (!guessedLetters.includes("_")) endGameGhost();
     }
 }
 
+function updateHistory(word) {
+    const historyContainer = document.getElementById('word-history');
+    const badge = document.createElement('span');
+    badge.className = "px-2 py-1 bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 rounded text-[10px] font-bold text-slate-500 uppercase animate-in fade-in zoom-in duration-300";
+    badge.innerText = word;
+    historyContainer.appendChild(badge);
+}
+
+function endGameGhost() {
+    clearInterval(timerInterval);
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+    
+    // CALCOLO PUNTEGGIO:
+    // 2000 base
+    // -10pt per ogni secondo
+    // -50pt per ogni ERRORE (parola senza lettere azzeccate)
+    // -250pt per ogni INDIZIO usato
+    const timeMalus = timeTaken * 10;
+    const errorMalus = wordAttempts * 50;
+    const hintMalus = hintCount * 250;
+    
+    const score = Math.max(100, 2000 - timeMalus - errorMalus - hintMalus);
+    
+    saveGameScore('word-guess', score, `Parola: "${secretWord}"\nErrori: ${wordAttempts} | Indizi: ${hintCount} | Tempo: ${timeTaken}s`);
+}
 
 // GIOCO BLOCCHI
 
 let grid = [];
-let pieces = [];
 let gameTimer;
-let timeLeft = 60;
+let timeLeft = 120;
 let currentScore = 0;
+let selectedPieceData = null;
+
 
 const PIECES_TYPES = [
-    { shape: [[1,1],[1,1]], color: 'block-type-0' },
-    { shape: [[1,1,1]],     color: 'block-type-1' },
-    { shape: [[1],[1],[1]], color: 'block-type-2' },
-    { shape: [[1,0],[1,1]], color: 'block-type-3' },
-    { shape: [[1]],          color: 'block-type-4' }
+    { id: 0, shape: [[1,1],[1,1]], color: 'block-type-0', weight: 1}, // cubo
+    { id: 1, shape: [[1,1,1]],     color: 'block-type-1', weight: 1.2}, // barra
+    { id: 2, shape: [[1],[1],[1]], color: 'block-type-2', weight: 1.2}, // barra verticale
+    { id: 3, shape: [[1,0],[1,1]], color: 'block-type-3', weight: 1}, // L
+    { id: 4, shape: [[1]],          color: 'block-type-4', weight: 1}, // punto
+    { id: 5, shape: [[1,1,0],[0,1,1]],          color: 'block-type-5', weight: 1}, // Z
+    { id: 6, shape: [[0,1,1],[1,1,0]],          color: 'block-type-6', weight: 1}, // S (N)
+    { id: 7, shape: [[1,1,1],[0,1,0]],          color: 'block-type-7', weight: 1}, // T
+    { id: 8, shape: [[1,0],[1,1],[1,0]],          color: 'block-type-7', weight: 1}, // I-
+    { id: 9, shape: [[0,1,0],[1,1,1]],          color: 'block-type-7', weight: 1}, // _|_
+    { id: 10, shape: [[1,1,1],[0,1,0]],          color: 'block-type-7', weight: 1}, // T
+
 ];
 
 function startBlocksGame() {
-    timeLeft = 60;
+    timeLeft = 120;
     currentScore = 0;
+    selectedPieceData = null;
     const container = document.getElementById('game-canvas');
     container.innerHTML = `
         <div class="flex flex-col items-center gap-4 w-full">
             <div class="flex justify-between w-full max-w-md px-2">
-                <div id="blocks-timer" class="text-2xl font-black text-red-500">1:00</div>
+                <div id="blocks-timer" class="text-2xl font-black text-red-500">2:00</div>
                 <div id="blocks-score" class="text-2xl font-black text-indigo-600">0</div>
             </div>
             <div id="grid-container" class="grid grid-cols-8 gap-1 p-2 bg-slate-200 dark:bg-slate-800 rounded-xl shadow-inner border-4 border-slate-300 dark:border-slate-700"></div>
-            <div id="pieces-container" class="flex gap-4 h-24 items-center justify-center mt-4"></div>
+            <div id="pieces-container" class="flex gap-4 h-32 items-center justify-center mt-4"></div>
         </div>
     `;
 
@@ -302,34 +387,43 @@ function startCountdown() {
         timeLeft--;
         const mins = Math.floor(timeLeft / 60);
         const secs = timeLeft % 60;
-        document.getElementById('blocks-timer').innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
+        const display = document.getElementById('blocks-timer');
+        if (display) display.innerText = `${mins}:${secs.toString().padStart(2, '0')}`;
         
         if (timeLeft <= 0) {
-            clearInterval(gameTimer);
-            saveGameScore('blocks', currentScore, `TEMPO SCADUTO!\nPunteggio finale: ${currentScore}`);
+            endGame("TEMPO SCADUTO!");
         }
     }, 1000);
+}
+
+// Funzione per scegliere un pezzo con pesi (probabilità)
+function getWeightedRandomPiece() {
+    const totalWeight = PIECES_TYPES.reduce((acc, p) => acc + p.weight, 0);
+    let random = Math.random() * totalWeight;
+    for (const piece of PIECES_TYPES) {
+        if (random < piece.weight) return piece;
+        random -= piece.weight;
+    }
+    return PIECES_TYPES[0];
 }
 
 function initBlocksGrid() {
     const gridEl = document.getElementById('grid-container');
     grid = Array(8).fill().map(() => Array(8).fill(0));
+    gridEl.innerHTML = '';
     
     for (let r = 0; r < 8; r++) {
         for (let c = 0; c < 8; c++) {
             const cell = document.createElement('div');
-            cell.className = "w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-900 rounded-sm";
-            cell.dataset.r = r;
-            cell.dataset.c = c;
+            // Aggiungiamo ID univoco per rintracciarla facilmente
+            cell.id = `cell-${r}-${c}`;
+            cell.className = "w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-900 rounded-sm cursor-pointer transition-colors";
             
-            // Eventi Drop
-            cell.ondragover = (e) => e.preventDefault();
-            cell.ondrop = (e) => {
-                e.preventDefault();
-                const pieceData = JSON.parse(e.dataTransfer.getData("pieceData"));
-                placePiece(parseInt(cell.dataset.r), parseInt(cell.dataset.c), pieceData);
+            cell.onclick = () => {
+                if (selectedPieceData) {
+                    attemptPlacePiece(r, c);
+                }
             };
-            
             gridEl.appendChild(cell);
         }
     }
@@ -340,135 +434,179 @@ function generatePieces() {
     container.innerHTML = '';
     
     for (let i = 0; i < 3; i++) {
-        const pieceIndex = Math.floor(Math.random() * PIECES_TYPES.length);
-        const piece = PIECES_TYPES[pieceIndex];
-        
-        const pieceEl = document.createElement('div');
-        pieceEl.className = "p-2 bg-white/50 dark:bg-slate-800/50 rounded-lg cursor-grab active:cursor-grabbing border-2 border-slate-200 dark:border-slate-700 shadow-sm";
-        pieceEl.draggable = true;
-        
-		pieceEl.ondragstart = (e) => {
-		e.dataTransfer.setData("pieceData", JSON.stringify({ index: pieceIndex, elId: i }));
-			setTimeout(() => pieceEl.classList.add('opacity-50'), 0); // Piccolo delay per il ghost image
-		};
-		
-		pieceEl.ondragend = () => pieceEl.classList.remove('opacity-50');
+		const piece = getWeightedRandomPiece();
 
+        const pieceWrapper = document.createElement('div');
+        pieceWrapper.id = `piece-wrapper-${i}`;
+		pieceWrapper.dataset.pieceJson = JSON.stringify(piece);
+        pieceWrapper.className = "p-2 bg-white dark:bg-slate-700 rounded-lg cursor-pointer border-2 border-transparent shadow-sm hover:bg-indigo-50 dark:hover:bg-slate-600 transition-all";
+        
+        // Creazione anteprima visiva
         const preview = document.createElement('div');
         preview.className = "grid gap-1";
         preview.style.gridTemplateColumns = `repeat(${piece.shape[0].length}, minmax(0, 1fr))`;
         
         piece.shape.forEach(row => {
-            row.forEach(cell => {
+            row.forEach(cellValue => {
                 const block = document.createElement('div');
-                block.className = `w-4 h-4 ${cell ? piece.color : 'bg-transparent'} rounded-sm`;
+                block.className = `w-4 h-4 ${cellValue ? piece.color : 'bg-transparent'} rounded-sm`;
                 preview.appendChild(block);
             });
         });
 
-        pieceEl.appendChild(preview);
-        pieceEl.id = `piece-candidate-${i}`;
-        container.appendChild(pieceEl);
+        pieceWrapper.onclick = () => {
+            document.querySelectorAll('[id^="piece-wrapper-"]').forEach(el => el.classList.remove('border-indigo-500', 'ring-2', 'ring-indigo-500'));
+            pieceWrapper.classList.add('border-indigo-500', 'ring-2', 'ring-indigo-500');
+            selectedPieceData = { id: i, shape: piece.shape, color: piece.color };
+        };
+
+        pieceWrapper.appendChild(preview);
+        container.appendChild(pieceWrapper);
+    }
+	checkGameOver();
+}
+
+function checkGameOver() {
+    const availableWrappers = [...document.querySelectorAll('[id^="piece-wrapper-"]')].filter(el => el.style.visibility !== 'hidden');
+    
+    if (availableWrappers.length === 0) return; // Se non ci sono pezzi, non è game over (devono essere generati)
+
+    const hasPossibleMove = availableWrappers.some(wrapper => {
+        const piece = JSON.parse(wrapper.dataset.pieceJson);
+        return canPieceFit(piece.shape);
+    });
+
+    if (!hasPossibleMove) {
+        endGame("NESSUNA MOSSA POSSIBILE!");
     }
 }
 
-function placePiece(r, c, data) {
-    const piece = PIECES_TYPES[data.index];
-    const shape = piece.shape;
+function canPieceFit(shape) {
+    for (let r = 0; r <= 8 - shape.length; r++) {
+        for (let c = 0; c <= 8 - shape[0].length; c++) {
+            let canPlace = true;
+            for (let i = 0; i < shape.length; i++) {
+                for (let j = 0; j < shape[i].length; j++) {
+                    if (shape[i][j] && grid[r + i][c + j] === 1) {
+                        canPlace = false;
+                        break;
+                    }
+                }
+                if (!canPlace) break;
+            }
+            if (canPlace) return true;
+        }
+    }
+    return false;
+}
 
-    // Validazione
+function attemptPlacePiece(r, c) {
+    const shape = selectedPieceData.shape;
+
     for (let i = 0; i < shape.length; i++) {
         for (let j = 0; j < shape[i].length; j++) {
             if (shape[i][j]) {
-                if (r + i >= 8 || c + j >= 8 || grid[r + i][c + j]) return;
+                if (r + i >= 8 || c + j >= 8 || grid[r + i][c + j] === 1) {
+                    return; // Non si può posizionare
+                }
             }
         }
     }
 
-    // Posizionamento
     for (let i = 0; i < shape.length; i++) {
         for (let j = 0; j < shape[i].length; j++) {
             if (shape[i][j]) {
                 grid[r + i][c + j] = 1;
-                const cell = document.querySelector(`[data-r="${r+i}"][data-c="${c+j}"]`);
-                cell.className = `w-8 h-8 sm:w-10 sm:h-10 rounded-sm ${piece.color}`;
+                const cell = document.getElementById(`cell-${r + i}-${c + j}`);
+                cell.className = `w-8 h-8 sm:w-10 sm:h-10 rounded-sm ${selectedPieceData.color} shadow-inner`;
             }
         }
     }
 
-    // Rimuovi pezzo usato
-    const usedEl = document.getElementById(`piece-candidate-${data.elId}`);
-    if (usedEl) usedEl.remove();
+    const usedWrapper = document.getElementById(`piece-wrapper-${selectedPieceData.id}`);
+    usedWrapper.style.visibility = 'hidden';
+    usedWrapper.onclick = null; // Disabilita click
+    
+    selectedPieceData = null;
 
     checkLines();
 
-    if (document.getElementById('pieces-container').children.length === 0) {
+    const visiblePieces = [...document.querySelectorAll('[id^="piece-wrapper-"]')].filter(el => el.style.visibility !== 'hidden');
+    if (visiblePieces.length === 0) {
         generatePieces();
-    }
+    } else {
+		checkGameOver();
+	}
+}
+
+function endGame(reason) {
+    clearInterval(gameTimer);
+    saveGameScore('blocks', currentScore, `${reason}\nPunteggio finale: ${currentScore}`);
 }
 
 function checkLines() {
     let rToRemove = [];
     let cToRemove = [];
 
-    for (let i = 0; i < 8; i++) {
-        if (grid[i].every(v => v === 1)) rToRemove.push(i);
-        if (grid.map(row => row[i]).every(v => v === 1)) cToRemove.push(i);
+    // Trova righe piene
+    for (let r = 0; r < 8; r++) {
+        if (grid[r].every(cell => cell === 1)) rToRemove.push(r);
+    }
+    // Trova colonne piene
+    for (let c = 0; c < 8; c++) {
+        if (grid.map(row => row[c]).every(cell => cell === 1)) cToRemove.push(c);
     }
 
-    // Effetto bolle per le righe
-    rToRemove.forEach(r => {
-        grid[r] = Array(8).fill(0);
-        document.querySelectorAll(`[data-r="${r}"]`).forEach(el => {
-            if (!el.className.includes('bg-white')) { // Solo se la cella era piena
-                createBubbles(el);
-            }
-            el.className = "w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-900 rounded-sm";
-        });
-    });
+    const totalLines = rToRemove.length + cToRemove.length;
 
-    // Effetto bolle per le colonne
-    cToRemove.forEach(c => {
-        for(let r=0; r<8; r++) {
-            grid[r][c] = 0;
-            const el = document.querySelector(`[data-r="${r}"][data-c="${c}"]`);
-            if (!el.className.includes('bg-white')) {
-                createBubbles(el);
-            }
-            el.className = "w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-900 rounded-sm";
-        }
-    });
-
-    if (rToRemove.length || cToRemove.length) {
-        currentScore += (rToRemove.length + cToRemove.length) * 100;
+    if (totalLines > 0) {
+        // Calcolo punteggio con combo
+        let multiplier = 1;
+        if (totalLines === 2) multiplier = 1.5;
+        if (totalLines >= 3) multiplier = 2.5;
+        
+        currentScore += Math.floor((totalLines * 150) * multiplier);
         document.getElementById('blocks-score').innerText = currentScore;
+
+        // Raccolta celle da svuotare (per evitare conflitti riga/colonna)
+        let cellsToClear = new Set();
+        rToRemove.forEach(r => {
+            for(let c=0; c<8; c++) cellsToClear.add(`${r}-${c}`);
+        });
+        cToRemove.forEach(c => {
+            for(let r=0; r<8; r++) cellsToClear.add(`${r}-${c}`);
+        });
+
+        // Esecuzione svuotamento e animazione
+        cellsToClear.forEach(coord => {
+            const [r, c] = coord.split('-').map(Number);
+            const cell = document.getElementById(`cell-${r}-${c}`);
+            
+            createBubbles(cell); // Effetto particelle
+            
+            grid[r][c] = 0;
+            cell.className = "w-8 h-8 sm:w-10 sm:h-10 bg-white dark:bg-slate-900 rounded-sm transition-colors";
+        });
     }
 }
+
+// Funzione Bubbles (rimane invariata, assicurati che sia nel file)
 function createBubbles(el) {
     const rect = el.getBoundingClientRect();
-    const container = document.body;
     const colors = ['#3b82f6', '#ef4444', '#10b981', '#f59e0b', '#8b5cf6'];
     const randomColor = colors[Math.floor(Math.random() * colors.length)];
 
-    for (let i = 0; i < 8; i++) {
+    for (let i = 0; i < 6; i++) {
         const bubble = document.createElement('span');
         bubble.className = 'bubble';
-        
-        // Direzioni casuali per l'esplosione
-        const dx = (Math.random() - 0.5) * 100 + 'px';
-        const dy = (Math.random() - 0.5) * 100 + 'px';
-        
+        const dx = (Math.random() - 0.5) * 80 + 'px';
+        const dy = (Math.random() - 0.5) * 80 + 'px';
         bubble.style.setProperty('--dx', dx);
         bubble.style.setProperty('--dy', dy);
         bubble.style.backgroundColor = randomColor;
-        
-        // Posiziona la bolla al centro della cella
         bubble.style.left = (rect.left + rect.width / 2) + 'px';
         bubble.style.top = (rect.top + rect.height / 2) + 'px';
-        
-        container.appendChild(bubble);
-        
-        // Rimuovi l'elemento dopo l'animazione
+        document.body.appendChild(bubble);
         setTimeout(() => bubble.remove(), 600);
     }
 }
@@ -620,12 +758,300 @@ function checkSudoku() {
         }
     }
 
-    if (!hasErrors) {
+	if (!hasErrors) {
         clearInterval(timerInterval);
         const timeTaken = Math.floor((Date.now() - startTime) / 1000);
-        const score = Math.max(100, 3000 - (timeTaken * 10));
-        saveGameScore('dungeon-numbers', score, `SUDOKU COMPLETATO!\nTempo: ${timeTaken}s`);
+        
+        // Essendo un Sudoku 6x6, richiede più tempo del memory.
+        // Formula: 2000 base - 8 punti per secondo.
+        // Esempio: 2 minuti (120s) = 1040pt | 3 minuti (180s) = 560pt
+        const score = Math.max(100, 2000 - (timeTaken * 8));
+        saveGameScore('dungeon-numbers', score, `Dungeon superato! Tempo: ${timeTaken}s`);
     } else {
         alert("Ci sono errori nella griglia. Le celle errate sono evidenziate.");
     }
+}
+
+
+
+// --- GIOCO: SCACCO MATTO (CHESS PUZZLES) ---
+
+let chessErrors = 0;
+
+const CHESS_PUZZLES = [
+    {   fen: 'r1bqkbnr/pppp1ppp/2n5/4p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 0 1',        solution: { from: 'f3', to: 'f7' }, description: 'Bianco muove e vince'},
+	{   fen: '6k1/5ppp/8/8/8/8/8/4R1K1 w - - 0 1', solution: { from: 'e1', to: 'e8' }, description: 'Trova il matto in 1' },    
+	{   fen: 'r1b1k1nr/pppp1ppp/2n5/4p3/1b1PP2q/5N2/PPP2PPP/RNBQKB1R w KQkq - 0 1', solution: { from: 'f3', to: 'h4' }, description: 'Il Nero ha sbagliato, puniscilo!' },
+    {   fen: 'rnbqkbnr/pppp1ppp/8/4p3/5PP1/8/PPPPP2P/RNBQKBNR b KQkq - 0 1',        solution: { from: 'd8', to: 'h4' },        description: 'Il Bianco ha aperto la difesa. Chiudi la partita!'    },
+    {   fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4',        solution: { from: 'h5', to: 'f7' },        description: 'Il Nero è indifeso. Colpisci!'    },
+    {   fen: 'r2qkb1r/pp2nppp/3p4/2pNN3/2BnP3/8/PPPP1PPP/R1BbK2R w KQkq - 0 1', solution: { from: 'd5', to: 'f6' }, description: 'Mossa a sorpresa!'    },
+    { fen: '4r1k1/5ppp/8/8/8/8/8/R5K1 w - - 0 1', solution: { from: 'a1', to: 'a8' }, description: 'Il Re nero è intrappolato. Approfittane!' },
+    { fen: 'r1bqk2r/pppp1ppp/2n5/4P3/2B1n3/2P2N2/P1P2PPP/R1BQK2R w KQkq - 1 8', solution: { from: 'c4', to: 'f7' }, description: 'Sacrificio vincere la Regina!'    },
+    { fen: 'r1bqkb1r/pppp1ppp/2n5/4N3/2B1n3/8/PPPP1PPP/RNBQK2R w KQkq - 0 5', solution: { from: 'c4', to: 'f7' }, description: 'Attacca il punto debole!' },
+    { fen: 'r1bqk1nr/pppp1ppp/2n5/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4', solution: { from: 'c4', to: 'f7' }, description: 'Un classico sacrificio.' },
+    { fen: '6k1/R4ppp/8/8/8/8/8/4R1K1 w - - 0 1', solution: { from: 'e1', to: 'e8' }, description: 'Matto del corridoio.' },
+    { fen: 'r1bqk2r/pppp1ppp/2n2n2/4p3/1bB1P3/2N2N2/PPPP1PPP/R1BQK2R w KQkq - 6 5', solution: { from: 'c4', to: 'f7' }, description: 'Il Nero ha trascurato la difesa.' },
+    { fen: '3r2k1/1p3ppp/8/8/8/8/5PPP/3R2K1 w - - 0 1', solution: { from: 'd1', to: 'd8' }, description: 'La colonna è aperta.' },
+    { fen: 'rnbqk1nr/pppp1ppp/8/2b1p3/2B1P3/5Q2/PPPP1PPP/RNB1K1NR w KQkq - 4 4', solution: { from: 'f3', to: 'f7' }, description: 'Matto del Barbiere.' },
+    { fen: '5k2/5ppp/8/8/8/8/8/4R1K1 w - - 0 1', solution: { from: 'e1', to: 'e8' }, description: 'Non c è scampo.' },
+    { fen: 'r1bqk2r/pppp1ppp/2n2n2/2b1p1N1/2B1P3/8/PPPP1PPP/RNBQK2R w KQkq - 8 5', solution: { from: 'c4', to: 'f7' }, description: 'Pressione raddoppiata.' },
+    { fen: '2r3k1/5ppp/8/8/8/8/5PPP/2R3K1 w - - 0 1', solution: { from: 'c1', to: 'c8' }, description: 'Sfrutta il corridoio.' },
+    { fen: 'rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3', solution: { from: 'h4', to: 'e1' }, description: 'Il Bianco ha subito Matto?' },
+    { fen: 'r1b1k1nr/pppp1ppp/2n5/2b1p3/2B1P2q/5N2/PPPP1PPP/RNBQK2R w KQkq - 6 5', solution: { from: 'f3', to: 'h4' }, description: 'Troppo in là?' },
+    { fen: 'rnbqkb1r/pp3ppp/3p1n2/2p1N3/4P3/8/PPPP1PPP/RNBQKB1R w KQkq - 0 5', solution: { from: 'b1', to: 'c3' }, description: 'Sviluppa e difendi il centro.' },
+    { fen: '5rk1/5ppp/8/8/8/8/8/5RK1 w - - 0 1', solution: { from: 'f1', to: 'f8' }, description: 'Aguzza la vista.' },
+    { fen: 'rnbqkb1r/pppp1ppp/8/4N3/4P3/8/PPPP1PPP/RNBQKB1R b KQkq - 0 4', solution: { from: 'd8', to: 'h4' }, description: 'Contrattacco immediato.' },
+    { fen: 'rnbqkbnr/pp3ppp/2p5/3pP3/8/8/PPPP1PPP/RNBQKBNR w KQkq - 0 4', solution: { from: 'd1', to: 'h5' }, description: 'Minaccia scacco e fai pressione.' },
+    { fen: 'r1bqkb1r/pppp1ppp/2n2n2/4p3/3PP3/5N2/PPP2PPP/RNBQKB1R w KQkq - 1 4', solution: { from: 'd4', to: 'e5' }, description: 'Spingi e attacca.' },
+    { fen: 'rnbqkb1r/pp2pppp/5n2/2pp4/3P4/2N2N2/PPP1PPPP/R1BQKB1R w KQkq - 2 4', solution: { from: 'c3', to: 'b5' }, description: 'Minaccia a forchetta.' },
+    { fen: 'rnbqkb1r/pp1ppppp/5n2/1Bp5/4P3/5N2/PPPP1PPP/RNBQK2R b KQkq - 3 3', solution: { from: 'f6', to: 'e4' }, description: 'Qualcuno è indifeso.' },
+    { fen: 'r1bqkb1r/pp1ppppp/2n2n2/1Bp5/4P3/2N2N2/PPPP1PPP/R1BQK2R b KQkq - 5 4', solution: { from: 'c6', to: 'd4' }, description: 'Riprendi il centro e attacca.' },
+    { fen: 'r1bqk1nr/pppp1ppp/2n5/4p3/1bB1P3/2N2N2/PPPP1PPP/R1BQK2R b KQkq - 5 4', solution: { from: 'f7', to: 'f5' }, description: 'Contrattacco aggressivo.' },
+    { fen: 'r1bqkbnr/pp1ppppp/2n5/2p5/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3', solution: { from: 'd2', to: 'd4' }, description: 'Apertura classica della Siciliana.' },
+    { fen: 'r1bqkbnr/pp1ppppp/8/2p5/3nP3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 4 4', solution: { from: 'f3', to: 'd4' }, description: 'Eliminalo.' },
+    { fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/4P3/2N5/PPPP1PPP/R1BQKBNR w KQkq - 2 3', solution: { from: 'f2', to: 'f4' }, description: 'Gambetto di Re ritardato.' },
+    { fen: 'rnbqkb1r/pppp1ppp/5n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 3 3', solution: { from: 'f6', to: 'h5' }, description: 'Qualcuno è indifeso.' },
+    { fen: 'rnbqkb1r/pppp1ppp/8/4N2Q/2B1P3/8/PPPP1PPP/RNB1K2R b KQkq - 0 5', solution: { from: 'd8', to: 'f6' }, description: 'Difenditi e attacca al cuore.' },
+    { fen: 'rnbqkbnr/pppp1ppp/8/4p3/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', solution: { from: 'd1', to: 'h5' }, description: 'Minaccia rapida su due case.' },
+    { fen: 'rnbqkb1r/pppp1ppp/5n2/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 2 3', solution: { from: 'd1', to: 'h5' }, description: 'Attacca due case simultaneamente.' },
+    { fen: 'rnbqkbnr/pp1ppppp/8/2p5/4P3/8/PPPP1PPP/RNBQKBNR w KQkq - 0 2', solution: { from: 'f2', to: 'f4' }, description: 'Mossa aggressiva contro la Siciliana.' },
+    { fen: 'rnbqkbnr/pppp1ppp/8/4p3/3P4/8/PPP1PPPP/RNBQKBNR w KQkq - 0 2', solution: { from: 'd4', to: 'e5' }, description: 'Cattura centrale.' },
+    { fen: 'rnbqkbnr/pppp1ppp/8/8/3pP3/8/PPP2PPP/RNBQKBNR w KQkq - 0 3', solution: { from: 'd1', to: 'd4' }, description: 'Riconquista il centro.' }
+];
+
+let currentPuzzle = null;
+
+function startChessGame() {
+	chessErrors = 0
+    currentPuzzle = CHESS_PUZZLES[Math.floor(Math.random() * CHESS_PUZZLES.length)];
+	
+	const turn = currentPuzzle.fen.split(' ')[1]; 
+    const turnText = turn === 'w' ? 'BIANCO' : 'NERO';
+    const turnClass = turn === 'w' ? 'bg-white text-slate-800 border-slate-300' : 'bg-slate-800 text-white border-slate-600';
+    
+    clearInterval(timerInterval);
+    startGlobalTimer();
+
+const container = document.getElementById('game-canvas');
+    container.innerHTML = `
+        <div class="flex flex-col items-center w-full max-w-md p-2 gap-4">
+            <div id="live-timer" class="text-xl font-bold text-indigo-500">0s</div>
+            
+            <div class="flex items-center gap-2 px-4 py-1 rounded-full border shadow-sm ${turnClass} font-black text-xs uppercase">
+                <span class="w-3 h-3 rounded-full ${turn === 'w' ? 'bg-slate-200 border border-slate-400' : 'bg-black'}"></span>
+                Tocca al ${turnText}
+            </div>
+
+            <p class="text-sm font-bold text-slate-600 dark:text-slate-300 uppercase text-center">${currentPuzzle.description}</p>
+            
+            <div id="chess-board" class="grid grid-cols-8 grid-rows-8 border-4 border-slate-800 shadow-2xl rounded-lg overflow-hidden w-[320px] h-[320px] sm:w-[360px] sm:h-[360px]">
+                ${renderChessBoard()}
+            </div>
+
+            <div id="chess-feedback" class="text-xs font-black text-indigo-500 uppercase italic text-center">
+                Trascina il pezzo vincente
+            </div>
+        </div>
+    `;
+    setupChessLogic();
+}
+
+
+function renderChessBoard() {
+    let html = "";
+    const pieces = parseFEN(currentPuzzle.fen);
+    
+    for (let r = 0; r < 8; r++) {
+        for (let c = 0; c < 8; c++) {
+            const isDark = (r + c) % 2 !== 0;
+            const coord = String.fromCharCode(97 + c) + (8 - r);
+            const piece = pieces[coord] || "";
+            
+            // Etichette: Numeri a sinistra (a1-h8), Lettere in basso
+            const showNumber = (c === 0);
+            const showLetter = (r === 7);
+            
+            html += `
+                <div id="sq-${coord}" data-coord="${coord}" 
+                    class="relative flex items-center justify-center w-full h-full
+                    ${isDark ? 'bg-[#b58863]' : 'bg-[#f0d9b5]'} shadow-inner"
+                    ondragover="event.preventDefault()" 
+                    ondrop="handleDrop(event)">
+                    
+                    ${showNumber ? `<span class="absolute top-0.5 left-0.5 text-[8px] font-bold ${isDark ? 'text-[#f0d9b5]' : 'text-[#b58863]'} select-none">${8 - r}</span>` : ''}
+                    
+                    ${showLetter ? `<span class="absolute bottom-0.5 right-0.5 text-[8px] font-bold ${isDark ? 'text-[#f0d9b5]' : 'text-[#b58863]'} select-none">${String.fromCharCode(97 + c)}</span>` : ''}
+
+                    ${piece ? `
+                        <img src="${PIECE_IMAGES[piece]}" 
+                             id="piece-${coord}"
+                             data-piece="${piece}"
+                             data-from="${coord}"
+                             draggable="true" 
+                             ondragstart="handleDragStart(event)"
+                             ondragend="handleDragEnd(event)"
+                             class="w-[85%] h-[85%] cursor-grab active:cursor-grabbing select-none z-10 transition-transform hover:scale-110">
+                    ` : ''}
+                </div>`;
+        }
+    }
+    return html;
+}
+const PIECE_IMAGES = {
+    'p': 'https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg',
+    'r': 'https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg',
+    'n': 'https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg',
+    'b': 'https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg',
+    'q': 'https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg',
+    'k': 'https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg',
+    'P': 'https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg',
+    'R': 'https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg',
+    'N': 'https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg',
+    'B': 'https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg',
+    'Q': 'https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg',
+    'K': 'https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg'
+};
+
+
+
+function setupChessLogic() {
+    let selectedSq = null;
+
+    document.querySelectorAll('[id^="sq-"]').forEach(sq => {
+        sq.onclick = () => {
+            const coord = sq.dataset.coord;
+
+            if (!selectedSq) {
+                if (sq.innerText !== "") {
+                    selectedSq = coord;
+                    sq.classList.add('ring-4', 'ring-indigo-500', 'z-10');
+                }
+            } else {
+                if (selectedSq === coord) {
+                    sq.classList.remove('ring-4', 'ring-indigo-500');
+                    selectedSq = null;
+                    return;
+                }
+
+                checkChessMove(selectedSq, coord);
+                document.getElementById(`sq-${selectedSq}`).classList.remove('ring-4', 'ring-indigo-500');
+                selectedSq = null;
+            }
+        };
+    });
+}
+
+
+function handleDragStart(e) {
+    e.dataTransfer.setData("text/plain", e.target.dataset.from);
+    e.dataTransfer.dropEffect = "move";
+    
+    // Usiamo un timeout leggermente più lungo per permettere al browser 
+    // di generare l'immagine di trascinamento prima di nascondere l'elemento sorgente
+    const target = e.target;
+    setTimeout(() => {
+        target.style.opacity = "0.2"; // Invece di sparire del tutto, lasciamo un'ombra
+    }, 10);
+}
+
+function handleDrop(e) {
+    e.preventDefault();
+    const fromCoord = e.dataTransfer.getData("text/plain");
+    const toSq = e.target.closest('[data-coord]');
+    
+    // Se rilasci fuori dalla scacchiera, ripristina il pezzo originale
+    if (!toSq) {
+        const draggedPiece = document.getElementById(`piece-${fromCoord}`);
+        if (draggedPiece) draggedPiece.style.opacity = "1";
+        return;
+    }
+
+    const toCoord = toSq.dataset.coord;
+    checkChessMove(fromCoord, toCoord);
+}
+
+function checkChessMove(from, to) {
+    const fromSq = document.getElementById(`sq-${from}`);
+    const pieceImg = fromSq.querySelector('img');
+
+    if (from === currentPuzzle.solution.from && to === currentPuzzle.solution.to) {
+        // 1. Individua la casa di destinazione
+        const toSq = document.getElementById(`sq-${to}`);
+        
+        // 2. SPOSTAMENTO IMMEDIATO NEL DOM
+        toSq.innerHTML = ""; // Rimuove eventuali pezzi mangiati
+        toSq.appendChild(pieceImg); 
+        
+        // 3. RESET STILI E COORDINATE
+        pieceImg.id = `piece-${to}`;
+        pieceImg.dataset.from = to;
+        pieceImg.style.opacity = "1";
+        
+        // 4. EFFETTO VISIVO VITTORIA (Glow verde sulla casa)
+        toSq.classList.add('ring-4', 'ring-emerald-500', 'z-20', 'transition-all');
+        
+        const feedback = document.getElementById('chess-feedback');
+        feedback.innerText = "MOSSA CORRETTA! COMPLIMENTI!";
+        feedback.classList.replace('text-red-500', 'text-emerald-500');
+
+        // 5. RITARDO PER IL RENDERING
+        // Usiamo 800ms per dare il tempo all'occhio di vedere la mossa e il "glow" verde
+        setTimeout(() => {
+            endChessGame();
+        }, 800);
+
+    } else {
+        // Logica mossa errata (rimane invariata)
+		chessErrors++; // Incrementa il contatore errori
+        if (pieceImg) pieceImg.style.opacity = "1";
+        
+        const feedback = document.getElementById('chess-feedback');
+		feedback.innerText = `Mossa errata! Tentativi falliti: ${chessErrors}`;
+        feedback.classList.remove('text-indigo-500', 'text-emerald-500');
+        feedback.classList.add('text-red-500');
+        
+        const board = document.getElementById('chess-board');
+        board.classList.add('animate-shake'); 
+        setTimeout(() => board.classList.remove('animate-shake'), 500);
+    }
+}
+
+
+function handleDragEnd(e) {
+    e.target.style.opacity = "1";
+}
+
+
+function parseFEN(fen) {
+    const board = {};
+    const rows = fen.split(' ')[0].split('/');
+    rows.forEach((row, r) => {
+        let c = 0;
+        for (const char of row) {
+            if (isNaN(char)) {
+                const coord = String.fromCharCode(97 + c) + (8 - r);
+                board[coord] = char;
+                c++;
+            } else {
+                c += parseInt(char);
+            }
+        }
+    });
+    return board;
+}
+
+function endChessGame() {
+    clearInterval(timerInterval);
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+	// CALCOLO PUNTEGGIO:
+    // Base 2000 - (20 punti per ogni secondo) - (200 punti per ogni errore)
+    const timePenalty = timeTaken * 20;
+    const errorPenalty = chessErrors * 200;
+    const score = Math.max(100, 2000 - timePenalty - errorPenalty);
+    
+    const message = chessErrors === 0 
+        ? `Perfetto! Pulito e veloce in ${timeTaken}s.` 
+        : `Risolto in ${timeTaken}s con ${chessErrors} errori.`;
+
+    saveGameScore('chess-puzzle', score, message);
 }
