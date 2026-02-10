@@ -350,13 +350,16 @@ const PIECES_TYPES = [
     { id: 1, shape: [[1,1,1]],     color: 'block-type-1', weight: 1.2}, // barra
     { id: 2, shape: [[1],[1],[1]], color: 'block-type-2', weight: 1.2}, // barra verticale
     { id: 3, shape: [[1,0],[1,1]], color: 'block-type-3', weight: 1}, // L
-    { id: 4, shape: [[1]],          color: 'block-type-4', weight: 1}, // punto
+    { id: 4, shape: [[1]],          color: 'block-type-4', weight: 1.1}, // punto
     { id: 5, shape: [[1,1,0],[0,1,1]],          color: 'block-type-5', weight: 1}, // Z
     { id: 6, shape: [[0,1,1],[1,1,0]],          color: 'block-type-6', weight: 1}, // S (N)
     { id: 7, shape: [[1,1,1],[0,1,0]],          color: 'block-type-7', weight: 1}, // T
     { id: 8, shape: [[1,0],[1,1],[1,0]],          color: 'block-type-7', weight: 1}, // I-
     { id: 9, shape: [[0,1,0],[1,1,1]],          color: 'block-type-7', weight: 1}, // _|_
     { id: 10, shape: [[1,1,1],[0,1,0]],          color: 'block-type-7', weight: 1}, // T
+    { id: 11, shape: [[1,1],[0,1]], color: 'block-type-3', weight: 1}, // -|
+    { id: 12, shape: [[1,1],[1,0]], color: 'block-type-3', weight: 1}, // |-
+    { id: 13, shape: [[0,1],[1,1]], color: 'block-type-3', weight: 1} // _|
 
 ];
 
@@ -1054,4 +1057,5 @@ function endChessGame() {
         : `Risolto in ${timeTaken}s con ${chessErrors} errori.`;
 
     saveGameScore('chess-puzzle', score, message);
+
 }
