@@ -407,7 +407,7 @@ async function checkWeather(exitHourStr) {
 
         // --- LOGICA CONDIZIONI ---
         if (code === 1000) {
-            condMsg = "Cielo limpido e soleggiato! Goditi il il resto della giornata";
+            condMsg = "Cielo limpido e soleggiato! Stammi bene";
         } else if ([1003, 1006].includes(code)) {
             condMsg = "Qualche nuvola, ma il tempo regge. Buona uscita";
         } else if (code === 1009) {
@@ -561,4 +561,5 @@ function closeEscapePopup() {
 
     </script>
 </body>
+
 </html>
