@@ -122,9 +122,16 @@
     </a>
 </div>
 
-<!--
-<div id="curiosita-box" class="w-full max-w-6xl mt-8"></div>
--->
+<div id="historyCard" class="mt-8 bg-white dark:bg-slate-900 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-lg overflow-hidden hidden w-[75%] mx-auto">    <div class="bg-indigo-500 p-4 text-white font-bold flex items-center gap-2">
+        <i data-lucide="history" class="w-5 h-5"></i> 
+        <span class="uppercase text-sm tracking-wide">Accadde Oggi nel Passato</span>
+    </div>
+    <div id="historyContent" class="p-6 space-y-4 max-h-64 overflow-y-auto">
+        <div class="flex justify-center py-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-b-2 border-slate-500"></div>
+        </div>
+    </div>
+</div>
 
 <div class="mt-6 border-t pt-4">
     <h4 class="centered text-xs font-black text-slate-600 uppercase mb-3">Rassegna Stampa</h4>
@@ -139,22 +146,19 @@
     </div>
 </div>
 
-
     <div class="flex justify-center pt-8">
       Powered by <a href="https://www.weatherapi.com/" title="Free Weather API">WeatherAPI.com</a>
     </div>
 
-
-
     </main>
-<!--    
-<script src="js/daily_news.js"></script>
--->
-    <script>
+	<script>
+	
+
         lucide.createIcons();
 	window.addEventListener('load', () => {
     updateWeather();
-    // Aggiungiamo un piccolissimo ritardo per essere sicuri che il DB sia pronto
+	caricaFattiStorici();
+
     setTimeout(mostraCuriosita, 100); 
     setInterval(() => updateWeather(), 1800000);
 });
@@ -164,7 +168,6 @@
             document.documentElement.classList.remove('dark');
         }
         
-        // Logica Dark Mode (riutilizzabile in tutte le pagine)
         const themeToggleBtn = document.getElementById('theme-toggle');
         const darkIcon = document.getElementById('theme-toggle-dark-icon');
         const lightIcon = document.getElementById('theme-toggle-light-icon');
@@ -194,8 +197,6 @@
             async function updateWeather(force = false) {
                 const cached = localStorage.getItem('weatherCache');
                 const now = Date.now();
-                
-                // Se abbiamo dati recenti (meno di 30 min) e non è richiesto il refresh forzato
                 if (!force && cached) {
                     const weather = JSON.parse(cached);
                     if (now - weather.timestamp < 1800000) {
@@ -222,98 +223,69 @@
                 document.getElementById('nav-weather').classList.remove('hidden');
                 document.getElementById('nav-weather-icon').src = navIcon;
                 document.getElementById('nav-temp').innerText = `${Math.round(data.current.temp_c)}°C - ${data.current.condition.text}`;
-                
-                // Aggiornamento Umidità + Orario
                 document.getElementById('nav-hum').innerHTML = `Umidità: ${data.current.humidity}% | <span class="opacity-70">Aggiornato: ${timeStr}</span>`;
             }
 
-            // Avvio al caricamento
             window.addEventListener('load', () => {
                 updateWeather();
-                // Refresh automatico ogni 30 minuti se la pagina resta aperta
                 setInterval(() => updateWeather(), 1800000);
             });
 
-
-		
-		
-
         applyTheme();
 		
-		
-// Aggiungi questa chiamata dentro l'evento load esistente
 window.addEventListener('load', () => {
     updateWeather();
-    mostraCuriosita(); // <--- AGGIUNTO QUI
     setInterval(() => updateWeather(), 1800000);
 });
 
-let currentCuriositaIndex = 0;
 
-function mostraCuriosita() {
+
+
+
+async function caricaFattiStorici() {
+    const historyCard = document.getElementById('historyCard');
+    const historyContent = document.getElementById('historyContent');
+    
     const oggi = new Date();
-    const giorno = String(oggi.getDate()).padStart(2, '0');
+    const giorno = oggi.getDate();
     const mese = oggi.getMonth() + 1;
-    const annoCorrente = oggi.getFullYear(); // Recuperiamo l'anno attuale
-    const container = document.getElementById('curiosita-box');
 
-    if (!container) return;
-
-    const dbs = {
-        1: { nome: "Gennaio", dati: window.GENNAIO_DB || (typeof GENNAIO_DB !== 'undefined' ? GENNAIO_DB : null) },
-        2: { nome: "Febbraio", dati: window.FEBBRAIO_DB || (typeof FEBBRAIO_DB !== 'undefined' ? FEBBRAIO_DB : null) },
-        3: { nome: "Marzo", dati: window.MARZO_DB || (typeof MARZO_DB !== 'undefined' ? MARZO_DB : null) },
-        4: { nome: "Aprile", dati: window.APRILE_DB || (typeof APRILE_DB !== 'undefined' ? APRILE_DB : null) },
-        5: { nome: "Maggio", dati: window.MAGGIO_DB || (typeof MAGGIO_DB !== 'undefined' ? MAGGIO_DB : null) },
-        6: { nome: "Giugno", dati: window.GIUGNO_DB || (typeof GIUGNO_DB !== 'undefined' ? GIUGNO_DB : null) },
-        7: { nome: "Luglio", dati: window.LUGLIO_DB || (typeof LUGLIO_DB !== 'undefined' ? LUGLIO_DB : null) },
-        8: { nome: "Agosto", dati: window.AGOSTO_DB || (typeof AGOSTO_DB !== 'undefined' ? AGOSTO_DB : null) },
-        9: { nome: "Settembre", dati: window.SETTEMBRE_DB || (typeof SETTEMBRE_DB !== 'undefined' ? SETTEMBRE_DB : null) },
-        10: { nome: "Ottobre", dati: window.OTTOBRE_DB || (typeof OTTOBRE_DB !== 'undefined' ? OTTOBRE_DB : null) },
-        11: { nome: "Novembre", dati: window.NOVEMBRE_DB || (typeof NOVEMBRE_DB !== 'undefined' ? NOVEMBRE_DB : null) },
-        12: { nome: "Dicembre", dati: window.DICEMBRE_DB || (typeof DICEMBRE_DB !== 'undefined' ? DICEMBRE_DB : null) }
-    };
-
-    const meseAttuale = dbs[mese];
-
-    if (meseAttuale && meseAttuale.dati && meseAttuale.dati[giorno]) {
-        const eventi = meseAttuale.dati[giorno];
+    try {
+        historyCard.classList.remove('hidden');
         
-        /* LOGICA "UNA ALL'ANNO":
-           Usiamo l'operatore modulo (%) sulla lunghezza dell'array degli eventi.
-           L'indice sarà fisso per tutto l'anno solare.
-        */
-        const indiceAnno = annoCorrente % eventi.length;
-        const eventoDelGiorno = eventi[indiceAnno];
+        const response = await fetch(`https://history.muffinlabs.com/date/${mese}/${giorno}`);
+        const data = await response.json();
+        const eventiCasuali = data.data.Events.sort(() => 0.5 - Math.random()).slice(0, 3);
 
-        container.innerHTML = `
-            <div class="bg-white dark:bg-slate-900 border-2 border-indigo-100 dark:border-slate-800 rounded-3xl p-8 shadow-sm hover:shadow-md transition-all">
-                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6">
-                    <div class="flex items-center gap-4">
-                        <div class="p-3 bg-indigo-50 dark:bg-indigo-900/30 rounded-2xl">
-                            <i data-lucide="sparkles" class="w-6 h-6 text-indigo-600 dark:text-indigo-400"></i>
-                        </div>
-                        <div>
-                            <h3 class="text-xl font-black text-indigo-900 dark:text-indigo-300">Accadde Oggi</h3>
-                            <p class="text-indigo-500 dark:text-indigo-400 font-bold text-xs uppercase tracking-widest">${giorno} ${meseAttuale.nome} ${annoCorrente}</p>
-                        </div>
-                    </div>
-                </div>
-                
-                <div class="p-6 bg-slate-50 dark:bg-slate-800/50 rounded-2xl border border-transparent hover:border-indigo-100 dark:hover:border-indigo-500/20 transition-all">
-                    <p class="text-lg text-slate-700 dark:text-slate-200 leading-relaxed italic">
-                        "${eventoDelGiorno}"
-                    </p>
-                </div>
-                <div class="mt-4 text-right">
-                    <span class="text-[10px] text-slate-400 font-medium uppercase tracking-tighter">Pillola storica dell'anno</span>
-                </div>
+        eventiCasuali.sort((a, b) => parseInt(a.year) - parseInt(b.year));
+
+        historyContent.innerHTML = `<p class="text-xs italic animate-pulse text-center">Traduzione in corso...</p>`;
+
+        const eventiTradotti = await Promise.all(eventiCasuali.map(async (ev) => {
+            try {
+                const tradRes = await fetch(`https://api.mymemory.translated.net/get?q=${encodeURIComponent(ev.text)}&langpair=en|it`);
+                const tradData = await tradRes.json();
+                return {
+                    year: ev.year,
+                    text: tradData.responseData.translatedText || ev.text
+                };
+            } catch (e) {
+                return ev;
+            }
+        }));
+
+        historyContent.innerHTML = eventiTradotti.map(ev => `
+            <div class="border-l-4 border-indigo-200 dark:border-white-900 pl-4 py-1">
+                <span class="font-black text-indigo-600 dark:text-white text-sm">${ev.year}</span>
+                <p class="text-sm text-slate-600 dark:text-slate-300 leading-snug">${ev.text}</p>
             </div>
-        `;
-        lucide.createIcons();
+        `).join('');
+
+    } catch (error) {
+        console.error("Errore caricamento storia:", error);
+        historyContent.innerHTML = "<p class='text-xs italic opacity-50 text-center'>Impossibile caricare gli eventi storici.</p>";
     }
 }
-
     </script>
 </body>
 </html>

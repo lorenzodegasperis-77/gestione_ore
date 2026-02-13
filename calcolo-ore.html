@@ -95,8 +95,8 @@
         <div class="p-10 text-center flex items-center justify-center min-h-[10px]">
             <div id="calculatedExit" class="text-6xl font-black text-emerald-500 tracking-tighter">--:--</div>
         </div>
-			<div class= "italic text-center text-orange-400 dark:text-white">
-			<h3> NB: Il testo è arancione se è <br> stata inserita flessibilità.</h3>
+			<div id="flexMessage" class= "hidden italic text-center text-orange-400 dark:text-white">
+			<h3> Atenzione è stata inserita flessibilità.</h3>
 			</div>
     </div>
 </div>
@@ -252,7 +252,6 @@ const API_KEY = '5487533995554d8fabe101832262601';
 const CITY = 'Rome';
 let targetTime = null;
 
-// Funzione centralizzata per aggiornare tutto (Ingresso -> Uscita -> Meteo)
 async function aggiornaTutto() {
     const entryInput = document.getElementById('entryInput');
     const flexInput = document.getElementById('flessibilita');
@@ -262,96 +261,71 @@ async function aggiornaTutto() {
     
     if (!valoreIngresso) return;
 
-    // --- CONTROLLO BLOCCO FLESSIBILITÀ (MAX 1 ORA) ---
     const [hFlexCheck, mFlexCheck] = valoreFlessibilita.split(':').map(Number);
     if (hFlexCheck > 1 || (hFlexCheck === 1 && mFlexCheck > 0)) {
-        alert("⚠️ ATTENZIONE: La flessibilità massima consentita è di 1 ora. Inserisci nuovamente l'orario.");
-        flexInput.value = "00:00"; // Reset visivo
+        alert("⚠️ ATTENZIONE: La flessibilità massima consentita è di 1 ora.");
+        flexInput.value = "00:00";
         localStorage.setItem('flexTime', "00:00");
-        aggiornaTutto(); // Riesegue il calcolo con 00:00
+        aggiornaTutto();
         return;
     }
     
-    // Salviamo le preferenze
     localStorage.setItem('entryTime', valoreIngresso);
     localStorage.setItem('flexTime', valoreFlessibilita);
     
-    // 1. Convertiamo l'ingresso in minuti totali
     const [hEntry, mEntry] = valoreIngresso.split(':').map(Number);
-    
-    // 2. Convertiamo la flessibilità in minuti totali
     const totalFlexMinutes = (hFlexCheck * 60) + mFlexCheck;
-    
-    // 3. Calcolo: Ingresso + 7h 42m (462 min) - Flessibilità
     const workDayMinutes = (7 * 60) + 42;
     const finalMinutes = (hEntry * 60) + mEntry + workDayMinutes - totalFlexMinutes;
     
-    // 4. Creiamo l'oggetto Date per l'uscita
     const date = new Date();
     date.setHours(Math.floor(finalMinutes / 60));
     date.setMinutes(finalMinutes % 60);
     date.setSeconds(0);
     targetTime = date;
 
-    // 5. Formattiamo la stringa per la UI
     const exitStr = date.getHours().toString().padStart(2, '0') + ":" + 
                     date.getMinutes().toString().padStart(2, '0');
     
-    document.getElementById('calculatedExit').innerText = exitStr;
-    document.getElementById('countdownCard').classList.remove('hidden');
-    
-    // Colora l'uscita in rosso se c'è flessibilità
     const exitEl = document.getElementById('calculatedExit');
+    const flexMsg = document.getElementById('flexMessage');
+    const countdownCard = document.getElementById('countdownCard'); // Aggiunto
+
+    countdownCard.classList.remove('hidden');
+    exitEl.innerText = exitStr;
+    
     if (totalFlexMinutes > 0) {
-        exitEl.classList.replace('text-emerald-500', 'text-orange-400');
+        exitEl.classList.remove('text-emerald-500');
+        exitEl.classList.add('text-orange-400');
+        flexMsg.classList.remove('hidden');
     } else {
-        exitEl.classList.replace('text-orange-400', 'text-emerald-500');
+        exitEl.classList.remove('text-orange-400');
+        exitEl.classList.add('text-emerald-500');
+        flexMsg.classList.add('hidden');
     }
     
-    // Aggiorniamo il meteo
     await checkWeather(exitStr);
 }
 
-// Modifica al caricamento della pagina (window.load)
-window.addEventListener('load', () => {
-    lucide.createIcons();
-    const savedEntry = localStorage.getItem('entryTime');
-    const savedFlex = localStorage.getItem('flexTime');
-    
-    if (savedFlex) {
-        document.getElementById('flessibilita').value = savedFlex;
-    }
-    
-    if (savedEntry) {
-        document.getElementById('entryInput').value = savedEntry;
-        aggiornaTutto();
-    } else {
-        checkWeather(); 
-    }
-});
-// NUOVA FUNZIONE: Gestisce la Cache e la Navigazione
+
 async function checkWeather(exitHourStr) {
     const cached = localStorage.getItem('weatherCache');
     const now = Date.now();
     let weatherData = null;
 
-    // 1. TENTATIVO CARICAMENTO DALLA CACHE (30 minuti)
     if (cached) {
         const cacheEntry = JSON.parse(cached);
-        if (now - cacheEntry.timestamp < 1800000) { // 1.800.000 ms = 30 min
+        if (now - cacheEntry.timestamp < 1800000) {
             weatherData = cacheEntry.data;
             renderNavWeather(weatherData, cacheEntry.timestamp);
         }
     }
 
-    // 2. SE NON C'È CACHE O È VECCHIA, FACCIO LA CHIAMATA API
     if (!weatherData) {
         try {
             const res = await fetch(`https://api.weatherapi.com/v1/forecast.json?key=${API_KEY}&q=${CITY}&days=1&lang=it`);
             if (!res.ok) throw new Error("Errore API");
             weatherData = await res.json();
-            
-            // Salvo in cache
             localStorage.setItem('weatherCache', JSON.stringify({
                 timestamp: now,
                 data: weatherData
@@ -365,7 +339,6 @@ async function checkWeather(exitHourStr) {
         }
     }
 
-    // 3. LOGICA PREVISIONE USCITA (La tua logica originale)
     if (exitHourStr && weatherData) {
         const exitHour = parseInt(exitHourStr.split(':')[0]);
         const forecast = weatherData.forecast.forecastday[0].hour.find(h => new Date(h.time).getHours() === exitHour);
@@ -373,7 +346,6 @@ async function checkWeather(exitHourStr) {
     }
 }
 
-    // Funzione per aggiornare la barra di navigazione con il timestamp
     function renderNavWeather(data, timestamp) {
         const timeStr = new Date(timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         const navIcon = data.current.condition.icon.startsWith('http') ? data.current.condition.icon : "https:" + data.current.condition.icon;
@@ -465,25 +437,12 @@ async function checkWeather(exitHourStr) {
         document.getElementById('timeRemaining').innerText = `${hrs}:${mins}:${secs}`;
     }, 1000);
 
-    window.addEventListener('load', () => {
-        lucide.createIcons();
-        const savedEntry = localStorage.getItem('entryTime');
-        if (savedEntry) {
-            document.getElementById('entryInput').value = savedEntry;
-            aggiornaTutto(savedEntry);
-        } else {
-            checkWeather(); // Aggiorna solo la nav se non c'è orario d'uscita
-        }
-    });
-	
-	
-// 1. Funzione per resettare la cache se l'utente vuole un'altra meta
+
 function rigeneraFuga() {
     localStorage.removeItem('selectedFlight');
     calcolaFugaDinamica();
 }
 
-// 2. Funzione principale integrata
 function calcolaFugaDinamica() {
     const exitTimeStr = document.getElementById('calculatedExit').innerText;
     
@@ -492,24 +451,19 @@ function calcolaFugaDinamica() {
         return;
     }
 
-    // Calcolo gap temporale (90 min)
     const [h, m] = exitTimeStr.split(':').map(Number);
     const minFlightInMinutes = (h * 60) + m + 90;
-
-    // --- LOGICA CACHE ---
     let voloScelto = null;
     const cached = localStorage.getItem('selectedFlight');
 
     if (cached) {
         const tempVolo = JSON.parse(cached);
-        // Verifichiamo se il volo in cache è ancora compatibile con l'orario attuale
         const [fH, fM] = tempVolo.f_time.split(':').map(Number);
         if ((fH * 60) + fM >= minFlightInMinutes) {
             voloScelto = tempVolo;
         }
     }
 
-    // --- SE NON C'È CACHE O NON È COMPATIBILE, NE SCEGLIAMO UNO NUOVO ---
     if (!voloScelto) {
         const compatibleFlights = FLIGHT_DATABASE.filter(f => {
             const [fH, fM] = f.f_time.split(':').map(Number);
@@ -525,7 +479,6 @@ function calcolaFugaDinamica() {
         localStorage.setItem('selectedFlight', JSON.stringify(voloScelto));
     }
 
-    // --- AGGIORNAMENTO UI MODAL ---
     const citta = voloScelto.destination.trim();
     document.getElementById('escapeIntro').innerText = `Se esci alle ${exitTimeStr}, fai in tempo!`;
     document.getElementById('escapeDest').innerText = citta.toUpperCase();
@@ -538,7 +491,6 @@ function calcolaFugaDinamica() {
     const durM = voloScelto.f_duration % 60;
     document.getElementById('escapeDuration').innerText = `DURATA: ${durH}h ${durM.toString().padStart(2, '0')}m`;
 
-    // --- CREAZIONE BOTTONI DINAMICI (Google + Reset) ---
     const urlGoogle = `https://www.google.com/search?q=${encodeURIComponent('voli da roma a ' + citta)}`;
     
     document.getElementById('fugaActions').innerHTML = `
@@ -550,7 +502,6 @@ function calcolaFugaDinamica() {
         </button>
     `;
 
-    // Mostra il Modal e aggiorna icone Lucide
     document.getElementById('escapeModal').classList.remove('hidden');
     lucide.createIcons();
 }
@@ -559,6 +510,25 @@ function closeEscapePopup() {
     document.getElementById('escapeModal').classList.add('hidden');
 }
 
+
+window.addEventListener('load', () => {
+    lucide.createIcons();
+    const savedEntry = localStorage.getItem('entryTime');
+    const savedFlex = localStorage.getItem('flexTime');
+    
+    if (savedFlex) {
+        document.getElementById('flessibilita').value = savedFlex;
+    }
+    
+    if (savedEntry) {
+        document.getElementById('entryInput').value = savedEntry;
+        aggiornaTutto();
+    } else {
+        checkWeather();
+    }
+    const options = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('it-IT', options);
+});
     </script>
 </body>
 

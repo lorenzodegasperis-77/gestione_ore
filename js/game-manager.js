@@ -1057,5 +1057,4 @@ function endChessGame() {
         : `Risolto in ${timeTaken}s con ${chessErrors} errori.`;
 
     saveGameScore('chess-puzzle', score, message);
-
 }
