@@ -66,9 +66,7 @@ const GAMES_REPO = [
     { id: 'memory', name: 'Memory', instructions: 'Una sfida per la mente: scopri le tessere e trova tutte le coppie. In questa sfida la rapidità fa la differenza tra un principiante e un vero campione.', init: startMemoryGame },
     { id: 'word-guess', name: 'Parola Fantasma', instructions: 'Una sfida di intuito: digita le parole per tentare di indovinare la parola segreta. Trova la soluzione, ma attento a non sbagliare. Devi essere veloce e preciso.', init: startGhostWordGame },
     { id: 'blocks', name: 'Color Blocks', instructions: 'Trascina i blocchi colorati sulla griglia per riempire righe o colonne e farle esplodere. Pianifica le tue mosse per distruggere più linee contemporaneamente e sfruttare i bonus combo.', init: startBlocksGame },
-    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Entra nel dungeon della logica con questo Sudoku 6x6. Riempi ogni cella cosicché ogni riga, colonna e settore 2x3 abbia numeri da 1 a 6 senza ripetizioni nel più breve tempo possibile.', init: startDungeonNumbers },
-	{ id: 'chess-puzzle', name: 'Scacco matto', instructions: 'Sfida il tuo intuito tattico! Risolvi puzzle scacchistici trovando la mossa vincente: matto in uno o guadagno di materiale decisivo. Attento però gli errori costano caro!', init: startChessGame }
-
+    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Entra nel dungeon della logica con questo Sudoku 6x6. Riempi ogni cella cosicché ogni riga, colonna e settore 2x3 abbia numeri da 1 a 6 senza ripetizioni nel più breve tempo possibile.', init: startDungeonNumbers }
 ];
 
 // --- UTILITY: TIMER ---
@@ -774,3 +772,4 @@ function checkSudoku() {
         alert("Ci sono errori nella griglia. Le celle errate sono evidenziate.");
     }
 }
+
