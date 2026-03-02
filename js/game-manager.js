@@ -772,4 +772,3 @@ function checkSudoku() {
         alert("Ci sono errori nella griglia. Le celle errate sono evidenziate.");
     }
 }
-
