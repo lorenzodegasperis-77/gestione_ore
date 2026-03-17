@@ -66,7 +66,10 @@ const GAMES_REPO = [
     { id: 'memory', name: 'Memory', instructions: 'Una sfida per la mente: scopri le tessere e trova tutte le coppie. In questa sfida la rapidità fa la differenza tra un principiante e un vero campione.', init: startMemoryGame },
     { id: 'word-guess', name: 'Parola Fantasma', instructions: 'Una sfida di intuito: digita le parole per tentare di indovinare la parola segreta. Trova la soluzione, ma attento a non sbagliare. Devi essere veloce e preciso.', init: startGhostWordGame },
     { id: 'blocks', name: 'Color Blocks', instructions: 'Trascina i blocchi colorati sulla griglia per riempire righe o colonne e farle esplodere. Pianifica le tue mosse per distruggere più linee contemporaneamente e sfruttare i bonus combo.', init: startBlocksGame },
-    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Entra nel dungeon della logica con questo Sudoku 6x6. Riempi ogni cella cosicché ogni riga, colonna e settore 2x3 abbia numeri da 1 a 6 senza ripetizioni nel più breve tempo possibile.', init: startDungeonNumbers }
+    { id: 'dungeon-numbers', name: 'Dungeon dei Numeri', instructions: 'Entra nel dungeon della logica con questo Sudoku 6x6. Riempi ogni cella cosicché ogni riga, colonna e settore 2x3 abbia numeri da 1 a 6 senza ripetizioni nel più breve tempo possibile.', init: startDungeonNumbers },
+	{ id: 'mines-easy', name: 'Schiva Meeting (Jr)', instructions: 'Trova tutti gli spazi liberi senza cliccare sui meeting. Clicca col tasto destro (o tieni premuto) per segnare un meeting.', init: () => startMinesGame('easy') },
+	{ id: 'mines-medium', name: 'Schiva Meeting (Sr)', instructions: 'La giornata si complica. Più scrivanie, più meeting da evitare.', init: () => startMinesGame('medium') },
+	{ id: 'mines-hard', name: 'Schiva Meeting (Mgr)', instructions: 'Livello Manager: il calendario è un campo minato. Sopravvivi alla giornata!', init: () => startMinesGame('hard') }
 ];
 
 // --- UTILITY: TIMER ---
@@ -770,5 +773,170 @@ function checkSudoku() {
         saveGameScore('dungeon-numbers', score, `Dungeon superato! Tempo: ${timeTaken}s`);
     } else {
         alert("Ci sono errori nella griglia. Le celle errate sono evidenziate.");
+    }
+}
+
+
+
+
+const MINES_CONFIGS = {
+    easy: { id: 'mines-easy', rows: 8, cols: 8, mines: 10, scoreMult: 2 },
+    medium: { id: 'mines-medium', rows: 12, cols: 12, mines: 25, scoreMult: 3.5 },
+    hard: { id: 'mines-hard', rows: 14, cols: 14, mines: 40, scoreMult: 5.5 }
+};
+
+let minesState = {
+    grid: [],
+    revealed: new Set(),
+    flags: new Set(),
+    gameOver: false,
+    config: null
+};
+
+function startMinesGame(difficulty) {
+    minesState.config = MINES_CONFIGS[difficulty];
+    minesState.gameOver = false;
+    minesState.revealed.clear();
+    minesState.flags.clear();
+    minesState.grid = [];
+
+    const container = document.getElementById('game-canvas');
+    container.innerHTML = `
+        <div class="flex flex-col items-center gap-4 w-full">
+            <div class="flex justify-between w-full max-w-md px-4 font-black text-indigo-600 dark:text-indigo-400 uppercase tracking-tighter">
+                <div id="mines-count">Meeting: ${minesState.config.mines}</div>
+                <div id="live-timer">0s</div>
+            </div>
+            <div id="mines-grid" class="grid bg-slate-200 dark:bg-slate-800 p-2 rounded-xl shadow-inner border-4 border-slate-300 dark:border-slate-700 mx-auto overflow-auto max-w-full"></div>
+        </div>
+    `;
+
+    const gridEl = document.getElementById('mines-grid');
+    gridEl.style.gridTemplateColumns = `repeat(${minesState.config.cols}, minmax(30px, 1fr))`;
+
+    // Inizializza Griglia Vuota
+    for (let r = 0; r < minesState.config.rows; r++) {
+        minesState.grid[r] = [];
+        for (let c = 0; c < minesState.config.cols; c++) {
+            minesState.grid[r][c] = { r, c, isMine: false, neighborCount: 0 };
+            const cell = document.createElement('div');
+            cell.id = `mine-${r}-${c}`;
+            cell.className = "w-8 h-8 sm:w-10 sm:h-10 border border-slate-300 dark:border-slate-600 bg-slate-100 dark:bg-slate-700 flex items-center justify-center cursor-pointer hover:bg-white dark:hover:bg-slate-500 font-bold transition-all text-sm";
+            
+            // Gestione Click Sinistro
+            cell.onclick = () => revealCell(r, c);
+            
+            // Gestione Click Destro (Bandierina)
+            cell.oncontextmenu = (e) => {
+                e.preventDefault();
+                toggleFlag(r, c);
+            };
+
+            gridEl.appendChild(cell);
+        }
+    }
+
+    // Posiziona Meeting casuali
+    let placed = 0;
+    while (placed < minesState.config.mines) {
+        let r = Math.floor(Math.random() * minesState.config.rows);
+        let c = Math.floor(Math.random() * minesState.config.cols);
+        if (!minesState.grid[r][c].isMine) {
+            minesState.grid[r][c].isMine = true;
+            placed++;
+        }
+    }
+
+    // Calcola numeri adiacenti
+    for (let r = 0; r < minesState.config.rows; r++) {
+        for (let c = 0; c < minesState.config.cols; c++) {
+            if (minesState.grid[r][c].isMine) continue;
+            let count = 0;
+            for (let dr = -1; dr <= 1; dr++) {
+                for (let dc = -1; dc <= 1; dc++) {
+                    if (minesState.grid[r + dr]?.[c + dc]?.isMine) count++;
+                }
+            }
+            minesState.grid[r][c].neighborCount = count;
+        }
+    }
+
+    clearInterval(timerInterval);
+    startGlobalTimer();
+}
+
+function revealCell(r, c) {
+    if (minesState.gameOver || minesState.revealed.has(`${r}-${c}`) || minesState.flags.has(`${r}-${c}`)) return;
+
+    const cell = minesState.grid[r][c];
+    const el = document.getElementById(`mine-${r}-${c}`);
+    minesState.revealed.add(`${r}-${c}`);
+
+    if (cell.isMine) {
+        endMinesGame(false);
+        return;
+    }
+
+    el.className = "w-8 h-8 sm:w-10 sm:h-10 border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 flex items-center justify-center text-xs font-black shadow-inner";
+    
+    if (cell.neighborCount > 0) {
+        el.innerText = cell.neighborCount;
+        const colors = ['', 'text-blue-500', 'text-green-500', 'text-red-500', 'text-purple-500', 'text-amber-600', 'text-cyan-500', 'text-black', 'text-gray-500'];
+        el.classList.add(colors[cell.neighborCount]);
+    } else {
+        // Espansione automatica se cella vuota
+        for (let dr = -1; dr <= 1; dr++) {
+            for (let dc = -1; dc <= 1; dc++) {
+                if (minesState.grid[r + dr]?.[c + dc]) revealCell(r + dr, c + dc);
+            }
+        }
+    }
+
+    checkWin();
+}
+
+function toggleFlag(r, c) {
+    if (minesState.gameOver || minesState.revealed.has(`${r}-${c}`)) return;
+    const key = `${r}-${c}`;
+    const el = document.getElementById(`mine-${r}-${c}`);
+
+    if (minesState.flags.has(key)) {
+        minesState.flags.delete(key);
+        el.innerText = "";
+    } else {
+        minesState.flags.add(key);
+        el.innerText = "🚫";
+    }
+    document.getElementById('mines-count').innerText = `Meeting: ${minesState.config.mines - minesState.flags.size}`;
+}
+
+function checkWin() {
+    const totalCells = minesState.config.rows * minesState.config.cols;
+    if (minesState.revealed.size === totalCells - minesState.config.mines) {
+        endMinesGame(true);
+    }
+}
+
+function endMinesGame(win) {
+    minesState.gameOver = true;
+    clearInterval(timerInterval);
+    const timeTaken = Math.floor((Date.now() - startTime) / 1000);
+
+    // Rivela tutti i meeting
+    for (let r = 0; r < minesState.config.rows; r++) {
+        for (let c = 0; c < minesState.config.cols; c++) {
+            if (minesState.grid[r][c].isMine) {
+                document.getElementById(`mine-${r}-${c}`).innerText = "📅";
+                if (!win) document.getElementById(`mine-${r}-${c}`).classList.add('bg-red-200', 'dark:bg-red-900');
+            }
+        }
+    }
+
+    if (win) {
+        // Punteggio: (Celle rivelate / Tempo) * Moltiplicatore Difficoltà
+        const score = Math.round((5000 / (timeTaken + 1)) * minesState.config.scoreMult);
+        saveGameScore(minesState.config.id, score, `GRANDE! Hai schivato tutti i meeting in ${timeTaken}s.\nPunteggio: ${score}`);
+    } else {
+        alert("Meeting a tradimento! Ti hanno incastrato in una call di 2 ore.");
     }
 }
