@@ -780,9 +780,9 @@ function checkSudoku() {
 
 
 const MINES_CONFIGS = {
-    easy: { id: 'mines-easy', rows: 8, cols: 8, mines: 10, scoreMult: 2 },
-    medium: { id: 'mines-medium', rows: 12, cols: 12, mines: 25, scoreMult: 3.5 },
-    hard: { id: 'mines-hard', rows: 14, cols: 14, mines: 40, scoreMult: 5.5 }
+    easy: { id: 'mines-easy', rows: 8, cols: 8, mines: 10, scoreMult: 4 },
+    medium: { id: 'mines-medium', rows: 12, cols: 12, mines: 25, scoreMult: 8 },
+    hard: { id: 'mines-hard', rows: 14, cols: 14, mines: 40, scoreMult: 15 }
 };
 
 let minesState = {
