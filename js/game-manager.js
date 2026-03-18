@@ -932,11 +932,23 @@ function endMinesGame(win) {
         }
     }
 
-    if (win) {
-        // Punteggio: (Celle rivelate / Tempo) * Moltiplicatore Difficoltà
-        const score = Math.round((5000 / (timeTaken + 1)) * minesState.config.scoreMult);
-        saveGameScore(minesState.config.id, score, `GRANDE! Hai schivato tutti i meeting in ${timeTaken}s.\nPunteggio: ${score}`);
+if (win) {
+        // --- NUOVO CALCOLO RANGE 500 - 3000 ---
+        
+        // 1. Definiamo una base per difficoltà
+        const bases = { easy: 800, medium: 1500, hard: 2200 };
+        const baseScore = bases[minesState.config.id.split('-')[1]] || 1000;
+
+        // 2. Bonus tempo: partiamo da 1000 e togliamo 5 punti al secondo
+        // Il max(0, ...) evita che il bonus diventi negativo
+        const timeBonus = Math.max(0, 800 - (timeTaken * 5));
+
+        // 3. Punteggio Finale
+        const finalScore = Math.round(baseScore + timeBonus);
+
+        saveGameScore(minesState.config.id, finalScore, 
+            `GRANDE CAPO!\nHai schivato i meeting in ${timeTaken}s.\nPunteggio Aziendale: ${finalScore} pt`);
     } else {
-        alert("Meeting a tradimento! Ti hanno incastrato in una call di 2 ore.");
+        alert("Meeting a tradimento! La tua produttività è colata a picco.");
     }
 }
